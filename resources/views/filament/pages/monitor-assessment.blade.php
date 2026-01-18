@@ -1,3 +1,5 @@
 <x-filament-panels::page>
-    {{-- Page content --}}
+    {{ $this->selectForm }}
+    {{ $this->filterForm }}
+    {{ $this->table }}
 </x-filament-panels::page>

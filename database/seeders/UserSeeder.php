@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Database\Factories\UserFactory;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -11,7 +12,7 @@ class UserSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
+    public function run(UserFactory $userFactory): void
     {
         User::firstorcreate([
             'name' => 'admin',
@@ -19,10 +20,8 @@ class UserSeeder extends Seeder
             'password' => 'admin'
         ]);
 
-        User::firstorcreate([
-            'name' => 'siswa',
-            'email' => 'siswa@mail.com',
-            'password' => 'siswa'
-        ]);
+        for ($i=0; $i < 10; $i++) {
+            User::firstorcreate($userFactory->definition());
+        }
     }
 }

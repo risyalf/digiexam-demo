@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Assessment;
+use App\Models\AssessmentToken;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -16,8 +17,9 @@ return new class extends Migration
         Schema::create('assessment_participants', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->timestamps();
-            $table->foreignIdFor(User::class, 'user_id');
+            $table->foreignIdFor(User::class);
             $table->foreignIdFor(Assessment::class);
+            $table->foreignIdFor(AssessmentToken::class);
             $table->timestamp('start_time');
             $table->string('status');
             $table->float('point')->default(0);
