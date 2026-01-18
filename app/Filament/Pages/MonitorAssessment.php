@@ -21,6 +21,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Actions\HeaderActionsPosition;
 use Filament\Tables\Columns\TextColumn;
@@ -63,6 +64,14 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                 ->components([
                     Section::make('Pilih Test')
                         ->collapsible()
+                        ->footerActionsAlignment(Alignment::Right)
+                        ->footerActions([
+                            Action::make('select')
+                                ->icon(Heroicon::Check)
+                                ->label('Pilih Tes')
+                                ->color(Color::Green)
+                                ->action(fn() => $this->dispatch('do-refresh')),
+                        ])
                         ->components([
                             Select::make('selectFormData.assessment_id')
                                 ->label('Nama Test')
@@ -86,15 +95,18 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                             Grid::make(2)
                                 ->components([
                                     TextInput::make('selectFormData.name')
+                                        ->label('Nama')
                                         ->readOnly()
                                         ->copyable(),
                                     TextInput::make('selectFormData.status')
                                         ->readOnly()
                                         ->copyable(),
                                     TextInput::make('selectFormData.date_start')
+                                        ->label('Waktu Mulai')
                                         ->readOnly()
                                         ->copyable(),
                                     TextInput::make('selectFormData.time')
+                                        ->label('Waktu Tes')
                                         ->readOnly()
                                         ->copyable(),
                                 ])
@@ -206,10 +218,14 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                     TextColumn::make('user.name')
                         ->copyable()
                         ->label('Nama')
-                        ->alignCenter(),
+                        ->alignLeft(),
                     TextColumn::make('start_time')
                         ->copyable()
                         ->label('Waktu Mulai')
+                        ->alignCenter(),
+                    TextColumn::make('end_time')
+                        ->copyable()
+                        ->label('Waktu Selesai')
                         ->alignCenter(),
                     TextColumn::make('point')
                         ->copyable()

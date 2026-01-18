@@ -21,6 +21,7 @@ return new class extends Migration
             $table->foreignIdFor(Assessment::class);
             $table->foreignIdFor(AssessmentToken::class);
             $table->timestamp('start_time');
+            $table->timestamp('end_time');
             $table->string('status');
             $table->float('point')->default(0);
         });
