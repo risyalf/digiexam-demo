@@ -34,10 +34,7 @@ class trial extends Command
     public function handle()
     {
         $users = User::query()
-                    ->with('roles')
-                    ->whereHas('roles', function ($q) {
-                        $q->where('name', 'siswa');
-                    })
+                    ->role('siswa')
                     ->get();
 
         $assesment = Assessment::first();
@@ -48,7 +45,7 @@ class trial extends Command
                 'assessment_token_id' => AssessmentToken::first()->id,
                 'start_time' => now()->toDateTimeString(),
                 'end_time' => Carbon::now()->addMinutes($assesment->time_test)->toDateTimeString(),
-                'status' => AssessmentParticipantStatus::ACTIVE,
+                'status' => AssessmentParticipantStatus::LOGGED_IN,
                 'point' => 0,
             ]);
         }

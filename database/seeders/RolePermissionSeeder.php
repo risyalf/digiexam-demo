@@ -24,5 +24,7 @@ class RolePermissionSeeder extends Seeder
         foreach (User::where('name', '!=', 'admin')->get() as $key => $user) {
             $user->assignRole('siswa');
         }
+
+        
     }
 }

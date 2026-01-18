@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Enum\AssessmentParticipantStatus;
 use App\Models\Assessment;
 use App\Models\AssessmentParticipant;
+use App\Models\User;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
@@ -48,6 +49,7 @@ class MonitorAssessment extends Page implements HasTable, HasForms
 
     public array $filterFormData = [
         'status' => null,
+        'name' => null
     ];
 
     protected function getForms(): array
@@ -85,7 +87,7 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                                 ->afterStateUpdated(function($state, Set $set, Get $get) {
                                     $assesment = Assessment::find($state);
                                     $set('selectFormData.name', $assesment->name);
-                                    $set('selectFormData.status', $assesment->status);
+                                    $set('selectFormData.status', 'Aktif');
                                     $set('selectFormData.date_start', $assesment->start_date);
                                     $set('selectFormData.time', $assesment->time_test);
 
@@ -127,7 +129,28 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                             Select::make('filterFormData.status')
                                 ->options(
                                     AssessmentParticipantStatus::options()
-                                )
+                                ),
+                            Select::make('filterFormData.name')
+                                ->label('Siswa')
+                                ->searchable()
+                                ->options(function($q) {
+                                    $siswas = User::query()
+                                    ->role('siswa')
+                                    ->pluck('name', 'id');
+
+                                    return [
+                                        null => 'Semua Siswa',
+                                        ...$siswas
+                                    ];
+                                })
+                        ])
+                        ->footerActionsAlignment(Alignment::Right)
+                        ->footerActions([
+                            Action::make('search')
+                                ->icon(Heroicon::OutlinedMagnifyingGlass)
+                                ->label('Cari')
+                                ->color(Color::Green)
+                                ->action(fn() => $this->dispatch('do-refresh')),
                         ])
                 ]);
     }
@@ -141,6 +164,9 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                         ->where('assessment_id', $this->selectFormData['assessment_id'])
                         ->when($this->filterFormData['status'], function ($q) {
                             $q->where('status', $this->filterFormData['status']);
+                        })
+                        ->when($this->filterFormData['name'], function ($q) {
+                            $q->where('user_id', $this->filterFormData['name']);
                         })
                 )
                 ->heading('Peserta')
