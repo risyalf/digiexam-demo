@@ -9,5 +9,6 @@ Route::post('/auth/login', [AuthController::class, 'login'])
 ->name('api.user.login');
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user/absen', [AttendanceRecordController::class, 'get'])->name('api.user.absen.get');
+    // Route::get('/user/absen', [AttendanceRecordController::class, 'get'])->name('api.user.absen.get');
+    // Route::post('/user/absen', [AttendanceRecordController::class, 'get'])->name('api.user.absen.get');
 });
