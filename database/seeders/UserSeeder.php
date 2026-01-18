@@ -21,7 +21,10 @@ class UserSeeder extends Seeder
         ]);
 
         for ($i=0; $i < 20; $i++) {
-            User::firstorcreate($userFactory->definition());
+            User::firstorcreate([
+                ...$userFactory->definition(),
+                'password' => 'siswa'
+            ]);
         }
     }
 }
