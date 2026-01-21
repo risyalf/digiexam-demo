@@ -1,0 +1,29 @@
+networks:
+  app-network:
+    driver: bridge
+
+services:
+  php-fpm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel-php-fpm
+    working_dir: /var/www
+    volumes:
+      - /var/www/student-assessment:/var/www
+    env_file:
+      - .env
+    networks:
+      - app-network
+    ports:
+      - "127.0.0.1:4949:9000"
+
+  node:
+    image: node:20
+    container_name: laravel-node
+    working_dir: /var/www 
+    volumes:
+      - /var/www/student-assessment:/var/www
+    command: tail -f /dev/null
+    networks:
+      - app-network
