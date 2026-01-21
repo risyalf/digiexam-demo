@@ -5,6 +5,7 @@ namespace App\Action;
 use App\Enum\AssessmentParticipantStatus;
 use App\Models\AssessmentParticipant;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class LockUser
 {
@@ -21,7 +22,7 @@ class LockUser
 
         return User::where('id', $userId)
                 ->update([
-                    'is_locked' => true,
+                    'is_locked' => DB::raw('true'),
                     'unlock_token' => null
                 ]);
     }

@@ -10,6 +10,7 @@ use App\Models\Topic;
 use App\Models\UserGroup;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class QuestionSeeder extends Seeder
 {
@@ -42,16 +43,12 @@ class QuestionSeeder extends Seeder
             'correct_point' => 1,
             'wrong_point' => 0,
             'empty_point' => 0,
-            'show_result' => true,
-            'detail_result' => true,
-            'need_token' => true,
             'module_id' => $module->id,
             'topic_id' => $topic->id,
             'type' => AssessmentType::PILIHAN_GANDA,
             'difficulty_level' => 1,
             'total_question' => 10,
             'total_answer' => 10,
-            'randomize_question' => true,
             'status' => AssessmentStatus::BELUM_DIMULAI,
         ]);
     }

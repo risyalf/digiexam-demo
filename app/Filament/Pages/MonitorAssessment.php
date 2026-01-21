@@ -187,7 +187,7 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                             $userIds = $records->pluck('user_id')->toArray();
 
                             User::query()
-                                ->where('is_locked', true)
+                                ->where('is_locked', DB::raw('true'))
                                 ->whereIn('id', $userIds)
                                 ->update([
                                     'unlock_token' => GenerateRandomString::execute(),
@@ -211,10 +211,10 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                             $userIds = $records->pluck('user_id')->toArray();
 
                             User::query()
-                                ->where('is_locked', false)
+                                ->where('is_locked', DB::raw('false'))
                                 ->whereIn('id', $userIds)
                                 ->update([
-                                    'is_locked' => true,
+                                    'is_locked' => DB::raw('true'),
                                 ]);
 
                             AssessmentParticipant::query()

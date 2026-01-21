@@ -13,12 +13,9 @@ class AssessmentParticipant extends Model
 
     protected $guarded = [];
 
-    protected function casts(): array
-    {
-        return [
-            'status' => AssessmentParticipantStatus::class
-        ];
-    }
+    protected $casts = [
+        'status' => AssessmentParticipantStatus::class
+    ];
 
     public function user(): BelongsTo
     {

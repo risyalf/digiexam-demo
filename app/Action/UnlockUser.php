@@ -6,6 +6,7 @@ use App\Enum\AssessmentParticipantStatus;
 use App\Models\AssessmentParticipant;
 use App\Models\User;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class UnlockUser
 {
@@ -31,7 +32,7 @@ class UnlockUser
             ]);
 
         return $user->update([
-            'is_locked' => false,
+            'is_locked' => DB::raw('false'),
             'unlock_token' => null
         ]);
     }

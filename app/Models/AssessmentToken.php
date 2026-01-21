@@ -16,4 +16,8 @@ class AssessmentToken extends Model
     {
         return $this->belongsTo(Assessment::class);
     }
+
+    protected $casts = [
+        'all_module' => 'boolean',
+    ];
 }

@@ -33,7 +33,7 @@ return new class extends Migration
             $table->float('empty_point')->default(0);
             $table->boolean('show_result')->default(false);
             $table->boolean('detail_result')->default(false);
-            $table->boolean('need_token')->default(false);
+            $table->boolean('need_token')->default(true);
             $table->foreignIdFor(Module::class)->nullable();
             $table->foreignIdFor(Topic::class)->nullable();
             $table->string('type')->nullable();

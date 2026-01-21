@@ -10,19 +10,19 @@ trait HasAudit
 {
     public function initializeHasAudit()
     {
-        $this->created_by = Auth::id() ?? 1;
-        $this->updated_by = Auth::id() ?? 1;
+        $this->created_by = Auth::id() ?? User::first() ? User::first()->id : 1;
+        $this->updated_by = Auth::id() ?? User::first() ? User::first()->id : 1;
     }
 
     public static function bootHasAudit()
     {
         static::creating(function ($model) {
-            $model->created_by = Auth::id() ?? 1;
-            $model->updated_by = Auth::id() ?? 1;
+            $model->created_by = Auth::id() ?? User::first() ? User::first()->id : 1;
+            $model->updated_by = Auth::id() ?? User::first() ? User::first()->id : 1;
         });
 
         static::updating(function ($model) {
-            $model->updated_by = Auth::id() ?? 1;
+            $model->updated_by = Auth::id() ?? User::first() ? User::first()->id : 1;
         });
 
         static::deleting(function ($model) {

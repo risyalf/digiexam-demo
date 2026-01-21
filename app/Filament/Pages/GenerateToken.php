@@ -146,7 +146,7 @@ class GenerateToken extends Page implements HasForms, HasTable
                         ->with('assessment')
                         ->select([
                             '*',
-                            'null as status'
+                            DB::raw("null as status"),
                         ])
                         ->when($this->filterFormData['date_from'] && $this->filterFormData['date_to'], function($q) {
                             $q->whereRaw("(start_date::date >= '{$this->filterFormData['date_from']}' and start_date::date <= '{$this->filterFormData['date_to']}')");
@@ -219,7 +219,7 @@ class GenerateToken extends Page implements HasForms, HasTable
                 'expired_time' => $this->createFormData['expired_time'],
                 'expired_until' => Carbon::now()->addMinutes((int)$this->createFormData['expired_time']),
                 'assessment_id' => $this->createFormData['all_module'] ? null : $this->createFormData['assessment_id'],
-                'all_module' => $this->createFormData['all_module'],
+                'all_module' => $this->createFormData['all_module'] == 1 ? DB::raw('true') : DB::raw('false'),
             ]);
 
             Notification::make()

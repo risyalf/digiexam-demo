@@ -10,4 +10,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Question extends Model
 {
     use HasAudit, HasUuids, SoftDeletes;
+
+    protected $casts = [
+        'show_once' => 'boolean',
+    ];
 }
