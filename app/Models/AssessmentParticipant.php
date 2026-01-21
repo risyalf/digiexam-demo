@@ -24,4 +24,9 @@ class AssessmentParticipant extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function assessment(): BelongsTo
+    {
+        return $this->belongsTo(Assessment::class);
+    }
 }

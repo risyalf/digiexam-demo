@@ -18,10 +18,10 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->timestamps();
             $table->foreignIdFor(User::class);
-            $table->foreignIdFor(Assessment::class);
-            $table->foreignIdFor(AssessmentToken::class);
-            $table->timestamp('start_time');
-            $table->timestamp('end_time');
+            $table->foreignIdFor(Assessment::class)->nullable();
+            $table->foreignIdFor(AssessmentToken::class)->nullable();
+            $table->timestamp('start_time')->nullable();
+            $table->timestamp('end_time')->nullable();
             $table->string('status');
             $table->float('point')->default(0);
         });

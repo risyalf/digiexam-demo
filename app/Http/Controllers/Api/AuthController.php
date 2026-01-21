@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enum\AssessmentParticipantStatus;
 use App\Http\Controllers\Controller;
+use App\Models\AssessmentParticipant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -24,6 +26,11 @@ class AuthController extends Controller
         $user = auth()->user();
         $token = $user->createToken('api-token')->plainTextToken;
 
+        AssessmentParticipant::firstOrCreate([
+            'user_id' => $user->id,
+            'status' => AssessmentParticipantStatus::LOGGED_IN,
+        ]);
+
         return response()->json([
             'message' => 'LOGIN SUCCESSFUL',
             'user' => $user,
@@ -35,7 +42,7 @@ class AuthController extends Controller
     {
         $request->user()->currentAccessToken()->delete();
 
-    return response()->json([
+        return response()->json([
             'message' => 'LOGGED OUT'
         ]);
     }
