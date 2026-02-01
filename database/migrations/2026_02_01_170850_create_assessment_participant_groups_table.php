@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Assessment;
-use App\Models\User;
+use App\Models\ParticipantGroup;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,12 +13,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('assessment_histories', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->timestamps();
-            $table->softDeletes();
+        Schema::create('assessment_participant_groups', function (Blueprint $table) {
             $table->foreignIdFor(Assessment::class);
-            $table->text('value');
+            $table->foreignIdFor(ParticipantGroup::class);
+
+            $table->unique(['assessment_id', 'participant_group_id']);
         });
     }
 
@@ -27,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('assessment_histories');
+        Schema::dropIfExists('assessment_participant_groups');
     }
 };

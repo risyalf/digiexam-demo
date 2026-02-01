@@ -1,9 +1,9 @@
 <?php
 
 use App\Models\Module;
+use App\Models\ParticipantGroup;
 use App\Models\Topic;
 use App\Models\User;
-use App\Models\UserGroup;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -22,8 +22,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class, 'created_by');
             $table->foreignIdFor(User::class, 'updated_by');
             $table->foreignIdFor(User::class, 'deleted_by')->nullable();
-            $table->foreignIdFor(UserGroup::class);
-            $table->string('name');
+            $table->string('name')->unique();
             $table->string('description')->nullable();
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();
@@ -37,10 +36,10 @@ return new class extends Migration
             $table->foreignIdFor(Module::class)->nullable();
             $table->foreignIdFor(Topic::class)->nullable();
             $table->string('type')->nullable();
-            $table->integer('difficulty_level')->default(1);
             $table->integer('total_question')->default(1);
             $table->integer('total_answer')->default(1);
             $table->boolean('randomize_question')->default(false);
+            $table->boolean('randomize_asnwer')->default(false);
             $table->string('status')->default('NOT STARTED');
         });
     }

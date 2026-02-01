@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class, 'created_by');
             $table->foreignIdFor(User::class, 'updated_by');
             $table->foreignIdFor(User::class, 'deleted_by')->nullable();
-            $table->string('name');
+            $table->string('name')->unique();
         });
     }
 

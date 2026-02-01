@@ -15,16 +15,17 @@ class RolePermissionSeeder extends Seeder
     public function run(): void
     {
         Role::create(['name' => 'admin']);
+        Role::create(['name' => 'guru']);
         Role::create(['name' => 'siswa']);
 
         $admin = User::where('name', 'admin')->first();
-
         $admin->assignRole('admin');
 
-        foreach (User::where('name', '!=', 'admin')->get() as $key => $user) {
+        $guru = User::where('name', 'guru')->first();
+        $guru->assignRole('guru');
+
+        foreach (User::whereNotIn('name', ['admin', 'guru'])->get() as $key => $user) {
             $user->assignRole('siswa');
         }
-
-        
     }
 }

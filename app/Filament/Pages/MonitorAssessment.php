@@ -3,9 +3,9 @@
 namespace App\Filament\Pages;
 
 use App\Action\GenerateRandomString;
-use App\Enum\AssessmentParticipantStatus;
+use App\Enum\ParticipantStatus;
 use App\Models\Assessment;
-use App\Models\AssessmentParticipant;
+use App\Models\Participant;
 use App\Models\User;
 use Carbon\Carbon;
 use Filament\Actions\Action;
@@ -130,7 +130,7 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                     ->components([
                         Select::make('filterFormData.status')
                             ->options(
-                                AssessmentParticipantStatus::options()
+                                ParticipantStatus::options()
                             ),
                         Select::make('filterFormData.name')
                             ->label('Siswa')
@@ -161,7 +161,7 @@ class MonitorAssessment extends Page implements HasTable, HasForms
     {
         return $table
             ->query(
-                AssessmentParticipant::query()
+                Participant::query()
                     ->with('user', 'assessment')
                     ->when($this->selectFormData['assessment_id'], function ($q) {
                         $q->where('assessment_id', $this->selectFormData['assessment_id']);
@@ -217,10 +217,10 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                                     'is_locked' => DB::raw('true'),
                                 ]);
 
-                            AssessmentParticipant::query()
+                            Participant::query()
                                 ->whereIn('id', $userIds)
                                 ->update([
-                                    'status' => AssessmentParticipantStatus::LOCKED
+                                    'status' => ParticipantStatus::LOCKED
                                 ]);
 
 
@@ -239,10 +239,10 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                 //     ->color(Color::Orange)
                 //     ->action(
                 //         function(Collection $records) { 
-                //             AssessmentParticipant::query()
+                //             Participant::query()
                 //                 ->whereIn('id', $records->pluck('id')->toArray())
                 //                 ->update([
-                //                     'status' => AssessmentParticipantStatus::PAUSED
+                //                     'status' => ParticipantStatus::PAUSED
                 //                 ]);
                 //         }
                 //     )
@@ -255,7 +255,7 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                     ->color(Color::Red)
                     ->action(
                         function (Collection $records) {
-                            AssessmentParticipant::whereIn('id', $records->pluck('id')->toArray())->delete();
+                            Participant::whereIn('id', $records->pluck('id')->toArray())->delete();
                         }
                     )
                     ->deselectRecordsAfterCompletion(),

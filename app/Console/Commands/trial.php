@@ -3,10 +3,10 @@
 namespace App\Console\Commands;
 
 use App\Action\GenerateRandomString;
-use App\Enum\AssessmentParticipantStatus;
+use App\Enum\ParticipantStatus;
 use App\Filament\Pages\MonitorAssessment;
 use App\Models\Assessment;
-use App\Models\AssessmentParticipant;
+use App\Models\Participant;
 use App\Models\AssessmentToken;
 use App\Models\User;
 use Carbon\Carbon;
@@ -39,13 +39,13 @@ class trial extends Command
 
         $assesment = Assessment::first();
         foreach ($users as $key => $user) {
-            AssessmentParticipant::create([
+            Participant::create([
                 'user_id' => $user->id,
                 'assessment_id' => $assesment->id,
                 'assessment_token_id' => AssessmentToken::first()->id,
                 'start_time' => now()->toDateTimeString(),
                 'end_time' => Carbon::now()->addMinutes($assesment->time_test)->toDateTimeString(),
-                'status' => AssessmentParticipantStatus::LOGGED_IN,
+                'status' => ParticipantStatus::LOGGED_IN,
                 'point' => 0,
             ]);
         }

@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Enum\AssessmentParticipantStatus;
+use App\Enum\ParticipantStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Assessment;
-use App\Models\AssessmentParticipant;
+use App\Models\Participant;
 use App\Models\AssessmentToken;
 use Carbon\Carbon;
 use Exception;
@@ -30,7 +30,7 @@ class AssessmentController extends Controller
             $id = auth()->user()->id;
             $updates = $request->updates;
 
-            AssessmentParticipant::where('user_id', $id)
+            Participant::where('user_id', $id)
                 ->update($updates);
 
             DB::commit();
@@ -81,21 +81,21 @@ class AssessmentController extends Controller
                 throw new Exception("UJIAN TIDAK KETEMU DI DATABASE!");
             }
 
-            $participant = AssessmentParticipant::query()
-                ->where('status', '!=', AssessmentParticipantStatus::FINISH)
+            $participant = Participant::query()
+                ->where('status', '!=', ParticipantStatus::FINISH)
                 ->where([
                     'user_id' => auth()->user()->id
                 ])
                 ->first();
 
             if (!$participant) {
-                $participant = AssessmentParticipant::create([
+                $participant = Participant::create([
                     'user_id' => auth()->user()->id,
                     'assessment_id' => $assessmentId,
                     'assessment_token_id' => $token->id,
                     'start_time' => Carbon::now()->toDateTimeString(),
                     'end_time' => Carbon::now()->addMinutes($assessment->time_test),
-                    'status' => AssessmentParticipantStatus::ACTIVE,
+                    'status' => ParticipantStatus::ACTIVE,
                 ]);
             } else {
                 $participant->update([
@@ -103,7 +103,7 @@ class AssessmentController extends Controller
                     'assessment_token_id' => $token->id,
                     'start_time' => Carbon::now()->toDateTimeString(),
                     'end_time' => Carbon::now()->addMinutes($assessment->time_test),
-                    'status' => AssessmentParticipantStatus::ACTIVE,
+                    'status' => ParticipantStatus::ACTIVE,
                 ]);
             }
 

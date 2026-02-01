@@ -2,8 +2,8 @@
 
 namespace App\Action;
 
-use App\Enum\AssessmentParticipantStatus;
-use App\Models\AssessmentParticipant;
+use App\Enum\ParticipantStatus;
+use App\Models\Participant;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
@@ -11,13 +11,13 @@ class LockUser
 {
     public static function execute($userId)
     {
-        AssessmentParticipant::query()
+        Participant::query()
             ->where([
                 'user_id' => $userId,
             ])
-            ->where('status', '!=', AssessmentParticipantStatus::FINISH)
+            ->where('status', '!=', ParticipantStatus::FINISH)
             ->update([
-                'status' => AssessmentParticipantStatus::LOCKED
+                'status' => ParticipantStatus::LOCKED
             ]);
 
         return User::where('id', $userId)

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Enum\AssessmentParticipantStatus;
+use App\Enum\ParticipantStatus;
 use App\Http\Controllers\Controller;
-use App\Models\AssessmentParticipant;
+use App\Models\Participant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -26,9 +26,9 @@ class AuthController extends Controller
         $user = auth()->user();
         $token = $user->createToken('api-token')->plainTextToken;
 
-        AssessmentParticipant::firstOrCreate([
+        Participant::firstOrCreate([
             'user_id' => $user->id,
-            'status' => AssessmentParticipantStatus::LOGGED_IN,
+            'status' => ParticipantStatus::LOGGED_IN,
         ]);
 
         return response()->json([

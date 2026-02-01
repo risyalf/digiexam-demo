@@ -2,8 +2,8 @@
 
 namespace App\Action;
 
-use App\Enum\AssessmentParticipantStatus;
-use App\Models\AssessmentParticipant;
+use App\Enum\ParticipantStatus;
+use App\Models\Participant;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -22,13 +22,13 @@ class UnlockUser
             throw new Exception("TOKEN SALAH!");
         }
 
-        AssessmentParticipant::query()
+        Participant::query()
             ->where([
                 'user_id' => $user->id,
             ])
-            ->where('status', '!=', AssessmentParticipantStatus::FINISH)
+            ->where('status', '!=', ParticipantStatus::FINISH)
             ->update([
-                'status' => AssessmentParticipantStatus::ACTIVE
+                'status' => ParticipantStatus::ACTIVE
             ]);
 
         return $user->update([

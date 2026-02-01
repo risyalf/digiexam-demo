@@ -23,12 +23,11 @@ return new class extends Migration
             $table->foreignIdFor(Topic::class);
             $table->string('name');
             $table->string('type');
-            $table->string('options')->nullable();
+            $table->integer('ordering');
+            $table->text('options')->nullable();
             $table->string('file')->nullable();
             $table->string('file_mime')->nullable();
             $table->boolean('show_once')->default(false);
-            $table->integer('difficulty_level')->default(1);
-            $table->string('right_answer')->nullable();
         });
     }
 

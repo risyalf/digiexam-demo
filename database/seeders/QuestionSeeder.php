@@ -5,9 +5,12 @@ namespace Database\Seeders;
 use App\Enum\AssessmentStatus;
 use App\Enum\AssessmentType;
 use App\Models\Assessment;
+use App\Models\AssessmentParticipantGroup;
+use App\Models\AssessmentSupervisor;
 use App\Models\Module;
 use App\Models\Topic;
-use App\Models\UserGroup;
+use App\Models\ParticipantGroup;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +22,7 @@ class QuestionSeeder extends Seeder
      */
     public function run(): void
     {
-        $userGroup = UserGroup::create([
+        $participantGroup = ParticipantGroup::create([
             'name' => 'IPA X-1'
         ]);
 
@@ -33,8 +36,7 @@ class QuestionSeeder extends Seeder
             'description' => 'Untuk uts bulan maret 2026'
         ]);
 
-        Assessment::create([
-            'user_group_id' => $userGroup->id,
+        $assessment = Assessment::create([
             'name' => 'Uji Coba Soal',
             'description' => 'Untuk Uji Coba Soal',
             'start_date' => Carbon::now()->toDateTimeString(),
@@ -46,10 +48,21 @@ class QuestionSeeder extends Seeder
             'module_id' => $module->id,
             'topic_id' => $topic->id,
             'type' => AssessmentType::PILIHAN_GANDA,
-            'difficulty_level' => 1,
             'total_question' => 10,
             'total_answer' => 10,
             'status' => AssessmentStatus::BELUM_DIMULAI,
+        ]);
+
+        AssessmentParticipantGroup::create([
+            'assessment_id' => $assessment->id,
+            'participant_group_id' => $participantGroup->id,
+        ]);
+
+        $guru = User::role('guru')->first();
+
+        AssessmentSupervisor::create([
+            'assessment_id' => $assessment->id,
+            'user_id' => $guru->id,
         ]);
     }
 }

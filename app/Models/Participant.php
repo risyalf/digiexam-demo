@@ -2,19 +2,19 @@
 
 namespace App\Models;
 
-use App\Enum\AssessmentParticipantStatus;
+use App\Enum\ParticipantStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class AssessmentParticipant extends Model
+class Participant extends Model
 {
     use HasUuids;
 
     protected $guarded = [];
 
     protected $casts = [
-        'status' => AssessmentParticipantStatus::class
+        'status' => ParticipantStatus::class
     ];
 
     public function user(): BelongsTo

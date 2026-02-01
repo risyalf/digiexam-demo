@@ -20,6 +20,12 @@ class UserSeeder extends Seeder
             'password' => 'admin'
         ]);
 
+        User::firstorcreate([
+            'name' => 'guru',
+            'email' => 'guru@mail.com',
+            'password' => 'guru'
+        ]);
+
         for ($i=0; $i < 20; $i++) {
             User::firstorcreate([
                 ...$userFactory->definition(),
