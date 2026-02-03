@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Topic;
+use App\Models\Test;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -13,20 +13,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('questions', function (Blueprint $table) {
+        Schema::create('test_questions', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->timestamps();
             $table->softDeletes();
             $table->foreignIdFor(User::class, 'created_by');
             $table->foreignIdFor(User::class, 'updated_by');
             $table->foreignIdFor(User::class, 'deleted_by')->nullable();
-            $table->foreignIdFor(Topic::class);
+            $table->foreignIdFor(Test::class);
             $table->string('name');
             $table->string('type');
             $table->integer('ordering');
             $table->text('options')->nullable();
             $table->string('file')->nullable();
-            $table->string('file_mime')->nullable();
+            $table->string('correct_answer')->nullable();
             $table->boolean('show_once')->default(false);
         });
     }
@@ -36,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('questions');
+        Schema::dropIfExists('test_questions');
     }
 };

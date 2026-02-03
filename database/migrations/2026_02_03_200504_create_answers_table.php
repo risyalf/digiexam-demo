@@ -1,8 +1,9 @@
 <?php
 
 use App\Models\Assessment;
-use App\Models\Question;
-use App\Models\User;
+use App\Models\Participant;
+use App\Models\Test;
+use App\Models\Topic;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,11 +18,16 @@ return new class extends Migration
         Schema::create('answers', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->timestamps();
-            $table->foreignIdFor(Question::class);
             $table->foreignIdFor(Assessment::class);
+            $table->foreignIdFor(Participant::class);
+            $table->foreignIdFor(Topic::class);
+            $table->foreignIdFor(Test::class);
             $table->text('value')->nullable();
+            $table->integer('correct_answers')->default(0);
+            $table->integer('wrong_answers')->default(0);
+            $table->integer('null_answers')->default(0);
 
-            $table->unique(['question_id', 'assessment_id']);
+            $table->unique(['assessment_id', 'participant_id']);
         });
     }
 
