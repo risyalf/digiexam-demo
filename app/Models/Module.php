@@ -10,4 +10,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Module extends Model
 {
     use HasAudit, HasUuids, SoftDeletes;
+
+    protected $guarded = [];
 }
