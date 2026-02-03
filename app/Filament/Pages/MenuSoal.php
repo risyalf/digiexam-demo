@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Action\ExportTestFormDocx;
 use App\Models\Module;
 use App\Models\Test;
 use App\Models\Topic;
@@ -25,6 +26,9 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use PhpOffice\PhpWord\IOFactory;
+use PhpOffice\PhpWord\PhpWord;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class MenuSoal extends Page implements HasTable, HasForms
 {
@@ -90,7 +94,11 @@ class MenuSoal extends Page implements HasTable, HasForms
                     ->alignCenter(),
             ])
             ->headerActions([
-                
+                Action::make('export')
+                    ->label('EXPORT FORMAT')
+                    ->icon(Heroicon::ArrowUp)
+                    ->color(Color::Green)
+                    ->action(fn () => ExportTestFormDocx::execute('IMPORT-FORMAT-SOAL.docx'))
             ])
             ->recordActions(
                 ActionGroup::make([
