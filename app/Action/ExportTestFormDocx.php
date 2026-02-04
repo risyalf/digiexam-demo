@@ -43,32 +43,32 @@ class ExportTestFormDocx
                 $table->addRow();
                 $table->addCell(1000, [...$styleBorderTopCell, ...$styleBorderLeftRightCell])->addText($i);
                 $table->addCell(2000, [...$styleBorderTopCell, ...$styleBorderLeftRightCell])->addText("PILIHAN GANDA / ESSAY");
-                $table->addCell(4000, [...$styleBorderTopCell, ...$styleBorderLeftRightCell])->addText("(MASUKKAN PERTANYAAN DAN GAMBAR DI SINI)");
+                $table->addCell(4000, [...$styleBorderTopCell, ...$styleBorderLeftRightCell])->addText($i == 1 ? "(MASUKKAN PERTANYAAN DAN GAMBAR DI SINI)" : "");
                 $table->addCell(2000, [...$styleBorderTopCell, ...$styleBorderLeftRightCell, 'bgColor' => 'FFFF00'])->addText("");
 
                 $table->addRow();
                 $table->addCell(1000, $styleBorderLeftRightCell)->addText("");
                 $table->addCell(2000, $styleBorderLeftRightCell)->addText("JAWABAN");
-                $table->addCell(4000, $styleBorderLeftRightCell)->addText("(MASUKKAN OPSI PERTANYAAN ATAU KOSONGI)");
-                $table->addCell(2000, $styleBorderLeftRightCell)->addText("(MASUKKAN ANGKA '1' JIKA JAWABAN BENAR, '0' JIKA SALAH)");
+                $table->addCell(4000, $styleBorderLeftRightCell)->addText($i == 1 ? "(MASUKKAN OPSI PERTANYAAN ATAU KOSONGI)" : "");
+                $table->addCell(2000, $styleBorderLeftRightCell)->addText($i == 1 ? "(MASUKKAN ANGKA '1' JIKA JAWABAN BENAR, '0' JIKA SALAH)" : "");
 
                 $table->addRow();
                 $table->addCell(1000, $styleBorderLeftRightCell)->addText("");
                 $table->addCell(2000, $styleBorderLeftRightCell)->addText("JAWABAN");
-                $table->addCell(4000, $styleBorderLeftRightCell)->addText("(MASUKKAN OPSI PERTANYAAN ATAU KOSONGI)");
-                $table->addCell(2000, $styleBorderLeftRightCell)->addText("(MASUKKAN ANGKA '1' JIKA JAWABAN BENAR, '0' JIKA SALAH)");
+                $table->addCell(4000, $styleBorderLeftRightCell)->addText($i == 1 ? "(MASUKKAN OPSI PERTANYAAN ATAU KOSONGI)" : "");
+                $table->addCell(2000, $styleBorderLeftRightCell)->addText($i == 1 ? "(MASUKKAN ANGKA '1' JIKA JAWABAN BENAR, '0' JIKA SALAH)" : "");
 
                 $table->addRow();
                 $table->addCell(1000, $styleBorderLeftRightCell)->addText("");
                 $table->addCell(2000, $styleBorderLeftRightCell)->addText("JAWABAN");
-                $table->addCell(4000, $styleBorderLeftRightCell)->addText("(MASUKKAN OPSI PERTANYAAN ATAU KOSONGI)");
-                $table->addCell(2000, $styleBorderLeftRightCell)->addText("(MASUKKAN ANGKA '1' JIKA JAWABAN BENAR, '0' JIKA SALAH)");
+                $table->addCell(4000, $styleBorderLeftRightCell)->addText($i == 1 ? "(MASUKKAN OPSI PERTANYAAN ATAU KOSONGI)" : "");
+                $table->addCell(2000, $styleBorderLeftRightCell)->addText($i == 1 ? "(MASUKKAN ANGKA '1' JIKA JAWABAN BENAR, '0' JIKA SALAH)" : "");
 
                 $table->addRow();
                 $table->addCell(1000, [...$styleBorderBottomCell, ...$styleBorderLeftRightCell])->addText("");
                 $table->addCell(2000, [...$styleBorderBottomCell, ...$styleBorderLeftRightCell])->addText("JAWABAN");
-                $table->addCell(4000, [...$styleBorderBottomCell, ...$styleBorderLeftRightCell])->addText("(MASUKKAN OPSI PERTANYAAN ATAU KOSONGI)");
-                $table->addCell(2000, [...$styleBorderBottomCell, ...$styleBorderLeftRightCell])->addText("(MASUKKAN ANGKA '1' JIKA JAWABAN BENAR, '0' JIKA SALAH)");
+                $table->addCell(4000, [...$styleBorderBottomCell, ...$styleBorderLeftRightCell])->addText($i == 1 ? "(MASUKKAN OPSI PERTANYAAN ATAU KOSONGI)" : "");
+                $table->addCell(2000, [...$styleBorderBottomCell, ...$styleBorderLeftRightCell])->addText($i == 1 ? "(MASUKKAN ANGKA '1' JIKA JAWABAN BENAR, '0' JIKA SALAH)" : "");
             }
 
             $writer = IOFactory::createWriter($phpWord);
