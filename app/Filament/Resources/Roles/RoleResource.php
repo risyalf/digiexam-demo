@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Filament\Resources\Roles;
 
+use App\Enum\Menu;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use App\Filament\Resources\Roles\Pages\CreateRole;
 use App\Filament\Resources\Roles\Pages\EditRole;
@@ -205,7 +206,7 @@ class RoleResource extends Resource
 
     public static function getNavigationGroup(): string|UnitEnum|null
     {
-        return "ADMIN";
+        return Menu::ADMIN;
     }
 
     public static function getModel(): string

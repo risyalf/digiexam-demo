@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\ParticipantGroups;
 
+use App\Enum\Menu;
 use App\Filament\Resources\ParticipantGroups\Pages\CreateParticipantGroup;
 use App\Filament\Resources\ParticipantGroups\Pages\EditParticipantGroup;
 use App\Filament\Resources\ParticipantGroups\Pages\ListParticipantGroups;
@@ -23,7 +24,7 @@ class ParticipantGroupResource extends Resource
 {
     protected static ?string $model = ParticipantGroup::class;
 
-    protected static string|UnitEnum|null $navigationGroup = "DATA PESERTA";
+    protected static string|UnitEnum|null $navigationGroup = Menu::DATA_PESERTA;
 
     protected static ?string $pluralLabel = "Grup Peserta";
 
