@@ -35,8 +35,6 @@ class UsersTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make("name")->searchable(),
                 TextColumn::make("email")->label("Email address")->searchable(),
-                TextColumn::make("email_verified_at")->dateTime()->sortable(),
-                IconColumn::make("is_locked")->boolean(),
             ])
             ->filters([TrashedFilter::make()])
             ->recordActions([
