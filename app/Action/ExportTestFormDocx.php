@@ -5,6 +5,7 @@ namespace App\Action;
 use PhpOffice\PhpWord\IOFactory;
 use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\SimpleType\Jc;
+use PhpOffice\PhpWord\SimpleType\TextAlignment;
 
 class ExportTestFormDocx
 {
@@ -21,6 +22,16 @@ class ExportTestFormDocx
             $jumlahSoal = 50;
             $phpWord = new PhpWord;
             $section = $phpWord->addSection();
+            $section->addText("Form Import Soal Pilihan Ganda berdasarkan Topik yang dipilih", [
+                'bold' => true                
+            ], [
+                'alignment' => Jc::CENTER,
+                'textAlignment' => TextAlignment::CENTER
+            ]);
+            $section->addTextBreak(1);
+            $section->addText("MASUKKAN ANGKA '1' JIKA JAWABAN BENAR, '0' ATAU KOSONGI JIKA SALAH");
+            $section->addTextBreak(1);
+
             $table = $section->addTable();
 
             $table->addRow();
@@ -45,7 +56,11 @@ class ExportTestFormDocx
                     $table->addCell(1000, [...$styleBorderLeftRightCell, ...$currentBorderStyle, 'vMerge' => 'continue']);
                     $table->addCell(2000, [...$styleBorderLeftRightCell, ...$currentBorderStyle])->addText("JAWABAN");
                     $table->addCell(4000, [...$styleBorderLeftRightCell, ...$currentBorderStyle])->addText($i == 1 ? "(MASUKKAN OPSI PERTANYAAN ATAU KOSONGI)" : "");
-                    $table->addCell(2000, [...$styleBorderLeftRightCell, ...$currentBorderStyle])->addText($i == 1 ? "(MASUKKAN ANGKA '1' JIKA JAWABAN BENAR, '0' ATAU KOSONGI JIKA SALAH)" : "");
+                    $nilai = "";
+                    if ($i == 1) {
+                        $nilai = $j == 1 ? 1 : 0;
+                    }
+                    $table->addCell(2000, [...$styleBorderLeftRightCell, ...$currentBorderStyle])->addText($nilai);
                 }
             }
 
