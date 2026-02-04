@@ -17,7 +17,13 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasUuids, SoftDeletes, HasFactory, Notifiable, HasRoles, HasPermissions, HasApiTokens;
+    use HasUuids,
+        SoftDeletes,
+        HasFactory,
+        Notifiable,
+        HasRoles,
+        HasPermissions,
+        HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -25,11 +31,11 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $fillable = [
-        'name',
-        'email',
-        'password',
-        'is_locked',
-        'unlock_token',
+        "name",
+        "email",
+        "password",
+        "is_locked",
+        "unlock_token",
     ];
 
     /**
@@ -37,10 +43,7 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    protected $hidden = ["password", "remember_token"];
 
     /**
      * Get the attributes that should be cast.
@@ -50,10 +53,19 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-            'is_locked' => 'boolean'
+            "email_verified_at" => "datetime",
+            "password" => "hashed",
+            "is_locked" => "boolean",
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (User $user) {
+            if (empty($user->email_verified_at)) {
+                $user->email_verified_at = now();
+            }
+        });
     }
 
     public function canAccessPanel(Panel $panel): bool
