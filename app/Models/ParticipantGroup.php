@@ -11,7 +11,5 @@ class ParticipantGroup extends Model
 {
     use HasAudit, HasUuids, SoftDeletes;
 
-    protected $fillable = ['name', 'created_by', 'updated_by', 'deleted_by'];
-
     protected $guarded = [];
 }
