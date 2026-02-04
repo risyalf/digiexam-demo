@@ -27,8 +27,9 @@ class UserSeeder extends Seeder
         ]);
 
         for ($i=0; $i < 20; $i++) {
-            User::firstorcreate([
-                ...$userFactory->definition(),
+            User::firstOrCreate([
+                'name' => "siswa-{$i}",
+                'email' => "siswa_{$i}@mail.com",
                 'password' => 'siswa'
             ]);
         }
