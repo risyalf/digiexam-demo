@@ -3,51 +3,57 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class UserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
-    public function run(UserFactory $userFactory): void
+    public function run(): void
     {
-        $users = [
-            [
-                "name" => "admin",
-                "email" => "admin@mail.com",
-                "password" => "admin",
-            ],
-            [
-                "name" => "guru",
-                "email" => "guru@mail.com",
-                "password" => "guru",
-            ],
-        ];
+        $now = now();
 
-        foreach ($users as $user) {
-            User::updateOrCreate(
-                ["email" => $user["email"]],
+        // password di-hash SEKALI
+        $adminPassword = Hash::make("admin");
+        $guruPassword = Hash::make("guru");
+        $siswaPassword = Hash::make("siswa");
+
+        // admin & guru (1 query)
+        User::upsert(
+            [
                 [
-                    "name" => $user["name"],
-                    "password" => Hash::make($user["password"]),
+                    "name" => "admin",
+                    "email" => "admin@mail.com",
+                    "password" => $adminPassword,
+                    "created_at" => $now,
+                    "updated_at" => $now,
                 ],
-            );
+                [
+                    "name" => "guru",
+                    "email" => "guru@mail.com",
+                    "password" => $guruPassword,
+                    "created_at" => $now,
+                    "updated_at" => $now,
+                ],
+            ],
+            ["email"],
+            ["name", "password", "updated_at"],
+        );
+
+        // siswa (1 query)
+        $siswa = [];
+
+        for ($i = 0; $i < 20; $i++) {
+            $siswa[] = [
+                "id" => Str::uuid7(),
+                "name" => "siswa-$i",
+                "email" => "siswa_$i@mail.com",
+                "password" => $siswaPassword,
+                "created_at" => $now,
+                "updated_at" => $now,
+            ];
         }
 
-        // siswa
-        User::factory()
-            ->count(20)
-            ->sequence(
-                fn($sequence) => [
-                    "name" => "siswa-{$sequence->index}",
-                    "email" => "siswa_{$sequence->index}@mail.com",
-                    "password" => Hash::make("siswa"),
-                ],
-            )
-            ->create();
+        User::insert($siswa);
     }
 }
