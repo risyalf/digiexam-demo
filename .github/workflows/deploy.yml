@@ -12,5 +12,5 @@ jobs:
     steps:
       - name: Pull latest code
         run: |
-          cd /home/ndik/DEV/jkims-app   # ⚠️ ganti path project kamu
+          cd /home/deploy/student-assessment-cms
           git pull origin main
