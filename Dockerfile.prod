@@ -1,13 +1,7 @@
-# Base image: FrankenPHP (PHP + built-in web server)
 FROM dunglas/frankenphp:php8.4
 
-# Set working directory
 WORKDIR /app
 
-# Install PHP extensions + pcntl
-RUN install-php-extensions pdo_pgsql intl zip gd opcache pcntl
-
-# Install system dependencies for npm & composer
 RUN apt-get update && apt-get install -y \
     curl \
     git \
@@ -15,22 +9,17 @@ RUN apt-get update && apt-get install -y \
     nodejs \
     npm \
     && rm -rf /var/lib/apt/lists/*
+    && install-php-extensions pdo_pgsql intl zip gd opcache pcntl
 
-# Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Copy app code
 COPY . /app
 
-# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Install JS dependencies & build assets
 RUN npm install && npm run build
 
-# Environment variables (optional)
 ENV APP_ENV=production
 ENV APP_DEBUG=false
 
-# Run Laravel Octane with FrankenPHP
 ENTRYPOINT ["php", "artisan", "octane:frankenphp"]
