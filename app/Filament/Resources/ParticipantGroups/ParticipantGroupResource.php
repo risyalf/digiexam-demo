@@ -3,18 +3,25 @@
 namespace App\Filament\Resources\ParticipantGroups;
 
 use App\Enum\Menu;
-use App\Filament\Resources\ParticipantGroups\Pages\CreateParticipantGroup;
-use App\Filament\Resources\ParticipantGroups\Pages\EditParticipantGroup;
-use App\Filament\Resources\ParticipantGroups\Pages\ListParticipantGroups;
-use App\Filament\Resources\ParticipantGroups\Pages\ViewParticipantGroup;
-use App\Filament\Resources\ParticipantGroups\Schemas\ParticipantGroupForm;
-use App\Filament\Resources\ParticipantGroups\Schemas\ParticipantGroupInfolist;
-use App\Filament\Resources\ParticipantGroups\Tables\ParticipantGroupsTable;
+use App\Filament\Resources\ParticipantGroups\Pages\ManageParticipantGroups;
 use App\Models\ParticipantGroup;
 use BackedEnum;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\TextInput;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -34,33 +41,76 @@ class ParticipantGroupResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return ParticipantGroupForm::configure($schema);
+        return $schema->components([TextInput::make("name")->required()]);
     }
 
     public static function infolist(Schema $schema): Schema
     {
-        return ParticipantGroupInfolist::configure($schema);
+        return $schema->components([
+            TextEntry::make("id")->label("ID"),
+            TextEntry::make("created_at")->dateTime(),
+            TextEntry::make("updated_at")->dateTime(),
+            TextEntry::make("deleted_at")
+                ->dateTime()
+                ->visible(
+                    fn(ParticipantGroup $record): bool => $record->trashed(),
+                ),
+            TextEntry::make("createdBy.name"),
+            TextEntry::make("updatedBy.name"),
+            TextEntry::make("deletedBy.name"),
+            TextEntry::make("name"),
+        ]);
     }
 
     public static function table(Table $table): Table
     {
-        return ParticipantGroupsTable::configure($table);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-                //
-            ];
+        return $table
+            ->columns([
+                TextColumn::make("id")->label("ID")->searchable()->hidden(),
+                TextColumn::make("created_at")
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make("updated_at")
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make("deleted_at")
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make("createdBy.name")
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make("updatedBy.name")
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make("deletedBy.name")
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make("name")->searchable(),
+            ])
+            ->filters([TrashedFilter::make()])
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
+                DeleteAction::make(),
+                ForceDeleteAction::make(),
+                RestoreAction::make(),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                    RestoreBulkAction::make(),
+                ]),
+            ]);
     }
 
     public static function getPages(): array
     {
         return [
-            "index" => ListParticipantGroups::route("/"),
-            // "create" => CreateParticipantGroup::route("/create"),
-            // "view" => ViewParticipantGroup::route("/{record}"),
-            // "edit" => EditParticipantGroup::route("/{record}/edit"),
+            "index" => ManageParticipantGroups::route("/"),
         ];
     }
 
