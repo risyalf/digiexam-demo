@@ -8,5 +8,5 @@ services:
     env_file:
       - .env
     volumes:
-      - ./storage:/var/www/html/storage
-      - ./logs:/var/www/html/logs
+      - ./storage:/app/storage
+      - ./logs:/app/logs
