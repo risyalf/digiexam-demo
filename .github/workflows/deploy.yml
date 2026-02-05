@@ -21,4 +21,4 @@ jobs:
       - name: Deploy with Docker Compose
         run: |
           cd /home/deploy/student-assessment-cms
-          docker-compose -f docker-compose.prod.yml --env-file .env up -d --build
+          docker compose -f docker-compose.prod.yml --env-file .env up -d --build
