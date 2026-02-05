@@ -29,7 +29,6 @@ RUN composer install --no-dev --optimize-autoloader
 RUN npm install && npm run build
 
 # Environment variables (optional)
-ENV SERVER_NAME=:80
 ENV APP_ENV=production
 ENV APP_DEBUG=false
 
