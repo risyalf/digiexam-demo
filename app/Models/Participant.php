@@ -14,8 +14,20 @@ class Participant extends Model
     protected $guarded = [];
 
     protected $casts = [
-        'status' => ParticipantStatus::class
+        "status" => ParticipantStatus::class,
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (Participant $participant) {
+            if (empty($participant->status)) {
+                $participant->status = ParticipantStatus::IDLE;
+            }
+            if (empty($participant->last_status)) {
+                $participant->last_status = ParticipantStatus::IDLE;
+            }
+        });
+    }
 
     public function user(): BelongsTo
     {
@@ -25,5 +37,10 @@ class Participant extends Model
     public function assessment(): BelongsTo
     {
         return $this->belongsTo(Assessment::class);
+    }
+
+    public function participantGroup(): BelongsTo
+    {
+        return $this->belongsTo(ParticipantGroup::class);
     }
 }

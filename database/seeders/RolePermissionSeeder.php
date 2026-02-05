@@ -6,6 +6,7 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class RolePermissionSeeder extends Seeder
 {
@@ -14,21 +15,43 @@ class RolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        Role::create(["name" => "super_admin"]);
-        Role::create(["name" => "guru"]);
-        Role::create(["name" => "siswa"]);
-
-        $admin = User::where("name", "admin")->first();
-        $admin->assignRole("super_admin");
-
-        $guru = User::where("name", "guru")->first();
-        $guru->assignRole("guru");
-
-        foreach (
-            User::whereNotIn("name", ["admin", "guru"])->get()
-            as $key => $user
-        ) {
-            $user->assignRole("siswa");
+        foreach (["super_admin", "guru", "siswa"] as $name) {
+            Role::firstOrCreate(["name" => $name]);
         }
+
+        $roles = Role::pluck("uuid", "name");
+
+        $adminId = User::where("name", "admin")->value("id");
+        $guruId = User::where("name", "guru")->value("id");
+
+        $siswaIds = User::whereNotIn("name", ["admin", "guru"])->pluck("id");
+
+        $rows = [];
+
+        if ($adminId) {
+            $rows[] = [
+                "role_id" => $roles["super_admin"],
+                "model_type" => User::class,
+                "model_uuid" => $adminId,
+            ];
+        }
+
+        if ($guruId) {
+            $rows[] = [
+                "role_id" => $roles["guru"],
+                "model_type" => User::class,
+                "model_uuid" => $guruId,
+            ];
+        }
+
+        foreach ($siswaIds as $id) {
+            $rows[] = [
+                "role_id" => $roles["siswa"],
+                "model_type" => User::class,
+                "model_uuid" => $id,
+            ];
+        }
+
+        DB::table("model_has_roles")->insertOrIgnore($rows);
     }
 }

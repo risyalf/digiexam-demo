@@ -37,7 +37,7 @@ class ParticipantGroupResource extends Resource
 
     protected static ?string $navigationLabel = "Grup Peserta";
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::UserGroup;
 
     public static function form(Schema $schema): Schema
     {
@@ -93,7 +93,7 @@ class ParticipantGroupResource extends Resource
             ->filters([TrashedFilter::make()])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
+                EditAction::make()->modalHeading("Ubah Grup Peserta"),
                 DeleteAction::make(),
                 ForceDeleteAction::make(),
                 RestoreAction::make(),
