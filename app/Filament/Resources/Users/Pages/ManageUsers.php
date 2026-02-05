@@ -4,16 +4,14 @@ namespace App\Filament\Resources\Users\Pages;
 
 use App\Filament\Resources\Users\UserResource;
 use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\Pages\ManageRecords;
 
-class ListUsers extends ListRecords
+class ManageUsers extends ManageRecords
 {
     protected static string $resource = UserResource::class;
 
     protected function getHeaderActions(): array
     {
-        return [
-            CreateAction::make(),
-        ];
+        return [CreateAction::make()->label("Tambah User")];
     }
 }
