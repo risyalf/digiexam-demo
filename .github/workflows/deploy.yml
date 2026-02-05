@@ -16,7 +16,7 @@ jobs:
       - name: Build Docker image
         run: |
           IMAGE_NAME=student-assessment-cms:latest
-          docker build -t $IMAGE_NAME .
+          docker build -f Dockerfile.prod -t $IMAGE_NAME .
 
       - name: Deploy with Docker Compose
         run: |
