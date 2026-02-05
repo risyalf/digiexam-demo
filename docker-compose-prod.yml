@@ -1,8 +1,0 @@
-services:
-  app:
-    image: ghcr.io/andywijaya15/student-assessment-cms:latest
-    restart: always
-    ports:
-      - "80:80"
-    volumes:
-      - ./data:/var/www/html

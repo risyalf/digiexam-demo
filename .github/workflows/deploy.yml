@@ -1,4 +1,4 @@
-name: Build, Push & Deploy
+name: Build & Deploy
 
 on:
   push:
@@ -6,39 +6,19 @@ on:
       - main
 
 jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
-    outputs:
-      image: ghcr.io/${{ github.repository }}/student-assessment-cms:latest
+  deploy:
+    runs-on: self-hosted
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Build Docker image
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository }}/student-assessment-cms:latest
+          IMAGE_NAME=student-assessment-cms:latest
           docker build -t $IMAGE_NAME .
 
-      - name: Push Docker image
+      - name: Deploy with Docker Compose
         run: |
-          IMAGE_NAME=ghcr.io/${{ github.repository }}/student-assessment-cms:latest
-          docker push $IMAGE_NAME
-
-  # deploy:
-  #   needs: build-and-push
-  #   runs-on: self-hosted
-
-  #   steps:
-  #     - name: Pull & Restart Docker Compose
-  #       run: |
-  #         cd /home/deploy/student-assessment-cms
-  #         docker-compose pull
-  #         docker-compose up -d
+          cd /home/deploy/student-assessment-cms
+          docker-compose -f docker-compose.prod.yml --env-file .env up -d --build
