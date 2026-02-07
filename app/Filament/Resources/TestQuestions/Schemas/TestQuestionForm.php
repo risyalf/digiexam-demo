@@ -13,6 +13,8 @@ class TestQuestionForm
         return $schema
             ->columns(1)
             ->components([
+                TextInput::make('id')
+                    ->disabled(),
                 RichEditor::make('name')
                     ->label('Nama Soal')
                     ->required(),

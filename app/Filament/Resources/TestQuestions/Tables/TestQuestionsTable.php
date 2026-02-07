@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\TestQuestions\Tables;
 
 use App\Action\SaveImage;
+use App\Models\TestQuestion;
 use App\Models\TestQuestionOption;
 use Exception;
 use Filament\Actions\Action;
@@ -132,7 +133,53 @@ class TestQuestionsTable
             ])
             ->recordActions([
                 EditAction::make()
-                    ->label('Ubah Pertanyaan'),
+                    ->label('Ubah Pertanyaan')
+                    ->action(function ($record, $data) {
+                        try {
+                            DB::transaction(function() use($record, $data) {
+                                $oldRecord = TestQuestion::find($record->id);
+        
+                                preg_match_all('/https?:\/\/[^\s"\']+?\.(?:jpg|jpeg|png|webp)/i', $data['name'], $newDatas);
+                                preg_match_all('/https?:\/\/[^\s"\']+?\.(?:jpg|jpeg|png|webp)/i', $oldRecord->content, $oldDatas);
+        
+                                $newDatas = collect($newDatas)->flatten()->map(fn($d) => explode('/storage/', $d)[1]);
+                                $oldDatas = collect($oldDatas)->flatten()->map(fn($d) => explode('/storage/', $d)[1]);
+        
+                                $notMatches = $oldDatas->diff($newDatas);
+                                $newImages = $newDatas->diff($oldDatas);
+        
+                                foreach ($notMatches as $key => $notMatch) {
+                                    Storage::disk('public')->delete($notMatch);
+                                }
+        
+                                foreach ($newImages as $newData) {
+                                    $binary = Storage::disk('public')->get($newData);
+        
+                                    $extension = pathinfo($newData, PATHINFO_EXTENSION);
+        
+                                    $newFilename = SaveImage::execute(
+                                        $oldRecord->test_id,
+                                        uniqid(),
+                                        $binary,
+                                        $extension
+                                    );
+        
+                                    $oldUrl = Storage::disk('public')->url($newData);
+                                    $newUrl = Storage::disk('public')->url($newFilename);
+        
+                                    $data['name'] = str_replace($oldUrl, $newUrl, $data['name']);
+        
+                                    Storage::disk('public')->delete($newData);
+                                }
+        
+                                $oldRecord->update($data);
+
+                                Notification::make()->success()->title('SUKSES UPDATE SOAL!');
+                            });
+                        } catch (\Throwable $th) {
+                            Notification::make()->danger()->title('ERROR')->body($th->getMessage())->send();
+                        }
+                    }),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
