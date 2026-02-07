@@ -158,7 +158,7 @@ class TestResource extends Resource
                                     'updated_by' => auth()->user()->id,
                                     'test_question_id' => $question->id,
                                     'content' => $answer['text'],
-                                    'value' => $answer['value'] == "true",
+                                    'value' => $answer['value'] == "true" ? DB::raw('true') : DB::raw('false'),
                                 ]);
                             });
 

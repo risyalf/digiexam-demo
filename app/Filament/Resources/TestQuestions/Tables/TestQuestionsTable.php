@@ -112,7 +112,7 @@ class TestQuestionsTable
 
                                         $oldOption->update([
                                             'content' => $value['content'],
-                                            'value' => $value['value'],
+                                            'value' => $value['value'] ? DB::raw('true') : DB::raw('false'),
                                         ]);
                                     }
                                     DB::commit();
