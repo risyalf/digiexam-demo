@@ -3,13 +3,17 @@
 namespace App\Action;
 
 use Exception;
+use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpWord\Element\Image;
 use PhpOffice\PhpWord\Element\Table;
 use PhpOffice\PhpWord\Element\TextRun;
 use PhpOffice\PhpWord\IOFactory;
 
 class ImportTestFormDocx
 {
-    public static function execute(string $filePath): array
+    protected $files = [];
+
+    public static function execute(string $id, string $filePath): array
     {
         $phpWord = IOFactory::load($filePath);
         $finalData = [];
@@ -29,16 +33,16 @@ class ImportTestFormDocx
 
                         $cells = $questionRow->getCells();
 
-                        $number = self::getCellText($cells[0] ?? null);
-                        $type = self::getCellText($cells[1] ?? null);
-                        $question = self::getCellText($cells[2] ?? null);
-                        $answers = $answerRows->map(function ($aRow, $index) {
+                        $number = self::getCellQuestion($cells[0] ?? null, $id);
+                        $type = self::getCellQuestion($cells[1] ?? null, $id);
+                        $question = self::getCellQuestion($cells[2] ?? null, $id);
+                        $answers = $answerRows->map(function ($aRow, $index) use($id) {
                             $aCells = $aRow->getCells();
-                            $value = self::getCellText($aCells[3] ?? null);
+                            $value = self::getCellQuestion($aCells[3] ?? null, $id);
 
                             return [
                                 'id' => $index,
-                                'text'  => self::getCellText($aCells[2] ?? null),
+                                'text'  => self::getCellQuestion($aCells[2] ?? null, $id),
                                 'value' => $value === '1' ? 'true' : 'false',
                             ];
                         })->values();
@@ -65,6 +69,7 @@ class ImportTestFormDocx
                             if (!$answer['text']) {
                                 throw new Exception("ADA JAWABAN YANG KOSONG DI NOMOR " . $number);
                             }
+                            $answer['text'] = "<p>".$answer['text']."</p>";
                             if (!$correctAnswer) {
                                 $correctAnswer = $answer['value'] == "true";
                             }
@@ -77,7 +82,7 @@ class ImportTestFormDocx
                         $finalData[] = [
                             'number'   => $number,
                             'type'     => $type,
-                            'question' => $question,
+                            'question' => "<p>".$question."</p>",
                             'answers'  => $answers->toArray(),
                         ];
                     }
@@ -88,18 +93,29 @@ class ImportTestFormDocx
         return $finalData;
     }
 
-    protected static function getCellText($cell): string
+    protected static function getCellQuestion($cell, $id): string
     {
         if (!$cell) return '';
 
-        $fullText = '';
-        foreach ($cell->getElements() as $element) {
-            if (method_exists($element, 'getText')) {
-                $fullText .= $element->getText();
-            } elseif ($element instanceof TextRun) {
-                foreach ($element->getElements() as $textElement) {
-                    if (method_exists($textElement, 'getText')) {
-                        $fullText .= $textElement->getText();
+        $fullText = "";
+        foreach ($cell->getElements() as $key => $element) {
+            if ($key != 0) {
+                $fullText .= "<br>";
+            }
+            if ($element instanceof TextRun) {
+                $childElements = $element->getElements();
+                foreach ($childElements as $key => $element) {
+                    if ($element instanceof Image) {
+                        $name = uniqid();
+    
+                        $url = SaveImage::execute($id, $name, $element->getImageString(), strtolower($element->getImageExtension()));
+    
+                        $url = asset('storage/' . $url);
+                        $url = "<img src='$url' style='max-width:100px; display:inline;'>";
+                        $fullText .= $url;
+                    }
+                    else if (method_exists($element, 'getText')) {
+                        $fullText .= $element->getText();
                     }
                 }
             }

@@ -13,6 +13,8 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
@@ -28,6 +30,8 @@ class TestQuestionResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = Menu::DATA_MODUL;
 
+    protected static ?string $navigationLabel = "Menu Soal";
+
     protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Schema $schema): Schema
@@ -37,7 +41,13 @@ class TestQuestionResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return TestQuestionsTable::configure($table);
+        return TestQuestionsTable::configure($table)
+            ->filters([
+                SelectFilter::make('test_id')
+                    ->label('Test')
+                    ->relationship('test', 'name')
+                    ->default(fn() => request()->query('test_id')),
+            ]);
     }
 
     public static function getRelations(): array

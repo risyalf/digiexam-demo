@@ -20,13 +20,11 @@ return new class extends Migration
             $table->foreignIdFor(User::class, 'created_by');
             $table->foreignIdFor(User::class, 'updated_by');
             $table->foreignIdFor(User::class, 'deleted_by')->nullable();
-            $table->foreignIdFor(Test::class);
-            $table->string('name');
+            $table->foreignIdFor(Test::class)->constrained()->cascadeOnDelete();
+            $table->text('name');
             $table->string('type');
             $table->integer('ordering');
-            $table->text('options')->nullable();
             $table->string('file')->nullable();
-            $table->string('correct_answer')->nullable();
             $table->boolean('show_once')->default(false);
         });
     }

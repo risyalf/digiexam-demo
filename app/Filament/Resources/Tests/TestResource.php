@@ -10,6 +10,7 @@ use App\Filament\Resources\TestQuestions\TestQuestionResource;
 use App\Filament\Resources\Tests\Pages\ManageTests;
 use App\Models\Test;
 use App\Models\TestQuestion;
+use App\Models\TestQuestionOption;
 use App\Models\Topic;
 use BackedEnum;
 use Exception;
@@ -35,6 +36,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use UnitEnum;
 
@@ -106,57 +108,76 @@ class TestResource extends Resource
                             ->required(),
                     ])
                     ->action(function (array $data) {
+                        $folderPath = "questions/images/ID_TEST_BARU/";
                         try {
-                            DB::transaction(function () use ($data) {
-                                $originalName = $data['original_name'] ?? 'Dokumen Tanpa Nama';
-                                $originalName = pathinfo($originalName, PATHINFO_FILENAME);
+                            DB::beginTransaction();
+                            $originalName = $data['original_name'] ?? 'Dokumen Tanpa Nama';
+                            $originalName = pathinfo($originalName, PATHINFO_FILENAME);
 
-                                $filePath = storage_path('app/public/' . $data['attachment']);
+                            $filePath = storage_path('app/public/' . $data['attachment']);
 
-                                $exists = Test::query()
-                                            ->where('name', $originalName)
-                                            ->exists();
+                            $exists = Test::query()
+                                ->where('name', $originalName)
+                                ->exists();
 
-                                if ($exists) {
-                                    throw new Exception("SUDAH ADA SOAL DENGAN NAMA $originalName. TOLONG GANTI NAMA FILE!");
+                            if ($exists) {
+                                throw new Exception("SUDAH ADA SOAL DENGAN NAMA $originalName. TOLONG GANTI NAMA FILE!");
+                            }
+
+                            if (!file_exists($filePath)) {
+                                throw new Exception("FILE HASIL UPLOAD TIDAK DITEMUKAN DI SERVER.");
+                            }
+
+                            $test = Test::create([
+                                'topic_id' => $data['topic'],
+                                'name' => $originalName
+                            ]);
+
+                            $folderPath = str_replace("ID_TEST_BARU", $test->id, $folderPath);
+
+                            $questions = ImportTestFormDocx::execute($test->id, $filePath, $originalName);
+
+                            $questionOptions = collect($questions)->map(function ($data) use ($test) {
+                                $question = TestQuestion::create([
+                                    'test_id' => $test->id,
+                                    'name' => $data['question'],
+                                    'type' => $data['type'] == 'PILIHAN GANDA' ? AssessmentType::PILIHAN_GANDA : AssessmentType::ESAI,
+                                    'ordering' => $data['number'],
+                                    // 'options' => json_encode($data['answers']),
+                                    // 'correct_answer' => collect($correctAnswer)->first()['id']
+                                ]);
+
+                                if (count($data) == 0) {
+                                    return;
                                 }
-                    
-                                if (!file_exists($filePath)) {
-                                    throw new Exception("FILE HASIL UPLOAD TIDAK DITEMUKAN DI SERVER.");
-                                }
 
-                                $test = Test::create([
-                                            'topic_id' => $data['topic'],
-                                            'name' => $originalName
-                                        ]);
-                    
-                                $questions = ImportTestFormDocx::execute($filePath, $originalName);
+                                return collect($data['answers'])->map(fn($answer) => [
+                                    'created_at' => now()->toDateTimeString(),
+                                    'updated_at' => now()->toDateTimeString(),
+                                    'created_by' => auth()->user()->id,
+                                    'updated_by' => auth()->user()->id,
+                                    'test_question_id' => $question->id,
+                                    'content' => $answer['text'],
+                                    'value' => $answer['value'] == "true",
+                                ]);
+                            });
 
-                                $dataQuestions = collect($questions)->map(function($data) use($test) {
-                                    $correctAnswer = collect($data['answers'])->filter(fn($answer) => $answer['value'] == "true");
+                            $questionOptions = $questionOptions
+                                ->flatten(1)
+                                ->values()
+                                ->toArray();
 
-                                    return [
-                                            'id' => Str::uuid7(),
-                                            'created_at' => now()->toDateTimeString(),
-                                            'updated_at' => now()->toDateTimeString(),
-                                            'created_by' => auth()->user()->id,
-                                            'updated_by' => auth()->user()->id,
-                                            'test_id' => $test->id,
-                                            'name' => $data['question'],
-                                            'type' => $data['type'] == 'PILIHAN GANDA' ? AssessmentType::PILIHAN_GANDA : AssessmentType::ESAI,
-                                            'ordering' => $data['number'],
-                                            'options' => json_encode($data['answers']),
-                                            'correct_answer' => collect($correctAnswer)->first()['id']
-                                    ];
-                                });
+                            TestQuestionOption::insert($questionOptions);
 
-                                TestQuestion::insert($dataQuestions->toArray());
-                    
-                                unlink($filePath);
+                            unlink($filePath);
 
-                                Notification::make()->success()->title("SUKSES IMPORT SOAL {$originalName}")->send();
-                            });                    
+                            Notification::make()->success()->title("SUKSES IMPORT SOAL {$originalName}")->send();
+                            DB::commit();
                         } catch (\Throwable $th) {
+                            DB::rollBack();
+                            if (!str_contains($folderPath, 'ID_TEST_BARU')) {
+                                Storage::disk('public')->deleteDirectory($folderPath);
+                            }
                             Notification::make()
                                 ->danger()
                                 ->title('IMPORT GAGAL')
@@ -175,8 +196,8 @@ class TestResource extends Resource
                 Action::make('detail')
                     ->color('info')
                     ->icon(Heroicon::MagnifyingGlass)
-                    ->url(fn (Test $record): string => TestQuestionResource::getUrl('index', [
-                        'tableFilters[test_id][value]' => $record->id,
+                    ->url(fn(Test $record): string => TestQuestionResource::getUrl('index', [
+                        'test_id' => $record->id,
                     ]), true)
             ])
             ->toolbarActions([
@@ -205,8 +226,6 @@ class TestResource extends Resource
 
     public static function getRelations(): array
     {
-        return [
-            RelationManagers\TestQuestionsRelationManager::class,
-        ];
+        return [];
     }
 }
