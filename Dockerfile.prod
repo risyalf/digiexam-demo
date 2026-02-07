@@ -1,0 +1,25 @@
+FROM dunglas/frankenphp:php8.4
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    curl \
+    git \
+    unzip \
+    nodejs \
+    npm \
+    && rm -rf /var/lib/apt/lists/* \
+    && install-php-extensions pdo_pgsql intl zip gd opcache pcntl
+
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+COPY . /app
+
+RUN composer install --no-dev --optimize-autoloader
+
+RUN npm install && npm run build
+
+ENV APP_ENV=production
+ENV APP_DEBUG=false
+
+ENTRYPOINT ["php", "artisan", "octane:frankenphp"]

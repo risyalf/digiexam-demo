@@ -1,0 +1,12 @@
+services:
+  app:
+    image: student-assessment-cms:latest
+    container_name: student-assessment-cms
+    restart: always
+    ports:
+      - "9494:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./storage:/app/storage
+      - ./logs:/app/logs

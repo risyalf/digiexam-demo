@@ -3,17 +3,15 @@
 namespace App\Filament\Resources\ParticipantGroups\Pages;
 
 use App\Filament\Resources\ParticipantGroups\ParticipantGroupResource;
-use Filament\Actions\EditAction;
-use Filament\Resources\Pages\ViewRecord;
+use Filament\Actions\CreateAction;
+use Filament\Resources\Pages\ManageRecords;
 
-class ViewParticipantGroup extends ViewRecord
+class ManageParticipantGroups extends ManageRecords
 {
     protected static string $resource = ParticipantGroupResource::class;
 
     protected function getHeaderActions(): array
     {
-        return [
-            EditAction::make(),
-        ];
+        return [CreateAction::make()->label("Tambah Grup Peserta")];
     }
 }
