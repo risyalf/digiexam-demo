@@ -14,7 +14,9 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use UnitEnum;
 
@@ -26,7 +28,7 @@ class TestQuestionResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = Menu::DATA_MODUL;
 
-    protected static ?string $navigationLabel = "Menu Soal";
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Schema $schema): Schema
     {
