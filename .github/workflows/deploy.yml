@@ -23,3 +23,4 @@ jobs:
           cd /home/deploy/student-assessment-cms
           git pull origin main
           docker compose -f docker-compose.prod.yml up -d --build
+          docker exec -it student-assessment-cms php artisan migrate --force
