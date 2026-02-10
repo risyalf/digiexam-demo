@@ -32,6 +32,7 @@ class UserSeeder extends Seeder
                 [
                     "name" => "guru",
                     "email" => "guru@mail.com",
+                    "nik" => null,
                     "password" => $guruPassword,
                     "created_at" => $now,
                     "updated_at" => $now,
