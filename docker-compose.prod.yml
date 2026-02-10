@@ -10,3 +10,15 @@ services:
     volumes:
       - ./storage:/app/storage
       - ./logs:/app/logs
+    command: php artisan octane:frankenphp --workers=4
+
+  queue:
+    image: student-assessment-cms:latest
+    container_name: student-assessment-cms-queue
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./storage:/app/storage
+      - ./logs:/app/logs
+    command: php artisan queue:work database --sleep=3 --tries=3 --timeout=90
