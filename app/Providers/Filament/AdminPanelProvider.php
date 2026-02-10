@@ -61,6 +61,7 @@ class AdminPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
             ])
             ->plugins([FilamentShieldPlugin::make()])
+            ->databaseNotifications()
             ->authMiddleware([Authenticate::class]);
     }
 }

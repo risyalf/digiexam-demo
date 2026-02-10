@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Users;
 
 use App\Enum\Menu;
+use App\Filament\Imports\UserImporter;
 use App\Filament\Resources\Users\Pages\ManageUsers;
 use App\Models\User;
 use BackedEnum;
@@ -12,6 +13,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\ImportAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Actions\ViewAction;
@@ -23,6 +25,7 @@ use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Colors\Color;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -109,6 +112,12 @@ class UserResource extends Resource
                 DeleteAction::make(),
                 ForceDeleteAction::make(),
                 RestoreAction::make(),
+            ])
+            ->headerActions([
+                ImportAction::make()
+                    ->icon(Heroicon::Plus)
+                    ->color(Color::Emerald)
+                    ->importer(UserImporter::class),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
