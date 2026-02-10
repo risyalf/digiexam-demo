@@ -11,6 +11,8 @@ services:
       - ./storage:/app/storage
       - ./logs:/app/logs
     command: php artisan octane:frankenphp --workers=4
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
   queue:
     image: student-assessment-cms:latest
@@ -22,3 +24,5 @@ services:
       - ./storage:/app/storage
       - ./logs:/app/logs
     command: php artisan queue:work database --sleep=3 --tries=3 --timeout=90
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
