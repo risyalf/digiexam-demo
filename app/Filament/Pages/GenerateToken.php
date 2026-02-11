@@ -3,8 +3,10 @@
 namespace App\Filament\Pages;
 
 use App\Action\CreateToken;
+use App\Enum\Menu;
 use App\Models\Assessment;
 use App\Models\AssessmentToken;
+use BackedEnum;
 use Carbon\Carbon;
 use Exception;
 use Filament\Actions\Action;
@@ -28,10 +30,15 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
+use UnitEnum;
 
 class GenerateToken extends Page implements HasForms, HasTable
 {
     use InteractsWithForms, InteractsWithTable;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Key;
+    
+    protected static string|UnitEnum|null $navigationGroup = Menu::DATA_TES->value;
 
     protected string $view = 'filament.pages.generate-token';
 
@@ -89,7 +96,6 @@ class GenerateToken extends Page implements HasForms, HasTable
                         ->headerActions([
                             Action::make('generate_token')
                                 ->label('Generate Token')
-                                ->color('success')
                                 ->action('createToken')
                         ])
                 ]);
@@ -131,7 +137,7 @@ class GenerateToken extends Page implements HasForms, HasTable
                         ->footerActions([
                             Action::make('filter')
                                 ->icon(Heroicon::MagnifyingGlass)
-                                ->color(Color::Green)
+                                ->color(Color::Emerald)
                                 ->label('Filter')
                                 ->action(fn() => $this->dispatch('do-refresh'))
                         ]),

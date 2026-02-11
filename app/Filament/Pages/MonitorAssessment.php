@@ -38,7 +38,7 @@ class MonitorAssessment extends Page implements HasTable, HasForms
 {
     use InteractsWithTable, InteractsWithForms;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::MagnifyingGlass;
     
     protected static string|UnitEnum|null $navigationGroup = Menu::DATA_TES->value;
 
@@ -79,9 +79,9 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                     ->footerActionsAlignment(Alignment::Right)
                     ->footerActions([
                         Action::make('select')
-                            ->icon(Heroicon::Check)
+                            ->icon(Heroicon::MagnifyingGlass)
                             ->label('Pilih Tes')
-                            ->color(Color::Green)
+                            ->color(Color::Emerald)
                             ->action(fn() => $this->dispatch('do-refresh')),
                     ])
                     ->components([
@@ -161,7 +161,7 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                         Action::make('search')
                             ->icon(Heroicon::OutlinedMagnifyingGlass)
                             ->label('Cari')
-                            ->color(Color::Green)
+                            ->color(Color::Emerald)
                             ->action(fn() => $this->dispatch('do-refresh')),
                     ])
             ]);
@@ -190,7 +190,8 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                     ->accessSelectedRecords()
                     ->successNotificationTitle('Sukses Membuka Ujian Siswa!')
                     ->requiresConfirmation()
-                    ->color(Color::Green)
+                    ->color(Color::Emerald)
+                    ->icon(Heroicon::LockOpen)
                     ->modal()
                     ->action(
                         function (Collection $records) {
@@ -215,7 +216,8 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                     ->accessSelectedRecords()
                     ->successNotificationTitle('Sukses Mengunci Ujian Siswa!')
                     ->requiresConfirmation()
-                    ->color(Color::Yellow)
+                    ->color(Color::Indigo)
+                    ->icon(Heroicon::LockClosed)
                     ->action(
                         function (Collection $records) {
                             $userIds = $records->pluck('user_id')->toArray();
@@ -258,7 +260,8 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                 //     )
                 //     ->deselectRecordsAfterCompletion(),
                 Action::make('delete')
-                    ->label('Hapus Data Partisipan')
+                    ->label('Hapus Partisipan')
+                    ->icon(Heroicon::Trash)
                     ->accessSelectedRecords()
                     ->successNotificationTitle('Sukses Menghapus Partisipan!')
                     ->requiresConfirmation()
@@ -272,7 +275,7 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                 Action::make('refresh')
                     ->icon(Heroicon::ArrowPath)
                     ->label('Refresh')
-                    ->color(Color::Green)
+                    ->color(Color::Slate)
                     ->action(fn() => $this->dispatch('do-refresh')),
             ])
             ->columns([

@@ -40,7 +40,7 @@ class TestResource extends Resource
 {
     protected static ?string $model = Test::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Document;
 
     protected static string|UnitEnum|null $navigationGroup = Menu::DATA_MODUL->value;
 

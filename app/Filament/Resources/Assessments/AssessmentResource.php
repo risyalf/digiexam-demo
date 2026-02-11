@@ -22,7 +22,7 @@ class AssessmentResource extends Resource
 {
     protected static ?string $model = Assessment::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Pencil;
     
     protected static string|UnitEnum|null $navigationGroup = Menu::DATA_TES->value;
 

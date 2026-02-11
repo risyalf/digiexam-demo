@@ -31,7 +31,7 @@ class TopicResource extends Resource
 {
     protected static ?string $model = Topic::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::RectangleStack;
 
     protected static string|UnitEnum|null $navigationGroup = Menu::DATA_MODUL->value;
 
