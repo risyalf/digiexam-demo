@@ -7,6 +7,7 @@ use App\Enum\AssessmentType;
 use App\Traits\HasAudit;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Assessment extends Model
@@ -45,5 +46,15 @@ class Assessment extends Model
     public function setRandomizeQuestionAttribute($value)
     {
         $this->attributes['randomize_question'] = (bool) $value;
+    }
+
+    public function module(): BelongsTo
+    {
+        return $this->belongsTo(Module::class);
+    }
+
+    public function topic(): BelongsTo
+    {
+        return $this->belongsTo(Topic::class);
     }
 }

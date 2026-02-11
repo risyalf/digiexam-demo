@@ -28,7 +28,7 @@ class TestQuestionResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
-    protected static string|UnitEnum|null $navigationGroup = Menu::DATA_MODUL;
+    protected static string|UnitEnum|null $navigationGroup = Menu::DATA_MODUL->value;
 
     protected static ?string $navigationLabel = "Menu Soal";
 

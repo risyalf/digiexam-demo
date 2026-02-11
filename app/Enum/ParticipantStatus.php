@@ -11,6 +11,6 @@ enum ParticipantStatus: string
     case IDLE = "IDLE";
     case LOGGED_IN = "LOGGED_IN";
     case IN_PROGRESS = "IN_PROGRESS";
-    case SUBMITTED = "SUBMITTED";
+    case FINISH = "FINISH";
     case LOCKED = "LOCKED";
 }

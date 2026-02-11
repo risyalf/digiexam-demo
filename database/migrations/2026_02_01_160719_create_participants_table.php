@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('status');
             $table->string('last_status');
             $table->float('point')->default(0);
+            $table->string('unlock_token')->nullable();
 
             $table->unique(['user_id', 'assessment_id']);
         });
