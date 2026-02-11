@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Assessments\Schemas;
 
 use App\Models\Module;
 use App\Models\Topic;
+use App\Models\User;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -26,6 +27,7 @@ class AssessmentForm
                 Select::make('module_id')
                     ->required()
                     ->label('MODUL')
+                    ->searchable()
                     ->options(
                         Module::query()
                             ->pluck('name', 'id')
@@ -33,10 +35,19 @@ class AssessmentForm
                 Select::make('topic_id')
                     ->required()
                     ->label('TOPIK')
+                    ->searchable()
                     ->options(
                         Topic::query()
                             ->pluck('name', 'id')
                     ),
+                Select::make('supervisors')
+                    ->options(
+                        User::query()
+                            ->whereHas('roles', fn($q) => $q->where('name', 'guru'))
+                            ->pluck('name', 'id')
+                    )
+                    ->searchable()
+                    ->required(),
                 DatePicker::make('start_date')
                     ->label('WAKTU MULAI')
                     ->required(),
@@ -44,7 +55,7 @@ class AssessmentForm
                     ->label('WAKTU SELESAI')
                     ->required(),
                 TextInput::make('time_test')
-                    ->label('BERAPA LAMA TEST BERLANGSUNG')
+                    ->label('LAMA TEST')
                     ->numeric()
                     ->default(0)
                     ->required(),
