@@ -19,7 +19,8 @@ class ExportTestFormDocx
             $centeredPara = ['alignment' => Jc::CENTER];
             $valignCenter = ['valign' => 'center'];
 
-            $jumlahSoal = 50;
+            $countQuestion = 50;
+            $countQuestionOption = 5;
             $phpWord = new PhpWord;
             $section = $phpWord->addSection();
             $section->addText("Form Import Soal Pilihan Ganda berdasarkan Topik yang dipilih", [
@@ -40,7 +41,7 @@ class ExportTestFormDocx
             $table->addCell(4000, [...$styleBorderTopCell, ...$styleBorderLeftRightCell])->addText("ISI");
             $table->addCell(2000, [...$styleBorderTopCell, ...$styleBorderLeftRightCell])->addText("JAWABAN");
 
-            for ($i = 1; $i <= $jumlahSoal; $i++) {
+            for ($i = 1; $i <= $countQuestion; $i++) {
 
                 $table->addRow();
                 $table->addCell(1000, [...$styleBorderTopCell, ...$styleBorderLeftRightCell, ...$valignCenter, 'vMerge' => 'restart'])
@@ -49,7 +50,7 @@ class ExportTestFormDocx
                 $table->addCell(4000, [...$styleBorderTopCell, ...$styleBorderLeftRightCell])->addText($i == 1 ? "(MASUKKAN PERTANYAAN DAN GAMBAR DI SINI)" : "");
                 $table->addCell(2000, [...$styleBorderTopCell, ...$styleBorderLeftRightCell, 'bgColor' => 'FFFF00'])->addText("");
 
-                for ($j = 1; $j <= 4; $j++) {
+                for ($j = 1; $j <= $countQuestionOption; $j++) {
                     $currentBorderStyle = [...$styleBorderBottomCell, ...$styleBorderTopCell];
 
                     $table->addRow();

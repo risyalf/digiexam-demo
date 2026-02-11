@@ -135,7 +135,7 @@ class TestResource extends Resource
 
                             $folderPath = str_replace("ID_TEST_BARU", $test->id, $folderPath);
 
-                            $questions = ImportTestFormDocx::execute($test->id, $filePath, $originalName);
+                            $questions = ImportTestFormDocx::execute($test->id, $filePath);
 
                             $questionOptions = collect($questions)->map(function ($data) use ($test) {
                                 $question = TestQuestion::create([

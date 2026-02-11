@@ -20,6 +20,8 @@ class ImportTestFormDocx
 
         $questionIsNull = false;
 
+        $countQuestionOption = 5;
+
         foreach ($phpWord->getSections() as $section) {
             foreach ($section->getElements() as $element) {
                 if ($element instanceof Table) {
@@ -27,7 +29,7 @@ class ImportTestFormDocx
 
                     $rowData = collect($rows)->skip(1);
 
-                    foreach ($rowData->chunk(5) as $chunk) {
+                    foreach ($rowData->chunk($countQuestionOption + 1) as $chunk) {
                         $questionRow = $chunk->first();
                         $answerRows = $chunk->skip(1);
 
