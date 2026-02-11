@@ -7,7 +7,7 @@ use App\Filament\Resources\EvaluateAnswers\Pages\EditEvaluateAnswer;
 use App\Filament\Resources\EvaluateAnswers\Pages\ListEvaluateAnswers;
 use App\Filament\Resources\EvaluateAnswers\Schemas\EvaluateAnswerForm;
 use App\Filament\Resources\EvaluateAnswers\Tables\EvaluateAnswersTable;
-use App\Models\EvaluateAnswer;
+use App\Models\Answer;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -16,7 +16,7 @@ use Filament\Tables\Table;
 
 class EvaluateAnswerResource extends Resource
 {
-    protected static ?string $model = EvaluateAnswer::class;
+    protected static ?string $model = Answer::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
