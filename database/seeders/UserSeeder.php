@@ -24,7 +24,7 @@ class UserSeeder extends Seeder
                 [
                     "name" => "admin",
                     "email" => "admin@mail.com",
-                    "nik" => "admin",
+                    "nis" => "admin",
                     "password" => $adminPassword,
                     "created_at" => $now,
                     "updated_at" => $now,
@@ -32,7 +32,7 @@ class UserSeeder extends Seeder
                 [
                     "name" => "guru",
                     "email" => "guru@mail.com",
-                    "nik" => null,
+                    "nis" => null,
                     "password" => $guruPassword,
                     "created_at" => $now,
                     "updated_at" => $now,

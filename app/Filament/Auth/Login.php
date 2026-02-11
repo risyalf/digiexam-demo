@@ -35,10 +35,10 @@ class Login extends BaseAuth
     {
         $login_type = filter_var($data["login"], FILTER_VALIDATE_EMAIL)
             ? "email"
-            : "nik";
+            : "nis";
         return [
             $login_type =>
-                $login_type == "nik" ? $data["login"] : $data["login"],
+                $login_type == "nis" ? $data["login"] : $data["login"],
             "password" => $data["password"],
         ];
     }

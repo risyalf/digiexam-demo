@@ -13,23 +13,35 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->validate([
-            'email' => 'required|email',
+            'nis' => 'required',
             'password' => 'required|string',
         ]);
 
-        if (!Auth::attempt($request->only('email', 'password'))) {
+        if (!Auth::attempt($request->only('nis', 'password'))) {
             return response()->json([
-                'message' => 'INVALID CREDENTIAL'
+                'message' => 'NOMOR INDUK ATAU PASSWORD ANDA SALAH!'
             ], 401);
         }
 
         $user = auth()->user();
+
+        $exists = Participant::query()
+            ->where('user_id', $user->id)
+            ->where('statu', '!=', ParticipantStatus::FINISH)
+            ->exists();
+
+        if (!$exists) {
+            return response()->json([
+                'message' => 'NOMOR INDUK ATAU PASSWORD ANDA SALAH!'
+            ], 400);
+        }
+        
         $token = $user->createToken('api-token')->plainTextToken;
 
-        Participant::firstOrCreate([
-            'user_id' => $user->id,
-            'status' => ParticipantStatus::LOGGED_IN,
-        ]);
+        // Participant::firstOrCreate([
+        //     'user_id' => $user->id,
+        //     'status' => ParticipantStatus::LOGGED_IN,
+        // ]);
 
         return response()->json([
             'message' => 'LOGIN SUCCESSFUL',

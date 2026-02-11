@@ -2,6 +2,7 @@
 
 use App\Models\Module;
 use App\Models\ParticipantGroup;
+use App\Models\Test;
 use App\Models\Topic;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
@@ -22,6 +23,9 @@ return new class extends Migration
             $table->foreignIdFor(User::class, 'created_by');
             $table->foreignIdFor(User::class, 'updated_by');
             $table->foreignIdFor(User::class, 'deleted_by')->nullable();
+            $table->foreignIdFor(Module::class)->nullable();
+            $table->foreignIdFor(Topic::class)->nullable();
+            $table->foreignIdFor(Test::class)->nullable();
             $table->string('name')->unique();
             $table->string('description')->nullable();
             $table->timestamp('start_date')->nullable();
@@ -33,8 +37,6 @@ return new class extends Migration
             $table->boolean('show_result')->default(false);
             $table->boolean('detail_result')->default(false);
             $table->boolean('need_token')->default(true);
-            $table->foreignIdFor(Module::class)->nullable();
-            $table->foreignIdFor(Topic::class)->nullable();
             $table->string('type')->nullable();
             $table->integer('total_question')->default(1);
             $table->integer('total_answer')->default(1);

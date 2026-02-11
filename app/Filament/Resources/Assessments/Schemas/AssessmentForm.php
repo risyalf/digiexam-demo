@@ -40,14 +40,7 @@ class AssessmentForm
                         Topic::query()
                             ->pluck('name', 'id')
                     ),
-                Select::make('supervisors')
-                    ->options(
-                        User::query()
-                            ->whereHas('roles', fn($q) => $q->where('name', 'guru'))
-                            ->pluck('name', 'id')
-                    )
-                    ->searchable()
-                    ->required(),
+                
                 DatePicker::make('start_date')
                     ->label('WAKTU MULAI')
                     ->required(),

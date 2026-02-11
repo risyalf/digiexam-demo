@@ -51,7 +51,7 @@ class UserResource extends Resource
                 ->label("Email address")
                 ->email()
                 ->required(),
-            TextInput::make("nik")->label("NIK"),
+            TextInput::make("nis")->label("NIS"),
             TextInput::make("password")
                 ->label("Password")
                 ->placeholder("password")
@@ -78,7 +78,7 @@ class UserResource extends Resource
                 ->visible(fn(User $record): bool => $record->trashed()),
             TextEntry::make("name"),
             TextEntry::make("email")->label("Email address"),
-            TextEntry::make("nik")->label("NIK"),
+            TextEntry::make("nis")->label("NIS"),
             TextEntry::make("email_verified_at")->dateTime()->placeholder("-"),
             IconEntry::make("is_locked")->boolean(),
         ]);
@@ -103,7 +103,7 @@ class UserResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make("name")->searchable(),
                 TextColumn::make("email")->label("Email address")->searchable(),
-                TextColumn::make("nik")->label("NIK")->searchable(),
+                TextColumn::make("nis")->label("NIS")->searchable(),
             ])
             ->filters([TrashedFilter::make()])
             ->recordActions([

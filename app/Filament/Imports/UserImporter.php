@@ -33,7 +33,7 @@ class UserImporter extends Importer
             ImportColumn::make("email")
                 ->requiredMapping()
                 ->rules(["required", "email"]),
-            ImportColumn::make("nik"),
+            ImportColumn::make("nis"),
             ImportColumn::make("password")
                 ->requiredMapping()
                 ->rules(["required"]),
