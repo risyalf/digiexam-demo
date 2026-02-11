@@ -7,23 +7,17 @@ use App\Models\Participant;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
-class LockUser
+class LockParticipant
 {
-    public static function execute($userId)
+    public static function execute($id)
     {
-        Participant::query()
+        return Participant::query()
             ->where([
-                'user_id' => $userId,
+                'id' => $id,
             ])
             ->where('status', '!=', ParticipantStatus::FINISH)
             ->update([
                 'status' => ParticipantStatus::LOCKED
             ]);
-
-        return User::where('id', $userId)
-                ->update([
-                    'is_locked' => DB::raw('true'),
-                    'unlock_token' => null
-                ]);
     }
 }

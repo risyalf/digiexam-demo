@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AssessmentController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ParticipantController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -20,20 +21,25 @@ Route::middleware("auth:sanctum")->group(function () {
         "api.user.unlock",
     );
 
-    Route::get("/assessment", [AssessmentController::class, "get"])->name(
-        "api.assessment.get",
-    );
-    Route::post("/assessment", [AssessmentController::class, "update"])->name(
-        "api.assessment.update",
-    );
-    Route::post("/assessment/join", [
-        AssessmentController::class,
-        "join",
-    ])->name("api.assessment.join");
+Route::middleware('auth:sanctum')->group(function () {
+    Route::prefix('user')->group(function() {
+        Route::get('/{id}', [UserController::class, 'get'])->name('api.user.get');
+    });
 
-    Route::post("/assessment/submit", [AssessmentController::class, "submit"]);
-    Route::get("/assessment/result/{assessment_id}/{participant_id}", [
-        AssessmentController::class,
-        "result",
-    ]);
+    Route::prefix('participant')->group(function() {
+        Route::get('/{id}', [ParticipantController::class, 'get'])->name('api.participant.get');
+        Route::post('/lock', [ParticipantController::class, 'lock'])->name('api.participant.lock');
+        Route::post('/unlock', [ParticipantController::class, 'unlock'])->name('api.participant.unlock');
+    });
+
+    Route::prefix('assessment')->group(function() {
+        Route::get('/', [AssessmentController::class, 'get'])->name('api.assessment.get');
+        Route::post('/', [AssessmentController::class, 'update'])->name('api.assessment.update');
+        Route::post('/join', [AssessmentController::class, 'join'])->name('api.assessment.join');
+        Route::post("/assessment/submit", [AssessmentController::class, "submit"])->name('api.assessment.submit');
+        Route::get("/assessment/result/{assessmentId}/{participantId}", [
+            AssessmentController::class,
+            "result",
+        ])->name('api.assessment.result');
+    });
 });

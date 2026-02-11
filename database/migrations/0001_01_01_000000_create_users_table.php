@@ -21,7 +21,6 @@ return new class extends Migration {
             $table->string("password");
             $table->rememberToken();
             $table->boolean("is_locked")->default(false);
-            $table->string("unlock_token")->nullable();
         });
 
         Schema::create("password_reset_tokens", function (Blueprint $table) {

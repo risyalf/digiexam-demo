@@ -31,7 +31,7 @@ class ParticipantGroupResource extends Resource
 {
     protected static ?string $model = ParticipantGroup::class;
 
-    protected static string|UnitEnum|null $navigationGroup = Menu::DATA_PESERTA;
+    protected static string|UnitEnum|null $navigationGroup = Menu::DATA_PESERTA->value;
 
     protected static ?string $pluralLabel = "Grup Peserta";
 

@@ -2,17 +2,17 @@
 
 namespace App\Filament\Pages;
 
-use App\Action\GenerateRandomString;
+use App\Action\CreateToken;
+use App\Enum\Menu;
 use App\Models\Assessment;
 use App\Models\AssessmentToken;
+use BackedEnum;
 use Carbon\Carbon;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\ToggleButtons;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
@@ -30,10 +30,15 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
+use UnitEnum;
 
 class GenerateToken extends Page implements HasForms, HasTable
 {
     use InteractsWithForms, InteractsWithTable;
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Key;
+    
+    protected static string|UnitEnum|null $navigationGroup = Menu::DATA_TES->value;
 
     protected string $view = 'filament.pages.generate-token';
 
@@ -61,15 +66,16 @@ class GenerateToken extends Page implements HasForms, HasTable
     public function createForm(Schema $schema): Schema
     {
         return $schema
+                ->statePath('createFormData')
                 ->components([
                     Section::make('Form')
                         ->hiddenLabel()
                         ->components([
-                            Checkbox::make('createFormData.all_module')
+                            Checkbox::make('all_module')
                                 ->label('Untuk Semua Test')
                                 ->reactive()
                                 ->helperText('Jika dicentang, token ini bisa digunakan untuk semua test.'),
-                            Select::make('createFormData.assessment_id')
+                            Select::make('assessment_id')
                                 ->label('Pilih Test')
                                 ->reactive()
                                 ->searchable()
@@ -77,8 +83,8 @@ class GenerateToken extends Page implements HasForms, HasTable
                                     Assessment::all()
                                         ->pluck('name', 'id')
                                 )
-                                ->visible(fn() => !$this->createFormData['all_module']),
-                            Select::make('createFormData.expired_time')
+                                ->visible(fn($get) => !$get('all_module')),
+                            Select::make('expired_time')
                                 ->label('Masa Aktif (Dalam Menit)')
                                 ->options([
                                     15 => 15,
@@ -90,7 +96,6 @@ class GenerateToken extends Page implements HasForms, HasTable
                         ->headerActions([
                             Action::make('generate_token')
                                 ->label('Generate Token')
-                                ->color('success')
                                 ->action('createToken')
                         ])
                 ]);
@@ -99,6 +104,7 @@ class GenerateToken extends Page implements HasForms, HasTable
     public function filterForm(Schema $schema): Schema
     {
         return $schema
+                ->statePath('filterFormData')
                 ->components([
                     Section::make('filter')
                         ->label('Filter')
@@ -107,19 +113,19 @@ class GenerateToken extends Page implements HasForms, HasTable
                         ->components([
                             Grid::make(2)
                                 ->components([
-                                    DatePicker::make('filterFormData.date_from')
+                                    DatePicker::make('date_from')
                                         ->format('d/m/Y')
                                         ->defaultFocusedDate(now())
                                         ->reactive(),
-                                    DatePicker::make('filterFormData.date_to')
+                                    DatePicker::make('date_to')
                                         ->format('d/m/Y')
                                         ->defaultFocusedDate(now())
                                         ->reactive()
                                         ->minDate(fn (callable $get) => $get('date_from') ? Carbon::createFromFormat('Y-m-d', $get('date_from')) : now()->startOfDay()),
                                 ]),
-                            Checkbox::make('filterFormData.show_expired')
+                            Checkbox::make('show_expired')
                                 ->label('Tampilkan Expired'),
-                            Select::make('filterFormData.assessment_id')
+                            Select::make('assessment_id')
                                 ->label('Assessment')
                                 ->searchable()
                                 ->options(
@@ -131,7 +137,7 @@ class GenerateToken extends Page implements HasForms, HasTable
                         ->footerActions([
                             Action::make('filter')
                                 ->icon(Heroicon::MagnifyingGlass)
-                                ->color(Color::Green)
+                                ->color(Color::Emerald)
                                 ->label('Filter')
                                 ->action(fn() => $this->dispatch('do-refresh'))
                         ]),
@@ -214,13 +220,7 @@ class GenerateToken extends Page implements HasForms, HasTable
 
             DB::beginTransaction();
 
-            AssessmentToken::create([
-                'value' => GenerateRandomString::execute(),
-                'expired_time' => $this->createFormData['expired_time'],
-                'expired_until' => Carbon::now()->addMinutes((int)$this->createFormData['expired_time']),
-                'assessment_id' => $this->createFormData['all_module'] ? null : $this->createFormData['assessment_id'],
-                'all_module' => $this->createFormData['all_module'] == 1 ? DB::raw('true') : DB::raw('false'),
-            ]);
+            CreateToken::execute($this->createFormData);
 
             Notification::make()
                 ->success()

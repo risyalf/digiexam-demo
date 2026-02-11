@@ -3,14 +3,14 @@
 namespace App\Filament\Pages;
 
 use App\Action\GenerateRandomString;
+use App\Enum\Menu;
 use App\Enum\ParticipantStatus;
 use App\Models\Assessment;
 use App\Models\Participant;
 use App\Models\User;
+use BackedEnum;
 use Carbon\Carbon;
 use Filament\Actions\Action;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\SelectAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -25,7 +25,6 @@ use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Actions\HeaderActionsPosition;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -33,12 +32,21 @@ use Filament\Tables\Table;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
+use UnitEnum;
 
 class MonitorAssessment extends Page implements HasTable, HasForms
 {
     use InteractsWithTable, InteractsWithForms;
 
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::MagnifyingGlass;
+    
+    protected static string|UnitEnum|null $navigationGroup = Menu::DATA_TES->value;
+
+    protected static ?string $navigationLabel = "Monitor Assessment";
+
     protected string $view = 'filament.pages.monitor-assessment';
+
+    protected static ?int $navigationSort = 1;
 
     public array $selectFormData = [
         'assessment_id' => null,
@@ -64,19 +72,20 @@ class MonitorAssessment extends Page implements HasTable, HasForms
     public function selectForm(Schema $schema): Schema
     {
         return $schema
+            ->statePath('selectFormData')
             ->components([
                 Section::make('Pilih Test')
                     ->collapsible()
                     ->footerActionsAlignment(Alignment::Right)
                     ->footerActions([
                         Action::make('select')
-                            ->icon(Heroicon::Check)
+                            ->icon(Heroicon::MagnifyingGlass)
                             ->label('Pilih Tes')
-                            ->color(Color::Green)
+                            ->color(Color::Emerald)
                             ->action(fn() => $this->dispatch('do-refresh')),
                     ])
                     ->components([
-                        Select::make('selectFormData.assessment_id')
+                        Select::make('assessment_id')
                             ->label('Nama Test')
                             ->options(
                                 Assessment::query()
@@ -88,28 +97,28 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                             ->afterStateUpdated(function ($state, Set $set, Get $get) {
                                 $assesment = Assessment::find($state);
 
-                                $set('selectFormData.name', $assesment ? $assesment->name : null);
-                                $set('selectFormData.status', $assesment ? 'Aktif' : null);
-                                $set('selectFormData.date_start', $assesment ? $assesment->start_date : null);
-                                $set('selectFormData.time', $assesment ? $assesment->time_test : null);
+                                $set('name', $assesment ? $assesment->name : null);
+                                $set('status', $assesment ? 'Aktif' : null);
+                                $set('date_start', $assesment ? $assesment->start_date : null);
+                                $set('time', $assesment ? $assesment->time_test : null);
 
                                 $this->dispatch('do-update');
                             })
                             ->searchable(),
                         Grid::make(2)
                             ->components([
-                                TextInput::make('selectFormData.name')
+                                TextInput::make('name')
                                     ->label('Nama')
                                     ->readOnly()
                                     ->copyable(),
-                                TextInput::make('selectFormData.status')
+                                TextInput::make('status')
                                     ->readOnly()
                                     ->copyable(),
-                                TextInput::make('selectFormData.date_start')
+                                TextInput::make('date_start')
                                     ->label('Waktu Mulai')
                                     ->readOnly()
                                     ->copyable(),
-                                TextInput::make('selectFormData.time')
+                                TextInput::make('time')
                                     ->label('Waktu Tes')
                                     ->readOnly()
                                     ->copyable(),
@@ -122,17 +131,18 @@ class MonitorAssessment extends Page implements HasTable, HasForms
     public function filterForm(Schema $schema): Schema
     {
         return $schema
+            ->statePath('filterFormData')
             ->components([
                 Section::make('Filter Siswa')
                     ->collapsed()
                     ->collapsible()
                     // ->visible(fn() => $this->selectFormData['assessment_id'])
                     ->components([
-                        Select::make('filterFormData.status')
+                        Select::make('status')
                             ->options(
                                 ParticipantStatus::options()
                             ),
-                        Select::make('filterFormData.name')
+                        Select::make('name')
                             ->label('Siswa')
                             ->searchable()
                             ->options(function ($q) {
@@ -151,7 +161,7 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                         Action::make('search')
                             ->icon(Heroicon::OutlinedMagnifyingGlass)
                             ->label('Cari')
-                            ->color(Color::Green)
+                            ->color(Color::Emerald)
                             ->action(fn() => $this->dispatch('do-refresh')),
                     ])
             ]);
@@ -180,7 +190,8 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                     ->accessSelectedRecords()
                     ->successNotificationTitle('Sukses Membuka Ujian Siswa!')
                     ->requiresConfirmation()
-                    ->color(Color::Green)
+                    ->color(Color::Emerald)
+                    ->icon(Heroicon::LockOpen)
                     ->modal()
                     ->action(
                         function (Collection $records) {
@@ -205,7 +216,8 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                     ->accessSelectedRecords()
                     ->successNotificationTitle('Sukses Mengunci Ujian Siswa!')
                     ->requiresConfirmation()
-                    ->color(Color::Yellow)
+                    ->color(Color::Indigo)
+                    ->icon(Heroicon::LockClosed)
                     ->action(
                         function (Collection $records) {
                             $userIds = $records->pluck('user_id')->toArray();
@@ -248,7 +260,8 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                 //     )
                 //     ->deselectRecordsAfterCompletion(),
                 Action::make('delete')
-                    ->label('Hapus Data Partisipan')
+                    ->label('Hapus Partisipan')
+                    ->icon(Heroicon::Trash)
                     ->accessSelectedRecords()
                     ->successNotificationTitle('Sukses Menghapus Partisipan!')
                     ->requiresConfirmation()
@@ -262,7 +275,7 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                 Action::make('refresh')
                     ->icon(Heroicon::ArrowPath)
                     ->label('Refresh')
-                    ->color(Color::Green)
+                    ->color(Color::Slate)
                     ->action(fn() => $this->dispatch('do-refresh')),
             ])
             ->columns([

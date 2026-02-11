@@ -16,12 +16,9 @@ use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -37,18 +34,19 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use UnitEnum;
 
 class TestResource extends Resource
 {
     protected static ?string $model = Test::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::Document;
 
-    protected static string|UnitEnum|null $navigationGroup = Menu::DATA_MODUL;
+    protected static string|UnitEnum|null $navigationGroup = Menu::DATA_MODUL->value;
 
     protected static ?string $navigationLabel = "Menu Soal";
+
+    protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
     {
