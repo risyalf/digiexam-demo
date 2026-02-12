@@ -51,8 +51,8 @@ class QuestionSeeder extends Seeder
         ]);
 
         AssessmentParticipantGroup::create([
-            "assessment_id" => $assessment->id,
-            "participant_group_id" => $participantGroup->id,
+            'assessment_id' => $assessment->id,
+            'participant_group_id' => $participantGroup->id,
         ]);
     }
 }

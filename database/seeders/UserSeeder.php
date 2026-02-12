@@ -50,6 +50,7 @@ class UserSeeder extends Seeder
                 "id" => Str::uuid7(),
                 "name" => "siswa-$i",
                 "email" => "siswa_$i@mail.com",
+                "nis" => $i,
                 "password" => $siswaPassword,
                 "created_at" => $now,
                 "updated_at" => $now,

@@ -195,9 +195,9 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                     ->modal()
                     ->action(
                         function (Collection $records) {
-                            $userIds = $records->pluck('user_id')->toArray();
+                            $userIds = $records->pluck('id')->toArray();
 
-                            User::query()
+                            Participant::query()
                                 ->where('is_locked', DB::raw('true'))
                                 ->whereIn('id', $userIds)
                                 ->update([
