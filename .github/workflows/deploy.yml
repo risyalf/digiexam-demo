@@ -6,20 +6,31 @@ on:
       - main
 
 jobs:
-  deploy:
-    runs-on: self-hosted
-
+  deploy-dev:
+    name: Deploy to DEV
+    runs-on: [self-hosted, dev]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # - name: Build Docker image
-      #   run: |
-      #
-      #     IMAGE_NAME=student-assessment-cms:latest
-      #     docker build -f Dockerfile.prod -t $IMAGE_NAME .
+      - name: Pull latest code & Deploy DEV
+        run: |
+          cd /home/deploy/student-assessment-cms
+          git pull origin main
+          docker compose -f docker-compose.dev.yml up -d --build
+          docker exec student-assessment-cms php artisan migrate --force
+          docker exec student-assessment-cms php artisan config:cache
+          docker exec student-assessment-cms php artisan route:cache
+          docker exec student-assessment-cms php artisan view:cache
 
-      - name: Deploy with Docker Compose
+  deploy-live:
+    name: Deploy to LIVE
+    runs-on: [self-hosted, live]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Pull latest code & Deploy LIVE
         run: |
           cd /home/deploy/student-assessment-cms
           git pull origin main
