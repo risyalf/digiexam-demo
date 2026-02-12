@@ -6,14 +6,11 @@ use App\Enum\AssessmentStatus;
 use App\Enum\AssessmentType;
 use App\Models\Assessment;
 use App\Models\AssessmentParticipantGroup;
-use App\Models\AssessmentSupervisor;
 use App\Models\Module;
 use App\Models\Topic;
 use App\Models\ParticipantGroup;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class QuestionSeeder extends Seeder
 {
@@ -57,12 +54,5 @@ class QuestionSeeder extends Seeder
             "assessment_id" => $assessment->id,
             "participant_group_id" => $participantGroup->id,
         ]);
-
-        $guru = User::role("guru")->first();
-
-        // AssessmentSupervisor::create([
-        //     'assessment_id' => $assessment->id,
-        //     'user_id' => $guru->id,
-        // ]);
     }
 }
