@@ -2,12 +2,16 @@
 
 namespace App\Filament\Imports;
 
+use App\Enum\ParticipantStatus;
+use App\Models\Participant;
+use App\Models\ParticipantGroup;
 use App\Models\Role;
 use App\Models\User;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 use Filament\Forms\Components\Select;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 
 class UserImporter extends Importer
@@ -32,11 +36,12 @@ class UserImporter extends Importer
                 ->rules(["required"]),
             ImportColumn::make("email")
                 ->requiredMapping()
-                ->rules(["required", "email"]),
-            ImportColumn::make("nis"),
-            ImportColumn::make("password")
-                ->requiredMapping()
+                ->rules(["email"]),
+            ImportColumn::make("nis")
                 ->rules(["required"]),
+            ImportColumn::make("password")
+                ->requiredMapping(),
+            ImportColumn::make("group"),
         ];
     }
 
@@ -64,5 +69,44 @@ class UserImporter extends Importer
         }
 
         return $body;
+    }
+
+    public function fillRecord(): void
+    {
+        foreach ($this->getCachedColumns() as $column) {
+            $name = $column->getName();
+
+            if ($name === 'group') {
+                continue;
+            }
+
+            if (! array_key_exists($name, $this->data)) {
+                continue;
+            }
+
+            $state = $this->data[$name];
+
+            $column->fillRecord($state);
+        }
+    }
+
+    public function saveRecord(): void
+    {
+        $this->record->save();
+
+        if (! empty($this->data['group'])) {
+            $group = ParticipantGroup::firstOrCreate([
+                'name' => $this->data['group'],
+            ]);
+
+            Participant::firstOrCreate(
+                ['user_id' => $this->record->id],
+                ['participant_group_id' => $group->id]
+            );
+        }
+
+        if ($role = $this->options['role'] ?? null) {
+            $this->record->assignRole($role);
+        }
     }
 }
