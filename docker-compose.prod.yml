@@ -11,8 +11,9 @@ services:
       - ./storage:/app/storage
       - ./logs:/app/logs
     command: php artisan octane:frankenphp --workers=4
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    depends_on:
+      - mysql
+      - redis
 
   queue:
     image: student-assessment-cms:latest
@@ -23,6 +24,34 @@ services:
     volumes:
       - ./storage:/app/storage
       - ./logs:/app/logs
-    command: php artisan queue:work database --sleep=3 --tries=3 --timeout=90
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    command: php artisan queue:work --sleep=3 --tries=3 --timeout=90
+    depends_on:
+      - mysql
+      - redis
+
+  mysql:
+    image: 8.0.45-bookworm
+    container_name: student-assessment-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: student_assessment
+      MYSQL_USER: student
+      MYSQL_PASSWORD: secret
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+
+  redis:
+    image: redis:8.6.0-alpine
+    container_name: student-assessment-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    volumes:
+      - redis-data:/data
+
+volumes:
+  mysql-data:
+  redis-data:
