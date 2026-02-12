@@ -2,7 +2,6 @@
 
 namespace App\Filament\Imports;
 
-use App\Enum\ParticipantStatus;
 use App\Models\Participant;
 use App\Models\ParticipantGroup;
 use App\Models\Role;
@@ -11,7 +10,6 @@ use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 use Filament\Forms\Components\Select;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Number;
 
 class UserImporter extends Importer
