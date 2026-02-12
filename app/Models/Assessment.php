@@ -8,12 +8,15 @@ use App\Traits\HasAudit;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Assessment extends Model
 {
     use HasAudit, HasUuids, SoftDeletes;
+
+    protected $guarded = [];
 
     protected $casts = [
         'type' => AssessmentType::class,
@@ -59,8 +62,13 @@ class Assessment extends Model
         return $this->belongsTo(Topic::class);
     }
 
-    public function supervisors(): HasMany
-    {
-        return $this->hasMany(AssessmentSupervisor::class, 'assessment_id', 'id');
-    }
+    public function participant_groups(): BelongsToMany
+{
+    return $this->belongsToMany(
+        ParticipantGroup::class, 
+        'assessment_participant_groups',
+        'assessment_id', 
+        'participant_group_id'
+    );
+}
 }

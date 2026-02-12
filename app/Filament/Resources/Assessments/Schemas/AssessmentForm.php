@@ -5,7 +5,7 @@ namespace App\Filament\Resources\Assessments\Schemas;
 use App\Models\Module;
 use App\Models\Topic;
 use App\Models\User;
-use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -40,15 +40,21 @@ class AssessmentForm
                         Topic::query()
                             ->pluck('name', 'id')
                     ),
-                
-                DatePicker::make('start_date')
+                Select::make('participant_groups')
+                    ->label('GRUP PESERTA')
+                    ->multiple()
+                    ->relationship('participant_groups', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->required(),
+                DateTimePicker::make('start_date')
                     ->label('WAKTU MULAI')
                     ->required(),
-                DatePicker::make('end_date')
+                DateTimePicker::make('end_date')
                     ->label('WAKTU SELESAI')
                     ->required(),
                 TextInput::make('time_test')
-                    ->label('LAMA TEST')
+                    ->label('WAKTU MENGERJAKAN')
                     ->numeric()
                     ->default(0)
                     ->required(),
@@ -80,7 +86,7 @@ class AssessmentForm
                     ->required()
                     ->default(true),
                 TextInput::make('total_question')
-                    ->label('PERTANYAAN YANG DI TAMPILKAN')
+                    ->label('JUMLAH SOAL')
                     ->numeric()
                     ->default(0)
                     ->required(),

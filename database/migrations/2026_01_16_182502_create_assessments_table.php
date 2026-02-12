@@ -42,7 +42,7 @@ return new class extends Migration
             $table->integer('total_answer')->default(1);
             $table->boolean('randomize_question')->default(false);
             $table->boolean('randomize_asnwer')->default(false);
-            $table->string('status')->default('NOT STARTED');
+            $table->string('status')->default('Belum Dimulai');
         });
     }
 
