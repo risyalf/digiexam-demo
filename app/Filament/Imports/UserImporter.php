@@ -93,14 +93,9 @@ class UserImporter extends Importer
         $this->record->save();
 
         if (! empty($this->data['group'])) {
-            $group = ParticipantGroup::firstOrCreate([
+            ParticipantGroup::firstOrCreate([
                 'name' => $this->data['group'],
             ]);
-
-            Participant::firstOrCreate(
-                ['user_id' => $this->record->id],
-                ['participant_group_id' => $group->id]
-            );
         }
 
         if ($role = $this->options['role'] ?? null) {

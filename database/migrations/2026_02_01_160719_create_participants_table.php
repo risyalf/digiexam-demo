@@ -21,16 +21,10 @@ return new class extends Migration
             $table->timestamps();
             $table->foreignIdFor(User::class);
             $table->foreignIdFor(ParticipantGroup::class);
-            $table->foreignIdFor(Assessment::class)->nullable();
-            $table->foreignIdFor(AssessmentToken::class)->nullable();
-            $table->timestamp('start_time')->nullable();
-            $table->timestamp('end_time')->nullable();
-            $table->string('status');
-            $table->string('last_status');
-            $table->float('point')->default(0);
-            $table->string('unlock_token')->nullable();
+            $table->string('test_number')->unique()->nullable();
+            $table->string('test_password')->nullable();
 
-            $table->unique(['user_id', 'assessment_id']);
+            $table->unique(['user_id', 'participant_group_id']);
         });
     }
 

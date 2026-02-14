@@ -24,12 +24,22 @@ class QuestionSeeder extends Seeder
         ]);
 
         $module = Module::create([
-            "name" => "Matematika",
+            "name" => "UAS 2026",
         ]);
 
         $topic = Topic::create([
             "module_id" => $module->id,
+            "name" => "BHS INDONESIA",
+            "description" => "Untuk uas bulan maret 2026",
+        ]);
+
+        $module = Module::create([
             "name" => "UTS 2026",
+        ]);
+
+        $topic = Topic::create([
+            "module_id" => $module->id,
+            "name" => "MATEMATIKA",
             "description" => "Untuk uts bulan maret 2026",
         ]);
 

@@ -8,6 +8,7 @@ use App\Filament\Resources\Participants\Pages\ManageParticipants;
 use App\Models\Participant;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;

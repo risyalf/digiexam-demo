@@ -31,17 +31,17 @@ return new class extends Migration
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();
             $table->integer('time_test')->default(0);
-            $table->float('correct_point')->default(0);
+            $table->float('correct_point')->default(1);
             $table->float('wrong_point')->default(0);
             $table->float('empty_point')->default(0);
             $table->boolean('show_result')->default(false);
-            $table->boolean('detail_result')->default(false);
+            $table->boolean('answer_not_null')->default(true);
             $table->boolean('need_token')->default(true);
             $table->string('type')->nullable();
             $table->integer('total_question')->default(1);
             $table->integer('total_answer')->default(1);
             $table->boolean('randomize_question')->default(false);
-            $table->boolean('randomize_asnwer')->default(false);
+            $table->boolean('randomize_answer')->default(false);
             $table->string('status')->default('Belum Dimulai');
         });
     }

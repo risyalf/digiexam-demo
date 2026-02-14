@@ -36,6 +36,7 @@ class TestQuestionsTable
                     ->alignCenter(),
                 TextColumn::make('name')
                     ->label('NAMA')
+                    ->wrap()
                     ->html(),
                 TextColumn::make('option_answers')
                     ->label('JAWABAN')

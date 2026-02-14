@@ -3,13 +3,13 @@
 namespace App\Filament\Resources\Assessments\Schemas;
 
 use App\Models\Module;
+use App\Models\Test;
 use App\Models\Topic;
-use App\Models\User;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\ToggleButtons;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 
 class AssessmentForm
@@ -28,6 +28,11 @@ class AssessmentForm
                     ->required()
                     ->label('MODUL')
                     ->searchable()
+                    ->reactive()
+                    ->afterStateUpdated(function(Set $set) {
+                        $set('topic_id', null);
+                        $set('test_id', null);
+                    })
                     ->options(
                         Module::query()
                             ->pluck('name', 'id')
@@ -36,10 +41,27 @@ class AssessmentForm
                     ->required()
                     ->label('TOPIK')
                     ->searchable()
+                    ->reactive()
+                    ->afterStateUpdated(fn(Set $set) => $set('test_id', null))
                     ->options(
+                        fn($get) =>
                         Topic::query()
+                            ->where('module_id', $get('module_id'))
                             ->pluck('name', 'id')
-                    ),
+                    )
+                    ->disabled(fn($get) => !$get('module_id')),
+                Select::make('test_id')
+                    ->required()
+                    ->label('SOAL')
+                    ->searchable()
+                    ->reactive()
+                    ->options(
+                        fn($get) =>
+                        Test::query()
+                            ->where('topic_id', $get('topic_id'))
+                            ->pluck('name', 'id')
+                    )
+                    ->disabled(fn($get) => !$get('topic_id')),
                 Select::make('participant_groups')
                     ->label('GRUP PESERTA')
                     ->multiple()
@@ -56,12 +78,12 @@ class AssessmentForm
                 TextInput::make('time_test')
                     ->label('WAKTU MENGERJAKAN')
                     ->numeric()
-                    ->default(0)
+                    ->default(90)
                     ->required(),
                 TextInput::make('correct_point')
                     ->label('NILAI JAWABAN BENAR')
                     ->numeric()
-                    ->default(0)
+                    ->default(1)
                     ->required(),
                 TextInput::make('wrong_point')
                     ->label('NILAI JAWABAN SALAH')
@@ -77,10 +99,10 @@ class AssessmentForm
                     ->label('TAMPILKAN JAWABAN SETELAH SELESAI')
                     ->required()
                     ->default(false),
-                Toggle::make('detail_result')
-                    ->label('TAMPILKAN DETAIL JAWABAN SETELAH SELESAI')
+                Toggle::make('answer_not_null')
+                    ->label('JAWABAN TERISI SEMUA')
                     ->required()
-                    ->default(false),
+                    ->default(true),
                 Toggle::make('need_token')
                     ->label('BUTUH TOKEN UNTUK MENGIKUTI UJIAN')
                     ->required()

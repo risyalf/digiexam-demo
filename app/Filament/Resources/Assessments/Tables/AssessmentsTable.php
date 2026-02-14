@@ -51,8 +51,8 @@ class AssessmentsTable
                 ToggleColumn::make('show_result')
                     ->label('TAMPILKAN JAWABAN SETELAH SELESAI')
                     ->disabled(),
-                ToggleColumn::make('detail_result')
-                    ->label('TAMPILKAN DETAIL JAWABAN SETELAH SELESAI')
+                ToggleColumn::make('answer_not_null')
+                    ->label('JAWABAN TERISI SEMUA')
                     ->disabled(),
                 ToggleColumn::make('need_token')
                     ->label('BUTUH TOKEN UNTUK MENGIKUTI UJIAN')
