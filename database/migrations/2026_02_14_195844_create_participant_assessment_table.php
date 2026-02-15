@@ -14,12 +14,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('participant_assessment', function (Blueprint $table) {
+        Schema::create('participant_assessments', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->timestamps();
             $table->foreignIdFor(Participant::class)->index()->onDelete('cascade');
-            $table->foreignIdFor(Assessment::class)->onDelete('cascade');;
-            $table->foreignIdFor(AssessmentToken::class);
+            $table->foreignIdFor(Assessment::class)->onDelete('cascade');
+            $table->foreignIdFor(AssessmentToken::class)->nullable();
             $table->timestamp('start_time')->nullable();
             $table->timestamp('end_time')->nullable();
             $table->string('status')->default('IDLE');
@@ -36,6 +36,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('participant_assessment');
+        Schema::dropIfExists('participant_assessments');
     }
 };

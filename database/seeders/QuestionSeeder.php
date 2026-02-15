@@ -19,10 +19,7 @@ class QuestionSeeder extends Seeder
      */
     public function run(): void
     {
-        $participantGroup = ParticipantGroup::create([
-            "name" => "IPA X-1",
-        ]);
-
+        $participantGroup = ParticipantGroup::first();
         $module = Module::create([
             "name" => "UAS 2026",
         ]);

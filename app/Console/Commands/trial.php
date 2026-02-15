@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Action\GenerateRandomString;
+use App\Action\SyncParticipantAssessment;
 use App\Enum\ParticipantStatus;
 use App\Filament\Pages\MonitorAssessment;
 use App\Models\Assessment;
@@ -33,21 +34,6 @@ class trial extends Command
      */
     public function handle()
     {
-        $users = User::query()
-                    ->role('siswa')
-                    ->get();
-
-        $assesment = Assessment::first();
-        foreach ($users as $key => $user) {
-            Participant::create([
-                'user_id' => $user->id,
-                'assessment_id' => $assesment->id,
-                'assessment_token_id' => AssessmentToken::first()->id,
-                'start_time' => now()->toDateTimeString(),
-                'end_time' => Carbon::now()->addMinutes($assesment->time_test)->toDateTimeString(),
-                'status' => ParticipantStatus::LOGGED_IN,
-                'point' => 0,
-            ]);
-        }
+        SyncParticipantAssessment::execute('019c60a2-3deb-726f-b09a-60272639dde3');
     }
 }
