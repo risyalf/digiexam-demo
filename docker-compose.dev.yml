@@ -1,9 +1,9 @@
 services:
-  app:
+  app-1:
     build:
       context: .
-      dockerfile: Dockerfile.prod
-    container_name: student-assessment-cms
+      dockerfile: Dockerfile.dev
+    container_name: student-assessment-cms-1
     restart: always
     ports:
       - "9495:8000"
@@ -12,7 +12,25 @@ services:
     volumes:
       - ./storage:/app/storage
       - ./logs:/app/logs
-    command: php artisan octane:frankenphp --workers=4
+    command: php artisan octane:frankenphp --workers=2
+    depends_on:
+      - mysql
+      - redis
+
+  app-2:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: student-assessment-cms-2
+    restart: always
+    ports:
+      - "9496:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./storage:/app/storage
+      - ./logs:/app/logs
+    command: php artisan octane:frankenphp --workers=2
     depends_on:
       - mysql
       - redis
@@ -20,7 +38,7 @@ services:
   queue:
     build:
       context: .
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile.dev
     container_name: student-assessment-cms-queue
     restart: unless-stopped
     env_file:
