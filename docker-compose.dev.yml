@@ -2,7 +2,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile.dev
     container_name: student-assessment-cms
     restart: always
     ports:
@@ -20,7 +20,7 @@ services:
   queue:
     build:
       context: .
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile.dev
     container_name: student-assessment-cms-queue
     restart: unless-stopped
     env_file:
