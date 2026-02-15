@@ -2,7 +2,7 @@ services:
   app:
     build:
       context: .
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile.dev
     container_name: student-assessment-cms
     restart: always
     ports:
@@ -12,7 +12,7 @@ services:
     volumes:
       - ./storage:/app/storage
       - ./logs:/app/logs
-    command: php artisan octane:frankenphp --workers=4
+    command: php artisan octane:frankenphp --workers=2
     depends_on:
       - mysql
       - redis
@@ -20,7 +20,7 @@ services:
   queue:
     build:
       context: .
-      dockerfile: Dockerfile.prod
+      dockerfile: Dockerfile.dev
     container_name: student-assessment-cms-queue
     restart: unless-stopped
     env_file:
