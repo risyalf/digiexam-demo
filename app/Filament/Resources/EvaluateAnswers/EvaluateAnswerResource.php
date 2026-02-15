@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\EvaluateAnswers;
 
+use App\Enum\Menu;
 use App\Filament\Resources\EvaluateAnswers\Pages\CreateEvaluateAnswer;
 use App\Filament\Resources\EvaluateAnswers\Pages\EditEvaluateAnswer;
 use App\Filament\Resources\EvaluateAnswers\Pages\ListEvaluateAnswers;
@@ -13,12 +14,19 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class EvaluateAnswerResource extends Resource
 {
     protected static ?string $model = Answer::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::DocumentCheck;
+    
+    protected static string|UnitEnum|null $navigationGroup = Menu::DATA_TES->value;
+
+    protected static ?string $navigationLabel = "Evaluasi Jawaban";
+
+    protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
     {

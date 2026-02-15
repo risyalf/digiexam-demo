@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Enum\Menu;
 use Filament\Http\Middleware\Authenticate;
 use App\Filament\Auth\Login;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
@@ -62,6 +63,12 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([FilamentShieldPlugin::make()])
             ->databaseNotifications()
-            ->authMiddleware([Authenticate::class]);
+            ->authMiddleware([Authenticate::class])
+            ->navigationGroups([
+                Menu::DATA_MODUL->value,
+                Menu::DATA_PESERTA->value,
+                Menu::DATA_TES->value,
+                Menu::ADMIN->value
+            ]);
     }
 }

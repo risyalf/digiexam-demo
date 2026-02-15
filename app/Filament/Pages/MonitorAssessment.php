@@ -38,15 +38,15 @@ class MonitorAssessment extends Page implements HasTable, HasForms
 {
     use InteractsWithTable, InteractsWithForms;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::MagnifyingGlass;
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::MagnifyingGlassPlus;
     
     protected static string|UnitEnum|null $navigationGroup = Menu::DATA_TES->value;
 
     protected static ?string $navigationLabel = "Monitor Assessment";
 
-    protected string $view = 'filament.pages.monitor-assessment';
-
     protected static ?int $navigationSort = 1;
+
+    protected string $view = 'filament.pages.monitor-assessment';
 
     public array $selectFormData = [
         'assessment_id' => null,
