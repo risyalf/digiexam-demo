@@ -12,6 +12,6 @@ class ManageParticipantGroups extends ManageRecords
 
     protected function getHeaderActions(): array
     {
-        return [CreateAction::make()->label("Tambah Grup Peserta")];
+        return [CreateAction::make()->label("Tambah Kelas Peserta")];
     }
 }

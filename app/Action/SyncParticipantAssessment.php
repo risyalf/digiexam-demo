@@ -2,6 +2,7 @@
 
 namespace App\Action;
 
+use App\Models\Assessment;
 use App\Models\AssessmentParticipantGroup;
 use App\Models\Participant;
 use App\Models\ParticipantAssessment;
@@ -10,6 +11,7 @@ class SyncParticipantAssessment
 {
     public static function execute(string $assessmentId): void
     {
+        $assessment = Assessment::find($assessmentId);
         $groupIds = AssessmentParticipantGroup::query()
                             ->where('assessment_id', $assessmentId)
                             ->pluck('participant_group_id')
@@ -17,6 +19,7 @@ class SyncParticipantAssessment
 
         $participantIds = Participant::query()
                             ->whereIn('participant_group_id', $groupIds)
+                            ->where('module_id', $assessment->module_id)
                             ->pluck('id')
                             ->toArray();
 

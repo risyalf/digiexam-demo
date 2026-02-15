@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Action\GenerateRandomString;
+use App\Action\PrintLoginCard;
 use App\Action\SyncParticipantAssessment;
 use App\Enum\ParticipantStatus;
 use App\Filament\Pages\MonitorAssessment;
@@ -34,6 +35,6 @@ class trial extends Command
      */
     public function handle()
     {
-        SyncParticipantAssessment::execute('019c60a2-3deb-726f-b09a-60272639dde3');
+        SyncParticipantAssessment::execute('019c617a-9c06-73c6-adaa-48bd8cef4914');
     }
 }

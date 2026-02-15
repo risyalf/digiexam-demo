@@ -3,6 +3,7 @@
 use App\Models\Assessment;
 use App\Models\Participant;
 use App\Models\AssessmentToken;
+use App\Models\Module;
 use App\Models\ParticipantGroup;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
@@ -19,12 +20,13 @@ return new class extends Migration
         Schema::create('participants', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->timestamps();
+            $table->foreignIdFor(Module::class);
             $table->foreignIdFor(User::class);
             $table->foreignIdFor(ParticipantGroup::class);
             $table->string('test_number')->unique()->nullable();
             $table->string('test_password')->nullable();
 
-            $table->unique(['user_id', 'participant_group_id']);
+            $table->unique(['user_id', 'participant_group_id', 'module_id']);
         });
     }
 

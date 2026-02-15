@@ -33,9 +33,9 @@ class ParticipantGroupResource extends Resource
 
     protected static string|UnitEnum|null $navigationGroup = Menu::DATA_PESERTA->value;
 
-    protected static ?string $pluralLabel = "Grup Peserta";
+    protected static ?string $pluralLabel = "Kelas Peserta";
 
-    protected static ?string $navigationLabel = "Grup Peserta";
+    protected static ?string $navigationLabel = "Kelas Peserta";
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::UserGroup;
 
@@ -93,7 +93,7 @@ class ParticipantGroupResource extends Resource
             ->filters([TrashedFilter::make()])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make()->modalHeading("Ubah Grup Peserta"),
+                EditAction::make()->modalHeading("Ubah Kelas Peserta"),
                 DeleteAction::make(),
                 ForceDeleteAction::make(),
                 RestoreAction::make(),

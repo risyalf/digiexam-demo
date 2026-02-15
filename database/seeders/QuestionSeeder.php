@@ -19,47 +19,14 @@ class QuestionSeeder extends Seeder
      */
     public function run(): void
     {
-        $participantGroup = ParticipantGroup::first();
         $module = Module::create([
             "name" => "UAS 2026",
         ]);
 
-        $topic = Topic::create([
+        Topic::create([
             "module_id" => $module->id,
             "name" => "BHS INDONESIA",
             "description" => "Untuk uas bulan maret 2026",
-        ]);
-
-        $module = Module::create([
-            "name" => "UTS 2026",
-        ]);
-
-        $topic = Topic::create([
-            "module_id" => $module->id,
-            "name" => "MATEMATIKA",
-            "description" => "Untuk uts bulan maret 2026",
-        ]);
-
-        $assessment = Assessment::create([
-            "name" => "Uji Coba Soal",
-            "description" => "Untuk Uji Coba Soal",
-            "start_date" => Carbon::now()->toDateTimeString(),
-            "end_date" => Carbon::now()->addDays(30)->toDateTimeString(),
-            "time_test" => 90,
-            "correct_point" => 1,
-            "wrong_point" => 0,
-            "empty_point" => 0,
-            "module_id" => $module->id,
-            "topic_id" => $topic->id,
-            "type" => AssessmentType::PILIHAN_GANDA,
-            "total_question" => 10,
-            "total_answer" => 10,
-            "status" => AssessmentStatus::BELUM_DIMULAI,
-        ]);
-
-        AssessmentParticipantGroup::create([
-            'assessment_id' => $assessment->id,
-            'participant_group_id' => $participantGroup->id,
         ]);
     }
 }

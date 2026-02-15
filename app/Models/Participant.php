@@ -25,8 +25,13 @@ class Participant extends Model
         return $this->belongsTo(ParticipantGroup::class);
     }
 
-    public function participantAssessment(): HasMany
+    public function participantAssessments(): HasMany
     {
         return $this->hasMany(ParticipantAssessment::class, 'participant_id', 'id');
+    }
+
+    public function module(): BelongsTo
+    {
+        return $this->belongsTo(Module::class);
     }
 }

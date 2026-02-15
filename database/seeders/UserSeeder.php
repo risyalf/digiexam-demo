@@ -20,14 +20,6 @@ class UserSeeder extends Seeder
         $guruPassword = Hash::make("guru");
         $siswaPassword = Hash::make("siswa");
 
-
-        $participantGroup = ParticipantGroup::create([
-            "name" => "IPA X-1",
-        ]);
-        $participantGroup = ParticipantGroup::create([
-            "name" => "IPA X-2",
-        ]);
-
         // admin & guru (1 query)
         User::upsert(
             [
@@ -54,9 +46,6 @@ class UserSeeder extends Seeder
 
         // siswa (1 query)
         $siswa = [];
-        $participant = [];
-
-        $groups = ParticipantGroup::pluck('id')->toArray();
 
         for ($i = 0; $i < 20; $i++) {
             $userId = Str::uuid7();
@@ -69,19 +58,8 @@ class UserSeeder extends Seeder
                 "created_at" => $now,
                 "updated_at" => $now,
             ];
-
-            foreach ($groups as $key => $group) {
-                $participant[] = [
-                    'id' => Str::uuid7(),
-                    'user_id' => $userId,
-                    'participant_group_id' => $group,
-                    "created_at" => $now,
-                    "updated_at" => $now,
-                ];
-            }
         }
 
         User::insert($siswa);
-        Participant::insert($participant);
     }
 }

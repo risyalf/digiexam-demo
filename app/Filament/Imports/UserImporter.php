@@ -2,10 +2,12 @@
 
 namespace App\Filament\Imports;
 
+use App\Models\Module;
 use App\Models\Participant;
 use App\Models\ParticipantGroup;
 use App\Models\Role;
 use App\Models\User;
+use Exception;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
@@ -40,6 +42,7 @@ class UserImporter extends Importer
             ImportColumn::make("password")
                 ->requiredMapping(),
             ImportColumn::make("group"),
+            ImportColumn::make("module"),
         ];
     }
 
@@ -74,7 +77,7 @@ class UserImporter extends Importer
         foreach ($this->getCachedColumns() as $column) {
             $name = $column->getName();
 
-            if ($name === 'group') {
+            if ($name === 'group' || $name === 'module') {
                 continue;
             }
 
@@ -92,9 +95,19 @@ class UserImporter extends Importer
     {
         $this->record->save();
 
-        if (! empty($this->data['group'])) {
-            ParticipantGroup::firstOrCreate([
+        if (!empty($this->data['group']) && !empty($this->data['module'])) {
+            $module = Module::query()
+                        ->where('name', $this->data['module'])
+                        ->first();
+
+            $group = ParticipantGroup::firstOrCreate([
                 'name' => $this->data['group'],
+            ]);
+
+            Participant::create([
+                'module_id' => $module->id,
+                'user_id' => $this->record->id,
+                'participant_group_id' => $group->id,
             ]);
         }
 

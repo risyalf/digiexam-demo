@@ -13,7 +13,6 @@ class CreateAssessment extends CreateRecord
 
     protected function afterCreate() : void
     {
-        // CreateAssessmentGroup::execute($this->data['participant_groups'], $this->record->id);
         SyncParticipantAssessment::execute($this->record->id);
     }
 }

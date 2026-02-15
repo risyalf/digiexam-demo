@@ -63,7 +63,7 @@ class AssessmentForm
                     )
                     ->disabled(fn($get) => !$get('topic_id')),
                 Select::make('participant_groups')
-                    ->label('GRUP PESERTA')
+                    ->label('KELAS PESERTA')
                     ->multiple()
                     ->relationship('participant_groups', 'name')
                     ->searchable()

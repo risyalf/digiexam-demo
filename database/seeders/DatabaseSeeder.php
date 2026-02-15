@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             ShieldSeeder::class,
             QuestionSeeder::class,
+            ParticipantSeeder::class
         ]);
     }
 }

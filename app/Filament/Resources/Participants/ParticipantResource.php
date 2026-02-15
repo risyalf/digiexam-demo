@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Participants;
 
 use App\Enum\Menu;
 use App\Enum\ParticipantStatus;
+use App\Filament\Imports\ParticipantImporter;
 use App\Filament\Resources\Participants\Pages\ManageParticipants;
 use App\Models\Participant;
 use BackedEnum;
@@ -12,6 +13,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ImportAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -19,6 +21,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Colors\Color;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -87,10 +90,19 @@ class ParticipantResource extends Resource
                     ->label("Nama Peserta"),
                 TextColumn::make("participantGroup.name")
                     ->searchable()
-                    ->label("Grup Peserta"),
+                    ->label("Kelas Peserta"),
+                TextColumn::make("module.name")
+                    ->searchable()
+                    ->label("Modul"),
             ])
             ->filters([
                 //
+            ])
+            ->headerActions([
+                ImportAction::make()
+                    ->icon(Heroicon::Plus)
+                    ->color(Color::Emerald)
+                    ->importer(ParticipantImporter::class),
             ])
             ->recordActions([
                 ViewAction::make(),
