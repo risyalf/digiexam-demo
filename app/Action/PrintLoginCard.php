@@ -2,30 +2,47 @@
 
 namespace App\Action;
 
+use App\Models\Module;
 use App\Models\Participant;
-use App\Models\ParticipantAssessment;
+use App\Models\ParticipantGroup;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
 use function Symfony\Component\Clock\now;
 
 class PrintLoginCard
 {
-    public static function execute(string $module_id, string $groupId)
+    public static function execute(string $moduleId, string $groupId)
     {
+        $group = ParticipantGroup::find($groupId);
+        $groupName = $group->name;
+        $module = Module::find($moduleId);
+        $moduleName = $module->name;
         $participants = Participant::query()
-                            ->where('module_id', $module_id)
+                            ->with('user')
+                            ->where('module_id', $moduleId)
                             ->where('participant_group_id', $groupId)
-                            ->whereHas('participantAssessments', function ($q) {
-                                $q->whereHas('assessments', function ($q) {
-                                    $q->whereDate('end_date', '>=', Carbon::now()->format('Y-m-d'));
-                                });
+                            ->whereHas('participantAssessments.assessments', function ($q) {
+                                $q->whereDate('end_date', '>=', Carbon::now()->format('Y-m-d'));
                             })
-                            ->get();
+                            ->get()
+                            ->map(function ($participant) {
+                                $name = $participant->user->name ?? '';
+                                $participant->user->name = htmlspecialchars(iconv('UTF-8', 'UTF-8//IGNORE', $name), ENT_QUOTES, 'UTF-8');
+                                
+                                return $participant;
+                            });
 
-        dd($participants);
-        // $pdf = Pdf::loadView('print.cards', compact('participants'))
-        //     ->setPaper('A4', 'portrait');
+        $pdf = Pdf::loadView('print.login-cards', compact('participants', 'groupName', 'moduleName'))
+            ->setPaper('A4', 'portrait')
+            ->setOptions([
+                'defaultFont' => 'DejaVu Sans',
+                'isHtml5ParserEnabled' => true,
+                'isRemoteEnabled' => true,
+            ]);;
 
-        // return $pdf->stream();
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->stream();
+        }, 'login-cards.pdf');
     }
 }

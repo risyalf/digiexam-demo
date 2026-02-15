@@ -24,6 +24,10 @@ class ParticipantImporter extends Importer
                 ->relationship('user', 'nis')
                 ->requiredMapping()
                 ->rules(['required']),
+            ImportColumn::make("order_number")
+                ->label('nomor urut')
+                ->exampleHeader('nomor urut')
+                ->rules(["required"]),
             ImportColumn::make('participantGroup')
                 ->label('kelas')
                 ->exampleHeader('kelas')

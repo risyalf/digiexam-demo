@@ -64,7 +64,9 @@ protected static ?int $navigationSort = 2;
                         ])
                         ->footerActions([
                             Action::make('print')
-                                ->action(fn($get) => PrintLoginCard::execute($get('module_id'), $get('group_id')))
+                            ->action(function ($get) {
+                                    return PrintLoginCard::execute($get('module_id'), $get('group_id'));
+                                })
                                 ->icon(Heroicon::Printer)
                         ])
                         ->footerActionsAlignment(Alignment::End)

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->foreignIdFor(Module::class);
             $table->foreignIdFor(User::class);
             $table->foreignIdFor(ParticipantGroup::class);
+            $table->integer('order_number')->unique()->nullable();
             $table->string('test_number')->unique()->nullable();
             $table->string('test_password')->nullable();
 

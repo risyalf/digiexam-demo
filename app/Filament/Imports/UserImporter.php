@@ -2,6 +2,8 @@
 
 namespace App\Filament\Imports;
 
+use App\Action\GenerateRandomString;
+use App\Action\GenerateTestNumber;
 use App\Models\Module;
 use App\Models\Participant;
 use App\Models\ParticipantGroup;
@@ -33,6 +35,9 @@ class UserImporter extends Importer
         return [
             ImportColumn::make("name")
                 ->requiredMapping()
+                ->rules(["required"]),
+            ImportColumn::make("order_number")
+                ->exampleHeader('nomor urut')
                 ->rules(["required"]),
             ImportColumn::make("email")
                 ->requiredMapping()
@@ -77,7 +82,7 @@ class UserImporter extends Importer
         foreach ($this->getCachedColumns() as $column) {
             $name = $column->getName();
 
-            if ($name === 'group' || $name === 'module') {
+            if ($name === 'group' || $name === 'module' || $name === 'order_number') {
                 continue;
             }
 
@@ -104,10 +109,11 @@ class UserImporter extends Importer
                 'name' => $this->data['group'],
             ]);
 
-            Participant::create([
+            $participant = Participant::create([
                 'module_id' => $module->id,
                 'user_id' => $this->record->id,
                 'participant_group_id' => $group->id,
+                'order_number' => $this->data['order_number'],
             ]);
         }
 
