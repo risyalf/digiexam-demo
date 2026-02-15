@@ -7,6 +7,7 @@ use App\Enum\Menu;
 use App\Enum\ParticipantStatus;
 use App\Models\Assessment;
 use App\Models\Participant;
+use App\Models\ParticipantAssessment;
 use App\Models\User;
 use BackedEnum;
 use Carbon\Carbon;
@@ -171,8 +172,8 @@ class MonitorAssessment extends Page implements HasTable, HasForms
     {
         return $table
             ->query(
-                Participant::query()
-                    ->with('user', 'assessment')
+                ParticipantAssessment::query()
+                    ->with('participants')
                     ->when($this->selectFormData['assessment_id'], function ($q) {
                         $q->where('assessment_id', $this->selectFormData['assessment_id']);
                     })
@@ -180,7 +181,7 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                         $q->where('status', $this->filterFormData['status']);
                     })
                     ->when($this->filterFormData['name'], function ($q) {
-                        $q->where('user_id', $this->filterFormData['name']);
+                        $q->whereHas('participants', fn($q) => $q->where('user_id', $this->filterFormData['name']));
                     })
             )
             ->heading('Peserta')
@@ -195,24 +196,20 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                     ->modal()
                     ->action(
                         function (Collection $records) {
-                            $userIds = $records->pluck('id')->toArray();
+                            $ids = $records->pluck('id')->toArray();
 
-                            Participant::query()
-                                ->where('is_locked', DB::raw('true'))
-                                ->whereIn('id', $userIds)
+                            ParticipantAssessment::query()
+                                ->where('is_locked', true)
+                                ->whereIn('id', $ids)
                                 ->update([
                                     'unlock_token' => GenerateRandomString::execute(),
                                 ]);
-
-                            Notification::make()
-                                ->success()
-                                ->title('SUKSES GENERATE UNLOCK TOKEN')
-                                ->send();
                         }
                     )
+                    ->successNotification(Notification::make()->success()->title('SUKSES GENERATE UNLOCK TOKEN'))
                     ->deselectRecordsAfterCompletion(),
                 Action::make('lock')
-                    ->label('Kunci Partisipan')
+                    ->label('Kunci Siswa')
                     ->accessSelectedRecords()
                     ->successNotificationTitle('Sukses Mengunci Ujian Siswa!')
                     ->requiresConfirmation()
@@ -220,57 +217,32 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                     ->icon(Heroicon::LockClosed)
                     ->action(
                         function (Collection $records) {
-                            $userIds = $records->pluck('user_id')->toArray();
+                            $ids = $records->pluck('id')->toArray();
 
-                            User::query()
-                                ->where('is_locked', DB::raw('false'))
-                                ->whereIn('id', $userIds)
+                            ParticipantAssessment::query()
+                                ->where('is_locked', false)
+                                ->whereIn('id', $ids)
                                 ->update([
-                                    'is_locked' => DB::raw('true'),
-                                ]);
-
-                            Participant::query()
-                                ->whereIn('id', $userIds)
-                                ->update([
+                                    'unlock_token' => null,
                                     'status' => ParticipantStatus::LOCKED
                                 ]);
-
-
-                            Notification::make()
-                                ->success()
-                                ->title('SUKSES LOCK SISWA')
-                                ->send();
                         }
                     )
+                    ->successNotification(Notification::make()->success()->title('SUKSES LOCK SISWA'))
                     ->deselectRecordsAfterCompletion(),
-                // Action::make('stop')
-                //     ->label('Hentikan Partisipan')
-                //     ->accessSelectedRecords()
-                //     ->successNotificationTitle('Sukses Menghentikan Ujian Siswa!')
-                //     ->requiresConfirmation()
-                //     ->color(Color::Orange)
-                //     ->action(
-                //         function(Collection $records) { 
-                //             Participant::query()
-                //                 ->whereIn('id', $records->pluck('id')->toArray())
-                //                 ->update([
-                //                     'status' => ParticipantStatus::PAUSED
-                //                 ]);
-                //         }
-                //     )
-                //     ->deselectRecordsAfterCompletion(),
                 Action::make('delete')
-                    ->label('Hapus Partisipan')
+                    ->label('Hapus Siswa')
                     ->icon(Heroicon::Trash)
                     ->accessSelectedRecords()
-                    ->successNotificationTitle('Sukses Menghapus Partisipan!')
+                    ->successNotificationTitle('Sukses Menghapus Siswa!')
                     ->requiresConfirmation()
                     ->color(Color::Red)
                     ->action(
                         function (Collection $records) {
-                            Participant::whereIn('id', $records->pluck('id')->toArray())->delete();
+                            ParticipantAssessment::whereIn('id', $records->pluck('id')->toArray())->delete();
                         }
                     )
+                    ->successNotification(Notification::make()->success()->title('SUKSES HAPUS SISWA'))
                     ->deselectRecordsAfterCompletion(),
                 Action::make('refresh')
                     ->icon(Heroicon::ArrowPath)
@@ -282,11 +254,11 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                 TextColumn::make('No.')
                     ->rowIndex()
                     ->alignCenter(),
-                TextColumn::make('user.name')
+                TextColumn::make('participants.user.name')
                     ->copyable()
                     ->label('Nama')
                     ->alignLeft(),
-                TextColumn::make('assessment.name')
+                TextColumn::make('assessments.name')
                     ->copyable()
                     ->label('Ujian Yang Di Ikuti')
                     ->alignLeft(),
@@ -306,7 +278,7 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                     ->copyable()
                     ->label('Status')
                     ->alignCenter(),
-                TextColumn::make('user.unlock_token')
+                TextColumn::make('unlock_token')
                     ->copyable()
                     ->label('Unlock Token')
                     ->alignCenter(),
