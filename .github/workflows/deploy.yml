@@ -6,23 +6,6 @@ on:
       - main
 
 jobs:
-  deploy-dev:
-    name: Deploy to DEV
-    runs-on: [self-hosted, dev]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Pull latest code & Deploy DEV
-        run: |
-          cd /home/deploy/student-assessment-cms
-          git pull origin main
-          docker compose -f docker-compose.dev.yml up -d --build
-          docker exec student-assessment-cms php artisan migrate --force
-          docker exec student-assessment-cms php artisan config:cache
-          docker exec student-assessment-cms php artisan route:cache
-          docker exec student-assessment-cms php artisan view:cache
-
   deploy-live:
     name: Deploy to LIVE
     runs-on: [self-hosted, live]
