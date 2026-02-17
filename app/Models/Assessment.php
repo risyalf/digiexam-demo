@@ -26,7 +26,7 @@ class Assessment extends Model
         'need_token' => 'boolean',
         'randomize_question' => 'boolean',
     ];
-    
+
     protected function castBoolean($value)
     {
         return filter_var($value, FILTER_VALIDATE_BOOLEAN);
@@ -62,13 +62,18 @@ class Assessment extends Model
         return $this->belongsTo(Topic::class);
     }
 
+    public function test(): BelongsTo
+    {
+        return $this->belongsTo(Test::class);
+    }
+
     public function participant_groups(): BelongsToMany
-{
-    return $this->belongsToMany(
-        ParticipantGroup::class, 
-        'assessment_participant_groups',
-        'assessment_id', 
-        'participant_group_id'
-    );
-}
+    {
+        return $this->belongsToMany(
+            ParticipantGroup::class,
+            'assessment_participant_groups',
+            'assessment_id',
+            'participant_group_id'
+        );
+    }
 }

@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enum\ParticipantStatus;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class ParticipantAssessment extends Model
@@ -18,13 +19,13 @@ class ParticipantAssessment extends Model
         "last_status" => ParticipantStatus::class,
     ];
 
-    public function assessments(): HasMany
+    public function assessment(): BelongsTo
     {
-        return $this->hasMany(Assessment::class, 'id', 'assessment_id');
+        return $this->belongsTo(Assessment::class, 'assessment_id', 'id');
     }
 
-    public function participants(): HasMany
+    public function participant(): BelongsTo
     {
-        return $this->hasMany(Participant::class, 'id', 'participant_id');
+        return $this->belongsTo(Participant::class, 'participant_id', 'id');
     }
 }

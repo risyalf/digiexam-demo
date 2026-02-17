@@ -3,20 +3,19 @@
 namespace App\Action;
 
 use App\Enum\ParticipantStatus;
-use App\Models\Participant;
-use App\Models\User;
-use Illuminate\Support\Facades\DB;
+use App\Models\ParticipantAssessment;
 
 class LockParticipant
 {
     public static function execute($id)
     {
-        return Participant::query()
+        return ParticipantAssessment::query()
             ->where([
                 'id' => $id,
             ])
             ->where('status', '!=', ParticipantStatus::FINISH)
             ->update([
+                'token' => null,
                 'status' => ParticipantStatus::LOCKED
             ]);
     }

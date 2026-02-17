@@ -11,6 +11,7 @@ use App\Filament\Pages\MonitorAssessment;
 use App\Models\Assessment;
 use App\Models\Participant;
 use App\Models\AssessmentToken;
+use App\Models\Test;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -36,7 +37,15 @@ class trial extends Command
      */
     public function handle()
     {
-        $a = GenerateTestNumber::execute('019c6204-f415-71c6-bec7-dbe536bab794');
-        dd($a);
+        $test = Test::first();
+
+        $testQuestions = $test->testQuestions->shuffle()->map(function($question) {
+            $options = $question->options;
+
+            $question['options'] = $options;
+            return $question;
+        });
+
+        dd($testQuestions->shuffle()->first()->toArray());
     }
 }

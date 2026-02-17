@@ -9,18 +9,40 @@ use App\Models\Answer;
 use App\Models\Assessment;
 use App\Models\Participant;
 use App\Models\AssessmentToken;
-use App\Models\TestQuestion;
-use App\Models\TestQuestionOption;
+use App\Models\ParticipantAssessment;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-use function Symfony\Component\Clock\now;
-
 class AssessmentController extends Controller
 {
-    public function get() {}
+    public function get() 
+    {
+        try {
+            $participantId = auth()->user()->id;
+            $assessments = Assessment::query()
+                                ->join('participant_assessments as pa', 'assessments.id', 'pa.assessment_id')
+                                ->select([
+                                    'assessments.*',
+                                    'pa.id as participant_assessment_id'
+                                ])
+                                ->where('pa.participant_id', $participantId)
+                                ->get();
+
+            return response([
+                "message" => "SUKSES MENGAMBIL DATA ASSESSMENT",
+                "data" => $assessments
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json(
+                [
+                    "message" => $th->getMessage(),
+                ],
+                400,
+            );
+        }
+    }
 
     public function update(Request $request)
     {
@@ -54,13 +76,14 @@ class AssessmentController extends Controller
 
     public function join(Request $request)
     {
-        $request->validate([
-            "assessment_id" => "required",
-            "assessment_token" => "required",
-        ]);
-
         try {
+            $request->validate([
+                "assessment_id" => "required",
+                "assessment_token" => "required",
+            ]);
+
             $assessmentId = Assessment::first()->id;
+            $participantId = auth()->user()->id;
             $assessmentToken = $request->assessment_token;
 
             $token = AssessmentToken::query()
@@ -86,39 +109,85 @@ class AssessmentController extends Controller
                 throw new Exception("UJIAN TIDAK KETEMU DI DATABASE!");
             }
 
-            $participant = Participant::query()
-                ->where("status", "!=", ParticipantStatus::FINISH)
+            $participantAssessment = ParticipantAssessment::query()
                 ->where([
-                    "user_id" => auth()->user()->id,
+                    "participant_id" => $participantId,
+                    "assessment_id" => $assessmentId
                 ])
                 ->first();
 
-            if (!$participant) {
-                $participant = Participant::create([
-                    "user_id" => auth()->user()->id,
-                    "assessment_id" => $assessmentId,
-                    "assessment_token_id" => $token->id,
-                    "start_time" => Carbon::now()->toDateTimeString(),
-                    "end_time" => Carbon::now()->addMinutes(
-                        $assessment->time_test,
-                    ),
-                    "status" => ParticipantStatus::ACTIVE,
-                ]);
-            } else {
-                $participant->update([
-                    "assessment_id" => $assessmentId,
-                    "assessment_token_id" => $token->id,
-                    "start_time" => Carbon::now()->toDateTimeString(),
-                    "end_time" => Carbon::now()->addMinutes(
-                        $assessment->time_test,
-                    ),
-                    "status" => ParticipantStatus::ACTIVE,
-                ]);
+            if (!$participantAssessment) {
+                throw new Exception("DATA SISWA UNTUK MENGIKUTI UJIAN TIDAK DI TEMUKAN!");
             }
+            if ($participantAssessment->status == ParticipantStatus::FINISH) {
+                throw new Exception("SISWA TELAH SELESAI MENGERJAKAN UJIAN!");
+            }
+
+            $participantAssessment->update([
+                "assessment_token_id" => $token->id,
+                "status" => ParticipantStatus::LOGGED_IN,
+                "last_status" => $participantAssessment->status
+            ]);
+
+            $data = $participantAssessment->only([
+                'id',
+                'assessment_id',
+                'start_time',
+                'end_time'
+            ]);
+
+            $data['participant_name'] = $participantAssessment->participant->user->name;
+            $data['assessment_name'] = $participantAssessment->assessment->name;
+            $data['duration'] = $participantAssessment->assessment->time_test;
 
             return response([
                 "message" => "SUKSES MASUK KE UJIAN",
-                "data" => $participant,
+                "data" => $data,
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json(
+                [
+                    "message" => $th->getMessage(),
+                ],
+                400,
+            );
+        }
+    }
+
+    public function start(Request $request)
+    {
+        try {
+            $request->validate([
+                "participant_assessment_id" => "required",
+            ]);
+            
+            $participantAssessmentId = $request->participant_assessment_id;
+            $participantAssessment = ParticipantAssessment::findOrFail($participantAssessmentId);
+            $assessment = $participantAssessment->assessment;
+
+            $participantAssessment->update([
+                "start_time" => Carbon::now()->toDateTimeString(),
+                "end_time" => Carbon::now()->addMinutes(
+                    $assessment->time_test,
+                ),
+                "status" => ParticipantStatus::IN_PROGRESS,
+                "last_status" => $participantAssessment->status
+            ]);
+
+            $data = $participantAssessment->only([
+                'id',
+                'assessment_id',
+                'start_time',
+                'end_time'
+            ]);
+
+            $data['participant_name'] = $participantAssessment->participant->user->name;
+            $data['assessment_name'] = $participantAssessment->assessment->name;
+            $data['duration'] = $participantAssessment->assessment->time_test;
+
+            return response([
+                "message" => "SUKSES MULAI UJIAN",
+                "data" => $data,
             ]);
         } catch (\Throwable $th) {
             return response()->json(

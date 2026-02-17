@@ -2,18 +2,21 @@
 
 namespace App\Models;
 
-use App\Enum\ParticipantStatus;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 
-class Participant extends Model
+class Participant extends Authenticatable
 {
     use HasUuids, HasApiTokens;
 
     protected $guarded = [];
+
+    protected $hidden = [
+        'test_password',
+    ];
 
     public function user(): BelongsTo
     {

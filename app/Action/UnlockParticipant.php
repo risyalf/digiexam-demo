@@ -3,14 +3,14 @@
 namespace App\Action;
 
 use App\Enum\ParticipantStatus;
-use App\Models\Participant;
+use App\Models\ParticipantAssessment;
 use Exception;
 
 class UnlockParticipant
 {
     public static function execute($id, $token)
     {
-        $participant = Participant::findOrFail($id);
+        $participant = ParticipantAssessment::findOrFail($id);
 
         if (!$participant->is_locked) {
             throw new Exception("SISWA TIDAK DALAM KONDISI TERKUNCI.");
