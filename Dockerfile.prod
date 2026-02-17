@@ -1,4 +1,4 @@
-FROM dunglas/frankenphp:php8.4
+FROM docker.io/dunglas/frankenphp:php8.4
 
 WORKDIR /app
 
@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/* \
     && install-php-extensions pdo_mysql intl zip gd opcache pcntl redis
 
-COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+COPY --from=docker.io/composer:2 /usr/bin/composer /usr/bin/composer
 
 # minimal laravel files
 COPY artisan artisan
