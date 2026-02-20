@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('test_number')->unique()->nullable();
             $table->string('test_password')->nullable();
 
-            $table->unique(['user_id', 'participant_group_id', 'module_id', 'order_number']);
+            $table->unique(['user_id', 'participant_group_id', 'module_id']);
         });
     }
 
