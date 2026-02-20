@@ -35,7 +35,7 @@ class User extends Authenticatable implements FilamentUser
         "name",
         "email",
         "password",
-        "unlock_token",
+        "nis",
     ];
 
     /**
