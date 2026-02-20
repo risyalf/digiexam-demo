@@ -6,19 +6,57 @@ on:
       - main
 
 jobs:
-  deploy-live:
-    name: Deploy to LIVE
-    runs-on: [self-hosted, live]
+  build:
+    name: Build & Push to GHCR
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Pull latest code & Deploy LIVE
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build & Push Docker Image
         run: |
-          cd /home/deploy/student-assessment-cms
-          git pull origin main
-          docker compose -f docker-compose.prod.yml up -d --build
-          docker exec student-assessment-cms php artisan migrate --force
-          docker exec student-assessment-cms php artisan config:cache
-          docker exec student-assessment-cms php artisan route:cache
-          docker exec student-assessment-cms php artisan view:cache
+          REPO_NAME=${{ github.repository }}
+          IMAGE_NAME=ghcr.io/${REPO_NAME}/student-assessment-cms
+          COMMIT_SHA=${{ github.sha }}
+
+          echo "Building image $IMAGE_NAME:$COMMIT_SHA"
+          docker build -f Dockerfile.prod -t $IMAGE_NAME:$COMMIT_SHA .
+          docker push $IMAGE_NAME:$COMMIT_SHA
+
+          # Optional: tag 'latest'
+          docker tag $IMAGE_NAME:$COMMIT_SHA $IMAGE_NAME:latest
+          docker push $IMAGE_NAME:latest
+
+  # deploy-live:
+  #   name: Deploy to LIVE
+  #   runs-on: [self-hosted, live]
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+
+  #     - name: Pull latest code & Deploy LIVE
+  #       run: |
+  #         REPO_NAME=${{ github.repository }}
+  #         IMAGE_NAME=ghcr.io/${REPO_NAME}/student-assessment-cms
+  #         COMMIT_SHA=${{ github.sha }}
+
+  #         cd /home/deploy/student-assessment-cms
+  #         git pull origin main
+
+  #         docker pull $IMAGE_NAME:$COMMIT_SHA
+  #         docker compose -f docker-compose.prod.yml pull
+  #         docker compose -f docker-compose.prod.yml up -d
+  #         docker exec student-assessment-cms php artisan migrate --force
+  #         docker exec student-assessment-cms php artisan config:cache
+  #         docker exec student-assessment-cms php artisan route:cache
+  #         docker exec student-assessment-cms php artisan view:cache
