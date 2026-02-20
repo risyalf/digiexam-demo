@@ -55,11 +55,11 @@ Route::middleware("auth:sanctum")->group(function () {
             Route::post("/start", [AssessmentController::class, "start"])->name(
                 "api.assessment.start",
             );
-            Route::post("/assessment/submit", [
+            Route::post("/submit", [
                 AssessmentController::class,
                 "submit",
             ])->name("api.assessment.submit");
-            Route::get("/assessment/result/{assessmentId}/{participantId}", [
+            Route::get("/result/{assessmentId}/{participantId}", [
                 AssessmentController::class,
                 "result",
             ])->name("api.assessment.result");

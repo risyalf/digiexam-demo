@@ -70,10 +70,7 @@ class ProcessAnswer implements ShouldQueue
         DB::transaction(function () use ($correct, $wrong, $null) {
             Answer::updateOrCreate(
                 [
-                    "assessment_id" => $this->validated["assessment_id"],
-                    "participant_id" => $this->validated["participant_id"],
-                    "topic_id" => $this->validated["topic_id"],
-                    "test_id" => $this->validated["test_id"],
+                    "participant_assessment_id" => $this->validated["participant_assessment_id"],
                 ],
                 [
                     "correct_answers" => $correct,

@@ -10,6 +10,8 @@ use App\Models\Assessment;
 use App\Models\Participant;
 use App\Models\AssessmentToken;
 use App\Models\ParticipantAssessment;
+use App\Models\TestQuestion;
+use App\Models\TestQuestionOption;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -202,16 +204,67 @@ class AssessmentController extends Controller
     public function submit(Request $request)
     {
         $validated = $request->validate([
-            "assessment_id" => "required|uuid",
-            "participant_id" => "required|uuid",
-            "topic_id" => "required|uuid",
-            "test_id" => "required|uuid",
+            "participant_assessment_id" => "required|uuid",
             "value" => "required|array|min:1",
             "value.*.test_question_id" => "required|uuid",
-            "value.*.answer" => "nullable|uuid",
+            "value.*.answer" => "nullable|int",
         ]);
 
-        ProcessAnswer::dispatch($validated);
+        // ProcessAnswer::dispatch($validated);
+
+        $answers = collect($request->value);
+
+        $questionIds = $answers->pluck("test_question_id")->unique();
+
+        $participantAssessment = ParticipantAssessment::findOrFail($request->participant_assessment_id);
+        $testId = $participantAssessment->assessment->test->id;
+        $validQuestionIds = TestQuestion::query()
+            ->where("test_id", $testId)
+            ->whereIn("id", $questionIds)
+            ->pluck("id")
+            ->toArray();
+
+        $correctOptions = TestQuestionOption::query()
+            ->whereIn("test_question_id", $validQuestionIds)
+            ->where("value", true)
+            ->get()
+            ->keyBy("test_question_id");
+
+        $correct = 0;
+        $wrong = 0;
+        $null = 0;
+
+        foreach ($answers as $item) {
+            if (!in_array($item["test_question_id"], $validQuestionIds)) {
+                continue;
+            }
+
+            if (!$item["answer"]) {
+                $null++;
+                continue;
+            }
+
+            $correctOption = $correctOptions[$item["test_question_id"]] ?? null;
+
+            if ($correctOption && $correctOption->id === $item["answer"]) {
+                $correct++;
+            } else {
+                $wrong++;
+            }
+        }
+
+        DB::transaction(function () use ($correct, $wrong, $null, $participantAssessment) {
+            Answer::updateOrCreate(
+                [
+                    "participant_assessment_id" => $participantAssessment->id,
+                ],
+                [
+                    "correct_answers" => $correct,
+                    "wrong_answers" => $wrong,
+                    "null_answers" => $null,
+                ],
+            );
+        });
 
         return response()->json([
             "message" => "Jawaban sedang diproses",

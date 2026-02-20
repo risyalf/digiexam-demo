@@ -135,12 +135,14 @@ class TestResource extends Resource
 
                             $questions = ImportTestFormDocx::execute($test->id, $filePath);
 
-                            $questionOptions = collect($questions)->map(function ($data) use ($test) {
+                            $ordering = 0;
+                            $questionOptions = collect($questions)->map(function ($data) use ($test, $ordering) {
+                                $ordering++;
                                 $question = TestQuestion::create([
                                     'test_id' => $test->id,
                                     'name' => $data['question'],
                                     'type' => $data['type'] == 'PILIHAN GANDA' ? AssessmentType::PILIHAN_GANDA : AssessmentType::ESAI,
-                                    'ordering' => $data['number'],
+                                    'ordering' => $ordering,
                                     // 'options' => json_encode($data['answers']),
                                     // 'correct_answer' => collect($correctAnswer)->first()['id']
                                 ]);

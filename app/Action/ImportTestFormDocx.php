@@ -82,7 +82,7 @@ class ImportTestFormDocx
                         }
 
                         $finalData[] = [
-                            'number'   => $number,
+                            'number'   => (int)$number,
                             'type'     => $type,
                             'question' => "<p>".$question."</p>",
                             'answers'  => $answers->toArray(),

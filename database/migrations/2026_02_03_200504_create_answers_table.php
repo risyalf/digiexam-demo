@@ -2,6 +2,7 @@
 
 use App\Models\Assessment;
 use App\Models\Participant;
+use App\Models\ParticipantAssessment;
 use App\Models\Test;
 use App\Models\Topic;
 use Illuminate\Database\Migrations\Migration;
@@ -18,10 +19,7 @@ return new class extends Migration
         Schema::create('answers', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->timestamps();
-            $table->foreignIdFor(Assessment::class);
-            $table->foreignIdFor(Participant::class);
-            $table->foreignIdFor(Topic::class);
-            $table->foreignIdFor(Test::class);
+            $table->foreignIdFor(ParticipantAssessment::class);
             $table->text('value')->nullable();
             $table->integer('correct_answers')->default(0);
             $table->integer('wrong_answers')->default(0);
