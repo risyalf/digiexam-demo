@@ -22,6 +22,8 @@ class ImportTestFormDocx
 
         $countQuestionOption = 5;
 
+        $number = 0;
+
         foreach ($phpWord->getSections() as $section) {
             foreach ($section->getElements() as $element) {
                 if ($element instanceof Table) {
@@ -35,7 +37,7 @@ class ImportTestFormDocx
 
                         $cells = $questionRow->getCells();
 
-                        $number = self::getCellQuestion($cells[0] ?? null, $id);
+                        $number++;
                         $type = self::getCellQuestion($cells[1] ?? null, $id);
                         $question = self::getCellQuestion($cells[2] ?? null, $id);
                         $answers = $answerRows->map(function ($aRow, $index) use($id) {
@@ -82,7 +84,7 @@ class ImportTestFormDocx
                         }
 
                         $finalData[] = [
-                            'number'   => (int)$number,
+                            'number'   => $number,
                             'type'     => $type,
                             'question' => "<p>".$question."</p>",
                             'answers'  => $answers->toArray(),
