@@ -12,7 +12,7 @@ class UnlockParticipant
     {
         $participant = ParticipantAssessment::findOrFail($id);
 
-        if (!$participant->is_locked) {
+        if ($participant->status != ParticipantStatus::LOCKED) {
             throw new Exception("SISWA TIDAK DALAM KONDISI TERKUNCI.");
         }
 
@@ -20,9 +20,9 @@ class UnlockParticipant
             throw new Exception("TOKEN SALAH!");
         }
 
-        if ($participant->status == ParticipantStatus::FINISH) {
-            throw new Exception("SISWA SUDAH SELESAI MENGERJAKAN UJIAN!");
-        }
+        // if ($participant->status == ParticipantStatus::FINISH) {
+        //     throw new Exception("SISWA SUDAH SELESAI MENGERJAKAN UJIAN!");
+        // }
 
         $lastStatus = $participant->status;
         $participant->status = $participant->last_status;

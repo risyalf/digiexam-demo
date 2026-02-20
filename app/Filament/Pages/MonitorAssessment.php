@@ -199,11 +199,12 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                             $ids = $records->pluck('id')->toArray();
 
                             ParticipantAssessment::query()
-                                ->where('is_locked', true)
+                                ->where('status', ParticipantStatus::LOCKED)
                                 ->whereIn('id', $ids)
-                                ->update([
+                                ->get()
+                                ->map(fn($data) => $data->update([
                                     'unlock_token' => GenerateRandomString::execute(),
-                                ]);
+                                ]));
                         }
                     )
                     ->successNotification(Notification::make()->success()->title('SUKSES GENERATE UNLOCK TOKEN'))

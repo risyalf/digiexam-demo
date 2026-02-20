@@ -41,6 +41,9 @@ Route::middleware("auth:sanctum")->group(function () {
     });
 
     Route::prefix("assessment")->group(function () {
+        Route::get("/find/{id}", [AssessmentController::class, "find"])->name(
+            "api.assessment.find",
+        );
         Route::get("/", [AssessmentController::class, "get"])->name(
             "api.assessment.get",
         );
@@ -57,15 +60,15 @@ Route::middleware("auth:sanctum")->group(function () {
             AssessmentController::class,
             "submit",
         ])->name("api.assessment.submit");
-        Route::get("/result/{assessmentId}/{participantId}", [
-            AssessmentController::class,
-            "result",
-        ])->name("api.assessment.result");
     });
 
     Route::prefix("test")->group(function () {
         Route::get("/", [TestController::class, "get"])->name(
             "api.test.get",
         );
+        Route::get("/result/{assessmentId}", [
+            TestController::class,
+            "result",
+        ])->name("api.assessment.result");
     });
 });

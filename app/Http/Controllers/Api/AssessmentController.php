@@ -19,22 +19,87 @@ use Illuminate\Support\Facades\DB;
 
 class AssessmentController extends Controller
 {
-    public function get() 
+    public function find($id)
     {
         try {
-            $participantId = auth()->user()->id;
-            $assessments = Assessment::query()
-                                ->join('participant_assessments as pa', 'assessments.id', 'pa.assessment_id')
-                                ->select([
-                                    'assessments.*',
-                                    'pa.id as participant_assessment_id'
-                                ])
-                                ->where('pa.participant_id', $participantId)
-                                ->get();
+            $assessment = Assessment::query()
+                            ->where('id', $id)
+                            ->select([
+                                'id',
+                                'name',
+                                'start_date',
+                                'end_date',
+                                'time_test' 
+                            ])
+                            ->first();
+
+            $participantAssessment = ParticipantAssessment::query()
+                                        ->where([
+                                            'participant_id' => auth()->user()->id,
+                                            'assessment_id' => $id
+                                        ])
+                                        ->first();
+
+            $data = [
+                'id' => $assessment->id,
+                'participant_assessment_id' => $participantAssessment->id,
+                'name' => $assessment->name,
+                'start_date' => $assessment->start_date,
+                'end_date' => $assessment->end_date,
+                'time_test' => $assessment->time_test,
+                'status' => $participantAssessment->status,
+            ];
 
             return response([
                 "message" => "SUKSES MENGAMBIL DATA ASSESSMENT",
-                "data" => $assessments
+                "data" => $data
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json(
+                [
+                    "message" => $th->getMessage(),
+                ],
+                400,
+            );
+        }
+    }
+
+    public function get()
+    {
+        try {
+            $participantId = auth()->user()->id;
+            $participantAssessments = ParticipantAssessment::query()
+                ->where('participant_id', $participantId)
+                ->get();
+
+            $data = [];
+
+            foreach ($participantAssessments as $key => $participantAssessment) {
+                $assessment = Assessment::query()
+                    ->select([
+                        'id',
+                        'name',
+                        'start_date',
+                        'end_date',
+                        'time_test'
+                    ])
+                    ->where('id', $participantAssessment->assessment_id)
+                    ->first();
+
+                $data[] = [
+                    'id' => $assessment->id,
+                    'participant_assessment_id' => $participantAssessment->id,
+                    'name' => $assessment->name,
+                    'start_date' => $assessment->start_date,
+                    'end_date' => $assessment->end_date,
+                    'time_test' => $assessment->time_test,
+                    'status' => $participantAssessment->status,
+                ];
+            }
+
+            return response([
+                "message" => "SUKSES MENGAMBIL DATA ASSESSMENT",
+                "data" => $data
             ]);
         } catch (\Throwable $th) {
             return response()->json(
@@ -141,6 +206,7 @@ class AssessmentController extends Controller
             $data['participant_name'] = $participantAssessment->participant->user->name;
             $data['assessment_name'] = $participantAssessment->assessment->name;
             $data['duration'] = $participantAssessment->assessment->time_test;
+            $data['locked'] = $participantAssessment->status == ParticipantStatus::LOCKED;
 
             return response([
                 "message" => "SUKSES MASUK KE UJIAN",
@@ -162,7 +228,7 @@ class AssessmentController extends Controller
             $request->validate([
                 "participant_assessment_id" => "required",
             ]);
-            
+
             $participantAssessmentId = $request->participant_assessment_id;
             $participantAssessment = ParticipantAssessment::findOrFail($participantAssessmentId);
             $assessment = $participantAssessment->assessment;
@@ -186,6 +252,7 @@ class AssessmentController extends Controller
             $data['participant_name'] = $participantAssessment->participant->user->name;
             $data['assessment_name'] = $participantAssessment->assessment->name;
             $data['duration'] = $participantAssessment->assessment->time_test;
+            $data['locked'] = $participantAssessment->status == ParticipantStatus::LOCKED;
 
             return response([
                 "message" => "SUKSES MULAI UJIAN",
@@ -210,13 +277,20 @@ class AssessmentController extends Controller
             "value.*.answer" => "nullable|int",
         ]);
 
+        ParticipantAssessment::query()
+            ->where('id', $request->participant_assessment_id)
+            ->update([
+                'status' => ParticipantStatus::FINISH,
+                'last_status' => ParticipantStatus::IN_PROGRESS,
+            ]);
+
         // ProcessAnswer::dispatch($validated);
 
-        $answers = collect($request->value);
+        $answers = collect($validated["value"]);
 
         $questionIds = $answers->pluck("test_question_id")->unique();
 
-        $participantAssessment = ParticipantAssessment::findOrFail($request->participant_assessment_id);
+        $participantAssessment = ParticipantAssessment::findOrFail($validated['participant_assessment_id']);
         $testId = $participantAssessment->assessment->test->id;
         $validQuestionIds = TestQuestion::query()
             ->where("test_id", $testId)
@@ -232,28 +306,29 @@ class AssessmentController extends Controller
 
         $correct = 0;
         $wrong = 0;
-        $null = 0;
 
         foreach ($answers as $item) {
             if (!in_array($item["test_question_id"], $validQuestionIds)) {
                 continue;
             }
 
-            if (!$item["answer"]) {
-                $null++;
-                continue;
-            }
+            $answer = $item["answer"];
 
             $correctOption = $correctOptions[$item["test_question_id"]] ?? null;
 
-            if ($correctOption && $correctOption->id === $item["answer"]) {
+            if ($correctOption && $correctOption->id == $answer) {
                 $correct++;
             } else {
                 $wrong++;
             }
         }
 
-        DB::transaction(function () use ($correct, $wrong, $null, $participantAssessment) {
+        $jsonValue = json_encode($validated['value']);
+
+        DB::transaction(function () use ($correct, $wrong, $participantAssessment, $jsonValue) {
+            $totalQuestion = $participantAssessment->assessment->total_question;    
+            $null = $totalQuestion - ($correct + $wrong);
+
             Answer::updateOrCreate(
                 [
                     "participant_assessment_id" => $participantAssessment->id,
@@ -262,35 +337,20 @@ class AssessmentController extends Controller
                     "correct_answers" => $correct,
                     "wrong_answers" => $wrong,
                     "null_answers" => $null,
+                    "value" => $jsonValue,
                 ],
             );
+
+            $point = $correct / $totalQuestion * 100;
+
+            $participantAssessment->status = ParticipantStatus::SUBMITTED;
+            $participantAssessment->last_status = $participantAssessment->status;
+            $participantAssessment->point = $point;
+            $participantAssessment->save();
         });
 
         return response()->json([
             "message" => "Jawaban sedang diproses",
-        ]);
-    }
-
-    public function result($assessmentId, $participantId)
-    {
-        $result = Answer::query()
-            ->where("assessment_id", $assessmentId)
-            ->where("participant_id", $participantId)
-            ->first();
-
-        if (!$result) {
-            return response()->json(
-                [
-                    "status" => false,
-                    "message" => "Hasil belum tersedia atau sedang diproses",
-                ],
-                404,
-            );
-        }
-
-        return response()->json([
-            "status" => true,
-            "data" => $result,
         ]);
     }
 }

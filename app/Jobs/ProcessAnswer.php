@@ -2,7 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Enum\ParticipantStatus;
 use App\Models\Answer;
+use App\Models\ParticipantAssessment;
 use App\Models\TestQuestion;
 use App\Models\TestQuestionOption;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -32,15 +34,17 @@ class ProcessAnswer implements ShouldQueue
 
         $questionIds = $answers->pluck("test_question_id")->unique();
 
+        $participantAssessment = ParticipantAssessment::findOrFail($this->validated['participant_assessment_id']);
+        $testId = $participantAssessment->assessment->test->id;
         $validQuestionIds = TestQuestion::query()
-            ->where("test_id", $this->validated["test_id"])
+            ->where("test_id", $testId)
             ->whereIn("id", $questionIds)
             ->pluck("id")
             ->toArray();
 
         $correctOptions = TestQuestionOption::query()
             ->whereIn("test_question_id", $validQuestionIds)
-            ->where("is_correct", true)
+            ->where("value", true)
             ->get()
             ->keyBy("test_question_id");
 
@@ -67,17 +71,22 @@ class ProcessAnswer implements ShouldQueue
             }
         }
 
-        DB::transaction(function () use ($correct, $wrong, $null) {
+        DB::transaction(function () use ($correct, $wrong, $null, $participantAssessment) {
             Answer::updateOrCreate(
                 [
-                    "participant_assessment_id" => $this->validated["participant_assessment_id"],
+                    "participant_assessment_id" => $participantAssessment->id,
                 ],
                 [
                     "correct_answers" => $correct,
                     "wrong_answers" => $wrong,
                     "null_answers" => $null,
+                    "value" => $validated["value"],
                 ],
             );
         });
+
+        $participantAssessment->status = ParticipantStatus::SUBMITTED;
+        $participantAssessment->last_status = $participantAssessment->status;
+        $participantAssessment->save();
     }
 }
