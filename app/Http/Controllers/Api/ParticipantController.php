@@ -2,12 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Action\LockParticipant;
-use App\Action\UnlockParticipant;
 use App\Http\Controllers\Controller;
 use App\Models\Participant;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ParticipantController extends Controller
 {
@@ -53,15 +52,14 @@ class ParticipantController extends Controller
         }
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         try {
-            auth()->logout();
+            $request->user()->currentAccessToken()->delete();
 
             return response()->json([
-                'message' => "SUKSES GET DATA SISWA",
-                'token' => $token,
-                'data' => $participant
+                'message' => "SUKSES LOGOUT",
+                'data' => null
             ]);
         } catch (\Throwable $th) {
             return response()->json([

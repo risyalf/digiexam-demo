@@ -12,6 +12,8 @@ Route::post("/auth/login", [AuthController::class, "login"])->name("api.user.log
 Route::post("/auth/participant/login", [ParticipantController::class, 'login'])->name('api.participant.login');
 
 Route::middleware("auth:sanctum")->group(function () {
+    Route::post("/auth/participant/logout", [ParticipantController::class, 'logout'])->name('api.participant.logout');
+
     Route::get("/user/{id}", [UserController::class, "get"])->name("api.user.get");
     Route::post("/user/lock", [UserController::class, "lock"])->name("api.user.lock");
 
