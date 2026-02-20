@@ -173,7 +173,7 @@ class MonitorAssessment extends Page implements HasTable, HasForms
         return $table
             ->query(
                 ParticipantAssessment::query()
-                    ->with('participants')
+                    ->with('participant')
                     ->when($this->selectFormData['assessment_id'], function ($q) {
                         $q->where('assessment_id', $this->selectFormData['assessment_id']);
                     })
@@ -181,7 +181,7 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                         $q->where('status', $this->filterFormData['status']);
                     })
                     ->when($this->filterFormData['name'], function ($q) {
-                        $q->whereHas('participants', fn($q) => $q->where('user_id', $this->filterFormData['name']));
+                        $q->whereHas('participant', fn($q) => $q->where('user_id', $this->filterFormData['name']));
                     })
             )
             ->heading('Peserta')
@@ -254,11 +254,11 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                 TextColumn::make('No.')
                     ->rowIndex()
                     ->alignCenter(),
-                TextColumn::make('participants.user.name')
+                TextColumn::make('participant.user.name')
                     ->copyable()
                     ->label('Nama')
                     ->alignLeft(),
-                TextColumn::make('assessments.name')
+                TextColumn::make('assessment.name')
                     ->copyable()
                     ->label('Ujian Yang Di Ikuti')
                     ->alignLeft(),

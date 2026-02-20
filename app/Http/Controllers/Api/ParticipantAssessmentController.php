@@ -48,7 +48,11 @@ class ParticipantAssessmentController extends Controller
             $participantAssessmentId = $request->participant_assessment_id;
             LockParticipant::execute($participantAssessmentId);
 
-            return response()->json(['message' => "SUKSES LOCK SISWA"]);
+            return response()->json([
+                'message' => "SUKSES LOCK SISWA",
+                'data' => ParticipantAssessment::findOrFail($participantAssessmentId)
+
+            ]);
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => $th->getMessage()
@@ -70,7 +74,11 @@ class ParticipantAssessmentController extends Controller
 
             UnlockParticipant::execute($participantAssessmentId, $unlockToken);
 
-            return response()->json(['message' => "SUKSES UNLOCK USER"]);
+            return response()->json([
+                'message' => "SUKSES UNLOCK USER",
+                'data' => ParticipantAssessment::findOrFail($participantAssessmentId)
+
+            ]);
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => $th->getMessage()
