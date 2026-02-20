@@ -28,4 +28,9 @@ class ParticipantAssessment extends Model
     {
         return $this->belongsTo(Participant::class, 'participant_id', 'id');
     }
+    
+    public function answer(): BelongsTo
+    {
+        return $this->belongsTo(Answer::class, 'id', 'participant_assessment_id');
+    }
 }
