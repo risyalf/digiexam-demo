@@ -37,15 +37,6 @@ class trial extends Command
      */
     public function handle()
     {
-        $test = Test::first();
-
-        $testQuestions = $test->testQuestions->shuffle()->map(function($question) {
-            $options = $question->options;
-
-            $question['options'] = $options;
-            return $question;
-        });
-
-        dd($testQuestions->shuffle()->first()->toArray());
+        SyncParticipantAssessment::execute('019c78d2-8f3c-7319-9ec9-a6c4063c4ea2');
     }
 }

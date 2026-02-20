@@ -88,18 +88,14 @@ class AssessmentsTable
                     ->color(Color::Emerald)
                     ->icon(Heroicon::CloudArrowDown)
                     ->action(fn($record) => SyncParticipantAssessment::execute($record->id))
-                    ->successNotification(Notification::make()->success()->title('SUKSES SYNCHRONIZE SISWA')->send())
-                    ->failureNotification(fn() => Notification::make()->danger()->title('ERROR')->body('ADA ERROR KETIKA SYNC SISWA')->send())
+                    ->successNotification(Notification::make()->success()->title('SUKSES SYNCHRONIZE SISWA'))
+                    ->failureNotification(fn() => Notification::make()->danger()->title('ERROR')->body('ADA ERROR KETIKA SYNC SISWA'))
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                     ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
-                    Action::make('sync')
-                        ->label('Sync Siswa')
-                        ->icon(Heroicon::ArrowUpCircle)
-                        ->color(Color::Emerald)
+                    RestoreBulkAction::make()
                 ]),
             ]);
     }

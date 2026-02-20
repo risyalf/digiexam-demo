@@ -23,11 +23,11 @@ return new class extends Migration
             $table->foreignIdFor(Module::class)->constrained();
             $table->foreignIdFor(User::class)->constrained()->onDelete('cascade');
             $table->foreignIdFor(ParticipantGroup::class)->constrained();
-            $table->integer('order_number')->unique()->nullable();
+            $table->integer('order_number')->nullable();
             $table->string('test_number')->unique()->nullable();
             $table->string('test_password')->nullable();
 
-            $table->unique(['user_id', 'participant_group_id', 'module_id']);
+            $table->unique(['user_id', 'participant_group_id', 'module_id', 'order_number']);
         });
     }
 

@@ -22,7 +22,7 @@ class PrintLoginCard
                             ->with('user')
                             ->where('module_id', $moduleId)
                             ->where('participant_group_id', $groupId)
-                            ->whereHas('participantAssessments.assessments', function ($q) {
+                            ->whereHas('participantAssessments.assessment', function ($q) {
                                 $q->whereDate('end_date', '>=', Carbon::now()->format('Y-m-d'));
                             })
                             ->get()

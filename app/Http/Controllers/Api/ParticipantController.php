@@ -53,6 +53,24 @@ class ParticipantController extends Controller
         }
     }
 
+    public function logout()
+    {
+        try {
+            auth()->logout();
+
+            return response()->json([
+                'message' => "SUKSES GET DATA SISWA",
+                'token' => $token,
+                'data' => $participant
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage()
+            ],
+            400);
+        }
+    }
+
     public function get($id)
     {
         try {
