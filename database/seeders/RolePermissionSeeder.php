@@ -21,10 +21,10 @@ class RolePermissionSeeder extends Seeder
 
         $roles = Role::pluck("uuid", "name");
 
-        $adminId = User::where("name", "admin")->value("id");
-        $guruId = User::where("name", "guru")->value("id");
+        $adminId = User::where("email", "swadayasemarang@gmail.com")->value("id");
+        // $guruId = User::where("name", "guru")->value("id");
 
-        $siswaIds = User::whereNotIn("name", ["admin", "guru"])->pluck("id");
+        // $siswaIds = User::whereNotIn("name", ["admin", "guru"])->pluck("id");
 
         $rows = [];
 
@@ -36,21 +36,21 @@ class RolePermissionSeeder extends Seeder
             ];
         }
 
-        if ($guruId) {
-            $rows[] = [
-                "role_id" => $roles["guru"],
-                "model_type" => User::class,
-                "model_uuid" => $guruId,
-            ];
-        }
+        // if ($guruId) {
+        //     $rows[] = [
+        //         "role_id" => $roles["guru"],
+        //         "model_type" => User::class,
+        //         "model_uuid" => $guruId,
+        //     ];
+        // }
 
-        foreach ($siswaIds as $id) {
-            $rows[] = [
-                "role_id" => $roles["siswa"],
-                "model_type" => User::class,
-                "model_uuid" => $id,
-            ];
-        }
+        // foreach ($siswaIds as $id) {
+        //     $rows[] = [
+        //         "role_id" => $roles["siswa"],
+        //         "model_type" => User::class,
+        //         "model_uuid" => $id,
+        //     ];
+        // }
 
         DB::table("model_has_roles")->insertOrIgnore($rows);
     }

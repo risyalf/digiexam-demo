@@ -16,26 +16,16 @@ class UserSeeder extends Seeder
         $now = now();
 
         // password di-hash SEKALI
-        $adminPassword = Hash::make("admin");
-        $guruPassword = Hash::make("guru");
-        $siswaPassword = Hash::make("siswa");
+        $adminPassword = Hash::make("RootSwadaya!123");
 
         // admin & guru (1 query)
         User::upsert(
             [
                 [
-                    "name" => "admin",
-                    "email" => "admin@mail.com",
+                    "name" => "Admin SMK Swadaya",
+                    "email" => "swadayasemarang@gmail.com",
                     "nis" => "admin",
                     "password" => $adminPassword,
-                    "created_at" => $now,
-                    "updated_at" => $now,
-                ],
-                [
-                    "name" => "guru",
-                    "email" => "guru@mail.com",
-                    "nis" => null,
-                    "password" => $guruPassword,
                     "created_at" => $now,
                     "updated_at" => $now,
                 ],
@@ -43,23 +33,5 @@ class UserSeeder extends Seeder
             ["email"],
             ["name", "password", "updated_at"],
         );
-
-        // siswa (1 query)
-        $siswa = [];
-
-        for ($i = 0; $i < 20; $i++) {
-            $userId = Str::uuid7();
-            $siswa[] = [
-                "id" => $userId,
-                "name" => "siswa-$i",
-                "email" => "siswa_$i@mail.com",
-                "nis" => $i,
-                "password" => $siswaPassword,
-                "created_at" => $now,
-                "updated_at" => $now,
-            ];
-        }
-
-        User::insert($siswa);
     }
 }
