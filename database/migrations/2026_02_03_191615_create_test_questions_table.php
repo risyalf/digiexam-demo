@@ -17,9 +17,9 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->timestamps();
             $table->softDeletes();
-            $table->foreignIdFor(User::class, 'created_by');
-            $table->foreignIdFor(User::class, 'updated_by');
-            $table->foreignIdFor(User::class, 'deleted_by')->nullable();
+            $table->foreignIdFor(User::class, 'created_by')->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(User::class, 'updated_by')->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(User::class, 'deleted_by')->nullable()->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Test::class)->constrained()->cascadeOnDelete();
             $table->text('name');
             $table->string('type');

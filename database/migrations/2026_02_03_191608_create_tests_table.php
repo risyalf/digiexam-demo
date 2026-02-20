@@ -17,10 +17,10 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->timestamps();
             $table->softDeletes();
-            $table->foreignIdFor(User::class, 'created_by');
-            $table->foreignIdFor(User::class, 'updated_by');
-            $table->foreignIdFor(User::class, 'deleted_by')->nullable();
-            $table->foreignIdFor(Topic::class);
+            $table->foreignIdFor(User::class, 'created_by')->constrained();
+            $table->foreignIdFor(User::class, 'updated_by')->constrained();
+            $table->foreignIdFor(User::class, 'deleted_by')->nullable()->constrained();
+            $table->foreignIdFor(Topic::class)->constrained();
             $table->string('name')->unique();
         });
     }

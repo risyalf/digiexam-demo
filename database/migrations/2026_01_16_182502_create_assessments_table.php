@@ -20,12 +20,12 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->timestamps();
             $table->softDeletes();
-            $table->foreignIdFor(User::class, 'created_by');
-            $table->foreignIdFor(User::class, 'updated_by');
-            $table->foreignIdFor(User::class, 'deleted_by')->nullable();
-            $table->foreignIdFor(Module::class)->nullable();
-            $table->foreignIdFor(Topic::class)->nullable();
-            $table->foreignIdFor(Test::class)->nullable();
+            $table->foreignIdFor(User::class, 'created_by')->constrained();
+            $table->foreignIdFor(User::class, 'updated_by')->constrained();
+            $table->foreignIdFor(User::class, 'deleted_by')->nullable()->constrained();
+            $table->foreignIdFor(Module::class)->nullable()->constrained();
+            $table->foreignIdFor(Topic::class)->nullable()->constrained();
+            $table->foreignIdFor(Test::class)->nullable()->constrained();
             $table->string('name')->unique();
             $table->string('description')->nullable();
             $table->timestamp('start_date')->nullable();

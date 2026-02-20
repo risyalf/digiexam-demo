@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('value');
             $table->float('expired_time')->default(0);
             $table->timestamp('expired_until')->nullable();
-            $table->foreignIdFor(Assessment::class)->nullable();
+            $table->foreignIdFor(Assessment::class)->nullable()->constrained();
             $table->boolean('all_module')->default(false);
         });
     }

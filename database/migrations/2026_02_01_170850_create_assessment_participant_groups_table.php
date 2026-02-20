@@ -15,8 +15,8 @@ return new class extends Migration {
         Schema::create("assessment_participant_groups", function (
             Blueprint $table,
         ) {
-            $table->foreignIdFor(Assessment::class);
-            $table->foreignIdFor(ParticipantGroup::class);
+            $table->foreignIdFor(Assessment::class)->constrained()->onDelete('cascade');
+            $table->foreignIdFor(ParticipantGroup::class)->constrained()->onDelete('cascade');
 
             $table->unique(
                 ["assessment_id", "participant_group_id"],

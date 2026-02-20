@@ -17,9 +17,9 @@ return new class extends Migration
         Schema::create('participant_assessments', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->timestamps();
-            $table->foreignIdFor(Participant::class)->index()->onDelete('cascade');
-            $table->foreignIdFor(Assessment::class)->onDelete('cascade');
-            $table->foreignIdFor(AssessmentToken::class)->nullable();
+            $table->foreignIdFor(Participant::class)->index()->constrained()->onDelete('cascade');
+            $table->foreignIdFor(Assessment::class)->constrained()->onDelete('cascade');
+            $table->foreignIdFor(AssessmentToken::class)->constrained()->nullable();
             $table->timestamp('start_time')->nullable();
             $table->timestamp('end_time')->nullable();
             $table->string('status')->default('IDLE');

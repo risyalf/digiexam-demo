@@ -21,7 +21,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->timestamps();
             $table->foreignIdFor(Module::class)->constrained();
-            $table->foreignIdFor(User::class)->constrained();
+            $table->foreignIdFor(User::class)->constrained()->onDelete('cascade');
             $table->foreignIdFor(ParticipantGroup::class)->constrained();
             $table->integer('order_number')->unique()->nullable();
             $table->string('test_number')->unique()->nullable();
