@@ -15,7 +15,7 @@ class LockParticipant
             ])
             ->where('status', '!=', ParticipantStatus::FINISH)
             ->update([
-                'token' => null,
+                'unlock_token' => null,
                 'status' => ParticipantStatus::LOCKED
             ]);
     }

@@ -77,7 +77,6 @@ class ParticipantAssessmentController extends Controller
             return response()->json([
                 'message' => "SUKSES UNLOCK USER",
                 'data' => ParticipantAssessment::findOrFail($participantAssessmentId)
-
             ]);
         } catch (\Throwable $th) {
             return response()->json([

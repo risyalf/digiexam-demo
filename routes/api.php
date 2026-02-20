@@ -2,10 +2,10 @@
 
 use App\Http\Controllers\Api\AssessmentController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ParticipantAssessmentController;
 use App\Http\Controllers\Api\ParticipantController;
 use App\Http\Controllers\Api\TestController;
 use App\Http\Controllers\Api\UserController;
-use App\Models\ParticipantAssessment;
 use Illuminate\Support\Facades\Route;
 
 Route::post("/auth/login", [AuthController::class, "login"])->name("api.user.login");
@@ -28,14 +28,14 @@ Route::middleware("auth:sanctum")->group(function () {
     });
 
     Route::prefix("participant-assessment")->group(function () {
-        Route::get("/{id}", [ParticipantAssessment::class, "get"])->name(
+        Route::get("/{id}", [ParticipantAssessmentController::class, "get"])->name(
             "api.participant.assessment.get",
         );
-        Route::post("/lock", [ParticipantAssessment::class, "lock"])->name(
+        Route::post("/lock", [ParticipantAssessmentController::class, "lock"])->name(
             "api.participant.assessment.lock",
         );
         Route::post("/unlock", [
-            ParticipantAssessment::class,
+            ParticipantAssessmentController::class,
             "unlock",
         ])->name("api.participant.assessment.unlock");
     });
