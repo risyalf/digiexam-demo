@@ -284,70 +284,7 @@ class AssessmentController extends Controller
                 'last_status' => ParticipantStatus::IN_PROGRESS,
             ]);
 
-        // ProcessAnswer::dispatch($validated);
-
-        $answers = collect($validated["value"]);
-
-        $questionIds = $answers->pluck("test_question_id")->unique();
-
-        $participantAssessment = ParticipantAssessment::findOrFail($validated['participant_assessment_id']);
-        $testId = $participantAssessment->assessment->test->id;
-        $validQuestionIds = TestQuestion::query()
-            ->where("test_id", $testId)
-            ->whereIn("id", $questionIds)
-            ->pluck("id")
-            ->toArray();
-
-        $correctOptions = TestQuestionOption::query()
-            ->whereIn("test_question_id", $validQuestionIds)
-            ->where("value", true)
-            ->get()
-            ->keyBy("test_question_id");
-
-        $correct = 0;
-        $wrong = 0;
-
-        foreach ($answers as $item) {
-            if (!in_array($item["test_question_id"], $validQuestionIds)) {
-                continue;
-            }
-
-            $answer = $item["answer"];
-
-            $correctOption = $correctOptions[$item["test_question_id"]] ?? null;
-
-            if ($correctOption && $correctOption->id == $answer) {
-                $correct++;
-            } else {
-                $wrong++;
-            }
-        }
-
-        $jsonValue = json_encode($validated['value']);
-
-        DB::transaction(function () use ($correct, $wrong, $participantAssessment, $jsonValue) {
-            $totalQuestion = $participantAssessment->assessment->total_question;    
-            $null = $totalQuestion - ($correct + $wrong);
-
-            Answer::updateOrCreate(
-                [
-                    "participant_assessment_id" => $participantAssessment->id,
-                ],
-                [
-                    "correct_answers" => $correct,
-                    "wrong_answers" => $wrong,
-                    "null_answers" => $null,
-                    "value" => $jsonValue,
-                ],
-            );
-
-            $point = $correct / $totalQuestion * 100;
-
-            $participantAssessment->status = ParticipantStatus::SUBMITTED;
-            $participantAssessment->last_status = $participantAssessment->status;
-            $participantAssessment->point = $point;
-            $participantAssessment->save();
-        });
+        ProcessAnswer::dispatch($validated);
 
         return response()->json([
             "message" => "Jawaban sedang diproses",

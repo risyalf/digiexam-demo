@@ -23,15 +23,45 @@ class ParticipantAssessmentController extends Controller
                                 'assessment_id' => $id,
                                 'participant_id' => $participantId,
                             ])
+                            ->select([
+                                'id',
+                                'participant_id',
+                                'assessment_id',
+                                'start_time',
+                                'end_time',
+                                'status',
+                            ])
                             ->first();
             
             if (!$participant) {
                 throw new Exception("TIDAK KETEMU SISWA PADA UJIAN!");
             }
 
+            $participantName = Participant::query()
+                ->where('participants.id', $participant->participant_id)
+                ->join('users', 'users.id', '=', 'participants.user_id')
+                ->value('users.name');
+
+            $assessment = Assessment::query()
+                ->select(['name', 'time_test'])
+                ->where('id', $participant->assessment_id)
+                ->first();
+
+            $response = [
+                'id' => $participant->id,
+                'participant_id' => $participant->participant_id,
+                'assessment_id' => $participant->assessment_id,
+                'start_time' => $participant->start_time,
+                'end_time' => $participant->end_time,
+                'participant_name' => $participantName,
+                'assessment_name' => $assessment->name ?? null,
+                'duration' => $assessment->time_test ?? null,
+                'locked' => $participant->status === ParticipantStatus::LOCKED,
+            ];
+
             return response()->json([
                 'message' => "SUKSES GET DATA SISWA",
-                'data' => $participant
+                'data' => $response
             ]);
         } catch (\Throwable $th) {
             return response()->json([

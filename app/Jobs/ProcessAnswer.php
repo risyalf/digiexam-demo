@@ -50,28 +50,29 @@ class ProcessAnswer implements ShouldQueue
 
         $correct = 0;
         $wrong = 0;
-        $null = 0;
 
         foreach ($answers as $item) {
             if (!in_array($item["test_question_id"], $validQuestionIds)) {
                 continue;
             }
 
-            if (!$item["answer"]) {
-                $null++;
-                continue;
-            }
+            $answer = $item["answer"];
 
             $correctOption = $correctOptions[$item["test_question_id"]] ?? null;
 
-            if ($correctOption && $correctOption->id === $item["answer"]) {
+            if ($correctOption && $correctOption->id == $answer) {
                 $correct++;
             } else {
                 $wrong++;
             }
         }
 
-        DB::transaction(function () use ($correct, $wrong, $null, $participantAssessment) {
+        $jsonValue = json_encode($this->validated['value']);
+
+        DB::transaction(function () use ($correct, $wrong, $participantAssessment, $jsonValue) {
+            $totalQuestion = $participantAssessment->assessment->total_question;    
+            $null = $totalQuestion - ($correct + $wrong);
+
             Answer::updateOrCreate(
                 [
                     "participant_assessment_id" => $participantAssessment->id,
@@ -80,13 +81,16 @@ class ProcessAnswer implements ShouldQueue
                     "correct_answers" => $correct,
                     "wrong_answers" => $wrong,
                     "null_answers" => $null,
-                    "value" => $validated["value"],
+                    "value" => $jsonValue,
                 ],
             );
-        });
 
-        $participantAssessment->status = ParticipantStatus::SUBMITTED;
-        $participantAssessment->last_status = $participantAssessment->status;
-        $participantAssessment->save();
+            $point = $correct / $totalQuestion * 100;
+
+            $participantAssessment->status = ParticipantStatus::SUBMITTED;
+            $participantAssessment->last_status = $participantAssessment->status;
+            $participantAssessment->point = $point;
+            $participantAssessment->save();
+        });
     }
 }

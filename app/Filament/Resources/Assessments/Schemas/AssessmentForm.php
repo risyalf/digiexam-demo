@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Assessments\Schemas;
 
 use App\Models\Module;
 use App\Models\Test;
+use App\Models\TestQuestion;
 use App\Models\Topic;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -61,6 +62,17 @@ class AssessmentForm
                             ->where('topic_id', $get('topic_id'))
                             ->pluck('name', 'id')
                     )
+                    ->afterStateUpdated(function($state, $set) {
+                        if (!$state) {
+                            return;
+                        }
+
+                        $totalQuestion = TestQuestion::query()
+                                            ->where('test_id', $state)
+                                            ->count();
+
+                        $set('total_question', $totalQuestion);
+                    })
                     ->disabled(fn($get) => !$get('topic_id')),
                 Select::make('participant_groups')
                     ->label('KELAS PESERTA')
