@@ -20,9 +20,9 @@ return new class extends Migration
         Schema::create('participants', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->timestamps();
-            $table->foreignIdFor(Module::class);
-            $table->foreignIdFor(User::class);
-            $table->foreignIdFor(ParticipantGroup::class);
+            $table->foreignIdFor(Module::class)->constrained();
+            $table->foreignIdFor(User::class)->constrained();
+            $table->foreignIdFor(ParticipantGroup::class)->constrained();
             $table->integer('order_number')->unique()->nullable();
             $table->string('test_number')->unique()->nullable();
             $table->string('test_password')->nullable();

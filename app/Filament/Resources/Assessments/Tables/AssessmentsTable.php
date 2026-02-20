@@ -96,6 +96,10 @@ class AssessmentsTable
                     DeleteBulkAction::make(),
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make(),
+                    Action::make('sync')
+                        ->label('Sync Siswa')
+                        ->icon(Heroicon::ArrowUpCircle)
+                        ->color(Color::Emerald)
                 ]),
             ]);
     }

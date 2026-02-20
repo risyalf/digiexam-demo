@@ -6,6 +6,7 @@ use App\Action\GenerateParticipantTestNumberAndPassword;
 use App\Enum\Menu;
 use App\Filament\Imports\ParticipantImporter;
 use App\Filament\Resources\Participants\Pages\ManageParticipants;
+use App\Models\Module;
 use App\Models\Participant;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -16,6 +17,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ImportAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -50,10 +52,21 @@ class ParticipantResource extends Resource
                 ->preload()
                 ->required(),
             Select::make("participant_group_id")
+                ->label('Kelas')
                 ->relationship("participantGroup", "name")
                 ->preload()
                 ->searchable()
                 ->required(),
+            Select::make('module_id')
+                ->label('Modul')
+                ->options(
+                    Module::query()
+                    ->pluck('name', 'id')
+                ),
+            TextInput::make('order_number')
+                ->label('Nomor Urut')
+                ->numeric()
+                ->default(1)
         ]);
     }
 
@@ -94,9 +107,11 @@ class ParticipantResource extends Resource
                     ->label("Modul"),
                 TextColumn::make("test_number")
                     ->label('Nomor Test')
+                    ->copyable()
                     ->searchable(),
                 TextColumn::make("test_password")
                     ->label('Password Test')
+                    ->copyable()
                     ->searchable(),
             ])
             ->filters([
