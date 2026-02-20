@@ -17,9 +17,10 @@ class LockParticipant
             return;
         }
 
+        $lastStatus = $participantAssessment->status;
         $participantAssessment->unlock_token = null;
         $participantAssessment->status = ParticipantStatus::LOCKED;
-        $participantAssessment->last_status = $participantAssessment->status;
+        $participantAssessment->last_status = $lastStatus;
         $participantAssessment->save();
     }
 }
