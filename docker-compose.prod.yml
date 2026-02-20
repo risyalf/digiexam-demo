@@ -1,6 +1,8 @@
 services:
   app:
-    image: ghcr.io/alris-dev/student-assessment-cms:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
     container_name: student-assessment-cms
     restart: always
     ports:
@@ -16,7 +18,9 @@ services:
       - redis
 
   queue:
-    image: ghcr.io/alris-dev/student-assessment-cms:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
     container_name: student-assessment-cms-queue
     restart: unless-stopped
     env_file:
