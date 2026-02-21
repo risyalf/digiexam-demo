@@ -34,6 +34,8 @@ class AnswerReport extends Page implements HasForms
 
     protected static ?string $navigationLabel = "Evaluasi Jawaban";
 
+    protected static ?string $title = "Evaluasi Jawaban";
+
     protected static ?int $navigationSort = 3;
 
     public array $data = [
