@@ -30,6 +30,9 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id("admin")
             ->path("admin")
+            ->brandLogoHeight('4rem')
+            ->brandLogo(asset('images/logo_smk.png'))
+            ->favicon(asset('images/logo_smk.png'))
             ->authGuard("web")
             ->login(Login::class)
             ->colors([
@@ -49,7 +52,7 @@ class AdminPanelProvider extends PanelProvider
                 in: app_path("Filament/Widgets"),
                 for: "App\Filament\Widgets",
             )
-            ->widgets([AccountWidget::class, FilamentInfoWidget::class])
+            ->widgets([AccountWidget::class])
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
