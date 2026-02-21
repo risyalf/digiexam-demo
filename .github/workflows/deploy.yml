@@ -22,3 +22,4 @@ jobs:
           docker exec student-assessment-cms php artisan config:cache
           docker exec student-assessment-cms php artisan route:cache
           docker exec student-assessment-cms php artisan view:cache
+          docker exec student-assessment-cms php artisan storage:link
