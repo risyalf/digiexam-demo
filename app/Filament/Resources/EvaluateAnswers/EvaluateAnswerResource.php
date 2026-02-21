@@ -28,6 +28,8 @@ class EvaluateAnswerResource extends Resource
 
     protected static ?int $navigationSort = 3;
 
+    protected static bool $shouldRegisterNavigation = false;
+
     public static function form(Schema $schema): Schema
     {
         return EvaluateAnswerForm::configure($schema);
@@ -49,8 +51,8 @@ class EvaluateAnswerResource extends Resource
     {
         return [
             'index' => ListEvaluateAnswers::route('/'),
-            'create' => CreateEvaluateAnswer::route('/create'),
-            'edit' => EditEvaluateAnswer::route('/{record}/edit'),
+            // 'create' => CreateEvaluateAnswer::route('/create'),
+            // 'edit' => EditEvaluateAnswer::route('/{record}/edit'),
         ];
     }
 }
