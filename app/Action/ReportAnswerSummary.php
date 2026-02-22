@@ -32,7 +32,13 @@ class ReportAnswerSummary
                             'module_id' => $moduleId,
                             'topic_id' => $topicId
                         ])
-                        ->when($groupId, fn($q) => $q->where('group_id', $groupId));
+                        ->when($groupId, fn($q) => $q->whereRaw(
+                            "exists(
+                                select 1 from assessment_participant_groups apg
+                                where apg.assessment_id = id
+                                and apg.participant_group_id = '$groupId'
+                            )"
+                        ));
                     })
                     ->get();
 
