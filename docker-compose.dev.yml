@@ -11,7 +11,7 @@ services:
       - .env
     volumes:
       - ./:/app
-    command: sh -c "composer install && npm ci && php artisan octane:start --watch"
+    command: sh -c "composer install && npm ci && php artisan serve --host=0.0.0.0 --port=8000"
     depends_on:
       - mysql
       - redis
