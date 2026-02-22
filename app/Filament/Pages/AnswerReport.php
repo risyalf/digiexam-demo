@@ -11,6 +11,8 @@ use App\Models\Topic;
 use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -43,6 +45,7 @@ class AnswerReport extends Page implements HasForms
         'topic_id' => null,
         'group_id' => null,
         'type' => null,
+        'created_at' => null
     ];
 
     public function form(Schema $schema): Schema
@@ -83,6 +86,8 @@ class AnswerReport extends Page implements HasForms
                                 'DETAIL' => 'DETAIL',
                                 'SUMMARY' => 'SUMMARY'
                             ]),
+                        DatePicker::make('created_at')
+                            ->label('Tanggal Submit'),
                     ])
                     ->headerActions([
                         Action::make('download')
