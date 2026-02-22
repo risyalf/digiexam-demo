@@ -167,7 +167,7 @@ class AssessmentController extends Controller
                 );
             }
 
-            if (!$token->allModule && $token->assessment_id != $assessmentId) {
+            if (!$token->all_module && $token->assessment_id != $assessmentId) {
                 throw new Exception("TOKEN TIDAK UNTUK UJIAN INI!");
             }
 
