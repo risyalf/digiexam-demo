@@ -14,6 +14,7 @@ use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
 use Filament\Forms\Components\Select;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Number;
 
 class UserImporter extends Importer
@@ -37,15 +38,13 @@ class UserImporter extends Importer
                 ->requiredMapping()
                 ->rules(["required"]),
             ImportColumn::make("order_number")
-                ->exampleHeader('nomor urut')
+                ->exampleHeader("nomor urut")
                 ->rules(["required"]),
             ImportColumn::make("email")
                 ->requiredMapping()
                 ->rules(["email"]),
-            ImportColumn::make("nis")
-                ->rules(["required"]),
-            ImportColumn::make("password")
-                ->requiredMapping(),
+            ImportColumn::make("nis")->rules(["required"]),
+            ImportColumn::make("password")->requiredMapping(),
             ImportColumn::make("group"),
             ImportColumn::make("module"),
         ];
@@ -82,11 +81,15 @@ class UserImporter extends Importer
         foreach ($this->getCachedColumns() as $column) {
             $name = $column->getName();
 
-            if ($name === 'group' || $name === 'module' || $name === 'order_number') {
+            if (
+                $name === "group" ||
+                $name === "module" ||
+                $name === "order_number"
+            ) {
                 continue;
             }
 
-            if (! array_key_exists($name, $this->data)) {
+            if (!array_key_exists($name, $this->data)) {
                 continue;
             }
 
@@ -100,24 +103,24 @@ class UserImporter extends Importer
     {
         $this->record->save();
 
-        if (!empty($this->data['group']) && !empty($this->data['module'])) {
-            $module = Module::query()
-                        ->where('name', $this->data['module'])
-                        ->first();
-
-            $group = ParticipantGroup::firstOrCreate([
-                'name' => $this->data['group'],
+        if (!empty($this->data["group"]) && !empty($this->data["module"])) {
+            $module = Module::query()->firstOrCreate([
+                "name" => $this->data["module"],
             ]);
 
-            $participant = Participant::create([
-                'module_id' => $module->id,
-                'user_id' => $this->record->id,
-                'participant_group_id' => $group->id,
-                'order_number' => $this->data['order_number'],
+            $group = ParticipantGroup::firstOrCreate([
+                "name" => $this->data["group"],
+            ]);
+
+            Participant::create([
+                "module_id" => $module->id,
+                "user_id" => $this->record->id,
+                "participant_group_id" => $group->id,
+                "order_number" => $this->data["order_number"],
             ]);
         }
 
-        if ($role = $this->options['role'] ?? null) {
+        if ($role = $this->options["role"] ?? null) {
             $this->record->assignRole($role);
         }
     }

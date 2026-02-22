@@ -9,30 +9,7 @@ RUN apt-get update && apt-get install -y \
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# minimal laravel files
-COPY artisan artisan
-COPY bootstrap bootstrap
-COPY config config
-COPY routes routes
+# Tidak copy source code!
+# Semua dimount dari volume
 
-RUN mkdir -p storage/framework/cache \
-    storage/framework/sessions \
-    storage/framework/views \
-    storage/logs \
-    bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
-
-COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader
-
-COPY package.json package-lock.json ./
-RUN npm install
-
-COPY . .
-
-RUN npm run build
-
-ENV APP_ENV=production
-ENV APP_DEBUG=false
-
-CMD ["php", "artisan", "octane:frankenphp", "--workers=4"]
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]

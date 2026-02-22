@@ -206,7 +206,7 @@ class RoleResource extends Resource
 
     public static function getNavigationGroup(): string|UnitEnum|null
     {
-        return Menu::ADMIN;
+        return Menu::ADMIN->value;
     }
 
     public static function getModel(): string

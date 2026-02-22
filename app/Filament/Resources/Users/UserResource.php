@@ -36,7 +36,7 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static string|UnitEnum|null $navigationGroup = Menu::ADMIN;
+    protected static string|UnitEnum|null $navigationGroup = Menu::ADMIN->value;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::User;
 

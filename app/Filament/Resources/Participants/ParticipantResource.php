@@ -31,7 +31,8 @@ class ParticipantResource extends Resource
 {
     protected static ?string $model = Participant::class;
 
-    protected static string|UnitEnum|null $navigationGroup = Menu::DATA_PESERTA->value;
+    protected static string|UnitEnum|null $navigationGroup = Menu::DATA_PESERTA
+        ->value;
 
     protected static ?string $pluralLabel = "Peserta";
 
@@ -52,21 +53,18 @@ class ParticipantResource extends Resource
                 ->preload()
                 ->required(),
             Select::make("participant_group_id")
-                ->label('Kelas')
+                ->label("Kelas")
                 ->relationship("participantGroup", "name")
                 ->preload()
                 ->searchable()
                 ->required(),
-            Select::make('module_id')
-                ->label('Modul')
-                ->options(
-                    Module::query()
-                    ->pluck('name', 'id')
-                ),
-            TextInput::make('order_number')
-                ->label('Nomor Urut')
+            Select::make("module_id")
+                ->label("Modul")
+                ->options(Module::query()->pluck("name", "id")),
+            TextInput::make("order_number")
+                ->label("Nomor Urut")
                 ->numeric()
-                ->default(1)
+                ->default(1),
         ]);
     }
 
@@ -102,15 +100,16 @@ class ParticipantResource extends Resource
                 TextColumn::make("participantGroup.name")
                     ->searchable()
                     ->label("Kelas Peserta"),
-                TextColumn::make("module.name")
+                TextColumn::make("order_number")
                     ->searchable()
-                    ->label("Modul"),
+                    ->label("No Urut"),
+                TextColumn::make("module.name")->searchable()->label("Modul"),
                 TextColumn::make("test_number")
-                    ->label('Nomor Test')
+                    ->label("Nomor Test")
                     ->copyable()
                     ->searchable(),
                 TextColumn::make("test_password")
-                    ->label('Password Test')
+                    ->label("Password Test")
                     ->copyable()
                     ->searchable(),
             ])
@@ -118,18 +117,20 @@ class ParticipantResource extends Resource
                 //
             ])
             ->headerActions([
-                Action::make('generate')
-                    ->label('Generate Nomor Test Dan Password')
+                Action::make("generate")
+                    ->label("Generate Nomor Test Dan Password")
                     ->color(Color::Cyan)
                     ->icon(Heroicon::CloudArrowUp)
-                    ->action(function() {
+                    ->action(function () {
                         $participantIds = Participant::query()
-                                            ->whereNull('test_number')
-                                            ->whereNull('test_password')
-                                            ->pluck('id')
-                                            ->toArray();
+                            ->whereNull("test_number")
+                            ->whereNull("test_password")
+                            ->pluck("id")
+                            ->toArray();
 
-                        GenerateParticipantTestNumberAndPassword::execute($participantIds);
+                        GenerateParticipantTestNumberAndPassword::execute(
+                            $participantIds,
+                        );
                     }),
                 ImportAction::make()
                     ->icon(Heroicon::Plus)
