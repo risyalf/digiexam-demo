@@ -100,7 +100,7 @@
                                     <td>{{ $groupName }}</td>
                                 </tr>
                                 <tr>
-                                    <td>No. Test</td>
+                                    <td>Username</td>
                                     <td>:</td>
                                     <td>{{ $participant->test_number }}</td>
                                 </tr>
