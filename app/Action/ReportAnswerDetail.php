@@ -17,6 +17,7 @@ class ReportAnswerDetail
         $moduleId = $data['module_id'];
         $topicId = $data['topic_id'];
         $groupId = $data['group_id'];
+        $createdAt = $data['created_at'];
 
         $module = Module::findOrFail($moduleId);
         $topic = Topic::findOrFail($topicId);
@@ -39,6 +40,7 @@ class ReportAnswerDetail
                             )"
                         ));
                     })
+                    ->when($createdAt, fn($q) => $q->whereDate('created_at', $createdAt))
                     ->get();
 
         $assessment = Assessment::query()
