@@ -8,14 +8,41 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="bg-white py-16 rounded-xl shadow-lg text-center w-full max-w-sm">
-        <h1 class="text-2xl font-semibold mb-12">Aplikasi Lembar Jawab Siswa</h1>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
+    <h1 class="text-2xl font-semibold mb-12">Aplikasi Lembar Jawab Siswa</h1>
 
-        <a href="{{ route('download.apk') }}"
+    <div class="bg-white py-16 rounded-xl shadow-lg text-center w-full max-w-sm">
+    <div class="mb-8">
+        <a href="{{ route('download.apk.dynamic', 'assessment_full.apk') }}"
            class="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-blue-700 transition">
             Download
         </a>
+        <br>
+        <div class="mt-3">
+            (Ukuran : 49 MB. Untuk Versi Full)
+        </div>
+    </div>
+
+    <div class="mb-8">
+        <a href="{{ route('download.apk.dynamic', 'assessment_9_15.apk') }}"
+           class="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-blue-700 transition">
+            Download
+        </a>
+        <br>
+        <div class="mt-3">
+            (Ukuran : 18 MB. Untuk Versi Android Baru)
+        </div>
+    </div>
+    <div class="">
+        <a href="{{ route('download.apk.dynamic', 'assessment_1_8.apk') }}"
+           class="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-blue-700 transition">
+            Download
+        </a>
+        <br>
+        <div class="mt-3">
+            (Ukuran : 15 MB. Untuk Versi Android Lama)
+        </div>
+    </div>
     </div>
 </body>
 </html>
