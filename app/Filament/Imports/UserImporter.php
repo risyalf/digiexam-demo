@@ -105,7 +105,7 @@ class UserImporter extends Importer
 
         if (!empty($this->data["group"]) && !empty($this->data["module"])) {
             $module = Module::query()->firstOrCreate([
-                "name" => $this->data["group"],
+                "name" => $this->data["module"],
             ]);
 
             $group = ParticipantGroup::firstOrCreate([
