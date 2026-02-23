@@ -8,6 +8,7 @@ use App\Filament\Imports\ParticipantImporter;
 use App\Filament\Resources\Participants\Pages\ManageParticipants;
 use App\Models\Module;
 use App\Models\Participant;
+use App\Models\ParticipantGroup;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -24,6 +25,8 @@ use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use UnitEnum;
 
@@ -114,7 +117,18 @@ class ParticipantResource extends Resource
                     ->searchable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('participant_group_id')
+                    ->options(
+                        ParticipantGroup::query()
+                            ->pluck('name', 'id')
+                    )
+                    ->label('Kelas'),
+                SelectFilter::make('module_id')
+                    ->options(
+                        Module::query()
+                            ->pluck('name', 'id')
+                    )
+                    ->label('Modul'),
             ])
             ->headerActions([
                 Action::make("generate")

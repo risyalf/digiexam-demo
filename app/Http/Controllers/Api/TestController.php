@@ -17,35 +17,32 @@ class TestController extends Controller
             $request->validate([
                 'assessment_id' => 'required',
             ]);
-    
+
             $assessmentId = $request->assessment_id;
-    
-            $assessment = Assessment::findOrFail($assessmentId);
-    
+
+            $assessment = Assessment::with([
+                'test.testQuestions.options'
+            ])->findOrFail($assessmentId);
+
             $test = $assessment->test;
-    
-            $randomizeQuestion = $assessment->randomize_question;
-            $randomizeAnswer = $assessment->randomize_answer;
-    
-            $testQuestions = $test->testQuestions;
-            if ($randomizeQuestion) {
-                $testQuestions = $testQuestions->shuffle();
+
+            $questions = $test->testQuestions->toArray();
+
+            if ($assessment->randomize_question) {
+                shuffle($questions);
             }
-            
-            $testQuestions = $testQuestions->map(function ($question) use ($randomizeAnswer) {
-                $options = $randomizeAnswer
-                    ? $question->options->shuffle()
-                    : $question->options;
-            
-                $question->setRelation('options', $options);
-            
-                return $question;
-            });
-    
+
+            if ($assessment->randomize_answer) {
+                foreach ($questions as &$q) {
+                    shuffle($q['options']);
+                }
+            }
+
             return response()->json([
                 'message' => 'SUKSES AMBIL DATA OPTIONS',
-                'data' => $testQuestions,
+                'data' => $questions,
             ]);
+
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => $th->getMessage(),

@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Models\Participant;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class ParticipantController extends Controller
 {
@@ -36,6 +35,8 @@ class ParticipantController extends Controller
             if (!$participant) {
                 throw new Exception("NOMOR TEST ATAU PASSWORD ANDA SALAH. SILAHKAN MASUKKAN DATA YANG BENAR ATAU HUBUNGI OPERATOR.");
             }
+
+            $participant->tokens()->delete();
 
             $token = $participant->createToken('participant-token')->plainTextToken;
 

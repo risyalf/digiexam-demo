@@ -51,8 +51,8 @@ class GenerateToken extends Page implements HasForms, HasTable
     public array $filterFormData = [
         'date_from' => null,
         'date_to' => null,
-        'show_expired' => true,
-        'assessment_id' => null
+        'show_expired' => false,
+        'assessment_id' => null,
     ];
 
     protected function getForms(): array
@@ -154,6 +154,9 @@ class GenerateToken extends Page implements HasForms, HasTable
                             '*',
                             DB::raw("null as status"),
                         ])
+                        ->when($this->filterFormData['date_from'] && $this->filterFormData['date_to'], function($q) {
+                            $q->whereRaw("(start_date::date >= '{$this->filterFormData['date_from']}' and start_date::date <= '{$this->filterFormData['date_to']}')");
+                        })
                         ->when($this->filterFormData['date_from'] && $this->filterFormData['date_to'], function($q) {
                             $q->whereRaw("(start_date::date >= '{$this->filterFormData['date_from']}' and start_date::date <= '{$this->filterFormData['date_to']}')");
                         })
