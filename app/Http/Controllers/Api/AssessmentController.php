@@ -23,36 +23,30 @@ class AssessmentController extends Controller
     {
         try {
             $assessment = Assessment::query()
-                            ->where('id', $id)
-                            ->select([
-                                'id',
-                                'name',
-                                'start_date',
-                                'end_date',
-                                'time_test' 
-                            ])
-                            ->first();
+                ->where("id", $id)
+                ->select(["id", "name", "start_date", "end_date", "time_test"])
+                ->first();
 
             $participantAssessment = ParticipantAssessment::query()
-                                        ->where([
-                                            'participant_id' => auth()->user()->id,
-                                            'assessment_id' => $id
-                                        ])
-                                        ->first();
+                ->where([
+                    "participant_id" => auth()->user()->id,
+                    "assessment_id" => $id,
+                ])
+                ->first();
 
             $data = [
-                'id' => $assessment->id,
-                'participant_assessment_id' => $participantAssessment->id,
-                'name' => $assessment->name,
-                'start_date' => $assessment->start_date,
-                'end_date' => $assessment->end_date,
-                'time_test' => $assessment->time_test,
-                'status' => $participantAssessment->status,
+                "id" => $assessment->id,
+                "participant_assessment_id" => $participantAssessment->id,
+                "name" => $assessment->name,
+                "start_date" => $assessment->start_date,
+                "end_date" => $assessment->end_date,
+                "time_test" => $assessment->time_test,
+                "status" => $participantAssessment->status,
             ];
 
             return response([
                 "message" => "SUKSES MENGAMBIL DATA ASSESSMENT",
-                "data" => $data
+                "data" => $data,
             ]);
         } catch (\Throwable $th) {
             return response()->json(
@@ -69,37 +63,28 @@ class AssessmentController extends Controller
         try {
             $participantId = auth()->user()->id;
             $participantAssessments = ParticipantAssessment::query()
-                ->where('participant_id', $participantId)
+                ->with("assessment")
+                ->where("participant_id", $participantId)
                 ->get();
 
             $data = [];
 
-            foreach ($participantAssessments as $key => $participantAssessment) {
-                $assessment = Assessment::query()
-                    ->select([
-                        'id',
-                        'name',
-                        'start_date',
-                        'end_date',
-                        'time_test'
-                    ])
-                    ->where('id', $participantAssessment->assessment_id)
-                    ->first();
-
-                $data[] = [
-                    'id' => $assessment->id,
-                    'participant_assessment_id' => $participantAssessment->id,
-                    'name' => $assessment->name,
-                    'start_date' => $assessment->start_date,
-                    'end_date' => $assessment->end_date,
-                    'time_test' => $assessment->time_test,
-                    'status' => $participantAssessment->status,
+            $data = $participantAssessments->map(function ($pa) {
+                $a = $pa->assessment;
+                return [
+                    "id" => $a->id,
+                    "participant_assessment_id" => $pa->id,
+                    "name" => $a->name,
+                    "start_date" => $a->start_date,
+                    "end_date" => $a->end_date,
+                    "time_test" => $a->time_test,
+                    "status" => $pa->status,
                 ];
-            }
+            });
 
             return response([
                 "message" => "SUKSES MENGAMBIL DATA ASSESSMENT",
-                "data" => $data
+                "data" => $data,
             ]);
         } catch (\Throwable $th) {
             return response()->json(
@@ -179,12 +164,14 @@ class AssessmentController extends Controller
             $participantAssessment = ParticipantAssessment::query()
                 ->where([
                     "participant_id" => $participantId,
-                    "assessment_id" => $assessmentId
+                    "assessment_id" => $assessmentId,
                 ])
                 ->first();
 
             if (!$participantAssessment) {
-                throw new Exception("DATA SISWA UNTUK MENGIKUTI UJIAN TIDAK DI TEMUKAN!");
+                throw new Exception(
+                    "DATA SISWA UNTUK MENGIKUTI UJIAN TIDAK DI TEMUKAN!",
+                );
             }
             if ($participantAssessment->status == ParticipantStatus::FINISH) {
                 throw new Exception("SISWA TELAH SELESAI MENGERJAKAN UJIAN!");
@@ -193,20 +180,22 @@ class AssessmentController extends Controller
             $participantAssessment->update([
                 "assessment_token_id" => $token->id,
                 "status" => ParticipantStatus::LOGGED_IN,
-                "last_status" => $participantAssessment->status
+                "last_status" => $participantAssessment->status,
             ]);
 
             $data = $participantAssessment->only([
-                'id',
-                'assessment_id',
-                'start_time',
-                'end_time'
+                "id",
+                "assessment_id",
+                "start_time",
+                "end_time",
             ]);
 
-            $data['participant_name'] = $participantAssessment->participant->user->name;
-            $data['assessment_name'] = $participantAssessment->assessment->name;
-            $data['duration'] = $participantAssessment->assessment->time_test;
-            $data['locked'] = $participantAssessment->status == ParticipantStatus::LOCKED;
+            $data["participant_name"] =
+                $participantAssessment->participant->user->name;
+            $data["assessment_name"] = $participantAssessment->assessment->name;
+            $data["duration"] = $participantAssessment->assessment->time_test;
+            $data["locked"] =
+                $participantAssessment->status == ParticipantStatus::LOCKED;
 
             return response([
                 "message" => "SUKSES MASUK KE UJIAN",
@@ -230,29 +219,31 @@ class AssessmentController extends Controller
             ]);
 
             $participantAssessmentId = $request->participant_assessment_id;
-            $participantAssessment = ParticipantAssessment::findOrFail($participantAssessmentId);
+            $participantAssessment = ParticipantAssessment::findOrFail(
+                $participantAssessmentId,
+            );
             $assessment = $participantAssessment->assessment;
 
             $participantAssessment->update([
                 "start_time" => Carbon::now()->toDateTimeString(),
-                "end_time" => Carbon::now()->addMinutes(
-                    $assessment->time_test,
-                ),
+                "end_time" => Carbon::now()->addMinutes($assessment->time_test),
                 "status" => ParticipantStatus::IN_PROGRESS,
-                "last_status" => $participantAssessment->status
+                "last_status" => $participantAssessment->status,
             ]);
 
             $data = $participantAssessment->only([
-                'id',
-                'assessment_id',
-                'start_time',
-                'end_time'
+                "id",
+                "assessment_id",
+                "start_time",
+                "end_time",
             ]);
 
-            $data['participant_name'] = $participantAssessment->participant->user->name;
-            $data['assessment_name'] = $participantAssessment->assessment->name;
-            $data['duration'] = $participantAssessment->assessment->time_test;
-            $data['locked'] = $participantAssessment->status == ParticipantStatus::LOCKED;
+            $data["participant_name"] =
+                $participantAssessment->participant->user->name;
+            $data["assessment_name"] = $participantAssessment->assessment->name;
+            $data["duration"] = $participantAssessment->assessment->time_test;
+            $data["locked"] =
+                $participantAssessment->status == ParticipantStatus::LOCKED;
 
             return response([
                 "message" => "SUKSES MULAI UJIAN",
@@ -278,10 +269,10 @@ class AssessmentController extends Controller
         ]);
 
         ParticipantAssessment::query()
-            ->where('id', $request->participant_assessment_id)
+            ->where("id", $request->participant_assessment_id)
             ->update([
-                'status' => ParticipantStatus::FINISH,
-                'last_status' => ParticipantStatus::IN_PROGRESS,
+                "status" => ParticipantStatus::FINISH,
+                "last_status" => ParticipantStatus::IN_PROGRESS,
             ]);
 
         ProcessAnswer::dispatch($validated);
