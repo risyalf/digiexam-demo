@@ -20,6 +20,7 @@
             (Ukuran : 49 MB. Untuk Versi Full)
         </div>
     </div>
+    <br>
 
     <div class="mb-8">
         <a href="{{ route('download.apk.dynamic', 'assessment_9_15.apk') }}"
@@ -31,6 +32,7 @@
             (Ukuran : 18 MB. Untuk Versi Android Baru)
         </div>
     </div>
+    <br>
     <div class="">
         <a href="{{ route('download.apk.dynamic', 'assessment_1_8.apk') }}"
            class="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-blue-700 transition">
