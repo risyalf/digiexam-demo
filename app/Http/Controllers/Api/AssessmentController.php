@@ -62,13 +62,11 @@ class AssessmentController extends Controller
     public function get()
     {
         try {
-            $participant = Participant::query()
-                ->where("user_id", Auth::user()->id)
-                ->first();
+            $participantId = Auth::user()->id;
 
             $participantAssessments = ParticipantAssessment::query()
                 ->with("assessment")
-                ->where("participant_id", $participant->id)
+                ->where("participant_id", $participantId)
                 ->get();
 
             $data = [];
