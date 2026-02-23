@@ -43,7 +43,7 @@ services:
       MYSQL_USER: student
       MYSQL_PASSWORD: secret
     ports:
-      - "127.0.0.1:3307:3306"
+      - "3307:3306"
     volumes:
       - mysql-data:/var/lib/mysql
       - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
