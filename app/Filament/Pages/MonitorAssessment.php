@@ -8,6 +8,7 @@ use App\Enum\ParticipantStatus;
 use App\Models\Assessment;
 use App\Models\Participant;
 use App\Models\ParticipantAssessment;
+use App\Models\ParticipantGroup;
 use App\Models\Topic;
 use App\Models\User;
 use BackedEnum;
@@ -61,7 +62,8 @@ class MonitorAssessment extends Page implements HasTable, HasForms
     public array $filterFormData = [
         'status' => null,
         'name' => null,
-        'topic_id' => null
+        'topic_id' => null,
+        'group_id' => null
     ];
 
     protected function getForms(): array
@@ -170,6 +172,11 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                                     ...$datas
                                 ];
                             }),
+                        Select::make('group_id')
+                            ->label('Kelas')
+                            ->searchable()
+                            ->options(ParticipantGroup::query()
+                            ->pluck('name', 'id')),
                     ])
                     ->footerActionsAlignment(Alignment::Right)
                     ->footerActions([
@@ -199,6 +206,9 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                     })
                     ->when($this->filterFormData['topic_id'], function ($q) {
                         $q->whereHas('assessment', fn($q) => $q->where('topic_id', $this->filterFormData['topic_id']));
+                    })
+                    ->when($this->filterFormData['group_id'], function ($q) {
+                        $q->whereHas('participant', fn($q) => $q->where('participant_group_id', $this->filterFormData['group_id']));
                     })
             )
             ->heading('Peserta')
@@ -275,6 +285,10 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                 TextColumn::make('participant.user.name')
                     ->copyable()
                     ->label('Nama')
+                    ->alignLeft(),
+                TextColumn::make('participant.participantGroup.name')
+                    ->copyable()
+                    ->label('Kelas')
                     ->alignLeft(),
                 TextColumn::make('assessment.name')
                     ->copyable()
