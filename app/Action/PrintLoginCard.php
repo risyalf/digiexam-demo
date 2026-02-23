@@ -12,16 +12,14 @@ use function Symfony\Component\Clock\now;
 
 class PrintLoginCard
 {
-    public static function execute(string $moduleId, string $groupId)
+    public static function execute(string $moduleId, ?string $groupId)
     {
-        $group = ParticipantGroup::find($groupId);
-        $groupName = $group->name;
         $module = Module::find($moduleId);
         $moduleName = $module->name;
         $participants = Participant::query()
-                            ->with('user')
+                            ->with(['user', 'participantGroup'])
                             ->where('module_id', $moduleId)
-                            ->where('participant_group_id', $groupId)
+                            ->when($groupId, fn($q) => $q->where('participant_group_id', $groupId))
                             ->whereHas('participantAssessments.assessment', function ($q) {
                                 $q->whereDate('end_date', '>=', Carbon::now()->format('Y-m-d'));
                             })
@@ -33,13 +31,13 @@ class PrintLoginCard
                                 return $participant;
                             });
 
-        $pdf = Pdf::loadView('print.login-cards', compact('participants', 'groupName', 'moduleName'))
+        $pdf = Pdf::loadView('print.login-cards', compact('participants', 'moduleName'))
             ->setPaper('A4', 'portrait')
             ->setOptions([
                 'defaultFont' => 'DejaVu Sans',
                 'isHtml5ParserEnabled' => true,
                 'isRemoteEnabled' => true,
-            ]);;
+            ]);
 
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->stream();

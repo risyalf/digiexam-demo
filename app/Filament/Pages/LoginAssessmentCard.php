@@ -59,8 +59,7 @@ protected static ?int $navigationSort = 2;
                                 ->options(
                                     ParticipantGroup::query()
                                         ->pluck('name', 'id')
-                                )
-                                ->required(),
+                                ),
                         ])
                         ->footerActions([
                             Action::make('print')

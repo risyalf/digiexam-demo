@@ -97,7 +97,7 @@
                                 <tr>
                                     <td>Kelas</td>
                                     <td>:</td>
-                                    <td>{{ $groupName }}</td>
+                                    <td>{{ $participant->participantGroup->name }}</td>
                                 </tr>
                                 <tr>
                                     <td>Username</td>
