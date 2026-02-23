@@ -15,6 +15,7 @@ use App\Models\TestQuestionOption;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class AssessmentController extends Controller
@@ -61,10 +62,13 @@ class AssessmentController extends Controller
     public function get()
     {
         try {
-            $participantId = auth()->user()->id;
+            $participant = Participant::query()
+                ->where("user_id", Auth::user()->id)
+                ->first();
+
             $participantAssessments = ParticipantAssessment::query()
                 ->with("assessment")
-                ->where("participant_id", $participantId)
+                ->where("participant_id", $participant->id)
                 ->get();
 
             $data = [];
