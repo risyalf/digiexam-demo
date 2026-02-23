@@ -8,6 +8,7 @@ use App\Enum\ParticipantStatus;
 use App\Models\Assessment;
 use App\Models\Participant;
 use App\Models\ParticipantAssessment;
+use App\Models\Topic;
 use App\Models\User;
 use BackedEnum;
 use Carbon\Carbon;
@@ -59,7 +60,8 @@ class MonitorAssessment extends Page implements HasTable, HasForms
 
     public array $filterFormData = [
         'status' => null,
-        'name' => null
+        'name' => null,
+        'topic_id' => null
     ];
 
     protected function getForms(): array
@@ -155,7 +157,19 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                                     null => 'Semua Siswa',
                                     ...$siswas
                                 ];
-                            })
+                            }),
+                        Select::make('topic_id')
+                            ->label('Topik')
+                            ->searchable()
+                            ->options(function ($q) {
+                                $datas = Topic::query()
+                                    ->pluck('name', 'id');
+
+                                return [
+                                    null => 'Semua Topik',
+                                    ...$datas
+                                ];
+                            }),
                     ])
                     ->footerActionsAlignment(Alignment::Right)
                     ->footerActions([
@@ -173,7 +187,7 @@ class MonitorAssessment extends Page implements HasTable, HasForms
         return $table
             ->query(
                 ParticipantAssessment::query()
-                    ->with('participant')
+                    ->with(['participant', 'assessment'])
                     ->when($this->selectFormData['assessment_id'], function ($q) {
                         $q->where('assessment_id', $this->selectFormData['assessment_id']);
                     })
@@ -182,6 +196,9 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                     })
                     ->when($this->filterFormData['name'], function ($q) {
                         $q->whereHas('participant', fn($q) => $q->where('user_id', $this->filterFormData['name']));
+                    })
+                    ->when($this->filterFormData['topic_id'], function ($q) {
+                        $q->whereHas('assessment', fn($q) => $q->where('topic_id', $this->filterFormData['topic_id']));
                     })
             )
             ->heading('Peserta')
