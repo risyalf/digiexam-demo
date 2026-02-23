@@ -11,7 +11,7 @@
 
     <div class="bg-white py-16 rounded-xl shadow-lg text-center w-full max-w-sm">
     <div class="mb-8">
-        <a href="{{ route('download.apk.dynamic', 'assessment_full.apk') }}"
+        <a href="{{ route('download.apk.filename', 'assessment_full.apk') }}"
            class="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-blue-700 transition">
             Download
         </a>
@@ -23,7 +23,7 @@
     <br>
 
     <div class="mb-8">
-        <a href="{{ route('download.apk.dynamic', 'assessment_9_15.apk') }}"
+        <a href="{{ route('download.apk.filename', 'assessment_9_15.apk') }}"
            class="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-blue-700 transition">
             Download
         </a>
@@ -34,7 +34,7 @@
     </div>
     <br>
     <div class="">
-        <a href="{{ route('download.apk.dynamic', 'assessment_1_8.apk') }}"
+        <a href="{{ route('download.apk.filename', 'assessment_1_8.apk') }}"
            class="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-blue-700 transition">
             Download
         </a>

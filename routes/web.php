@@ -29,12 +29,12 @@ Route::get('/download/apk/{filename}', function ($filename) {
     return response()->streamDownload(function () use ($apkPath) {
         $stream = fopen($apkPath, 'rb');
         while (!feof($stream)) {
-            echo fread($stream, 1024 * 32); // stream 32KB
-            flush(); // kirim chunk ke client
+            echo fread($stream, 1024 * 32);
+            flush();
         }
         fclose($stream);
     }, $filename, [
         'Content-Type' => 'application/vnd.android.package-archive',
-        'Content-Length' => filesize($apkPath), // optional, lebih kompatibel
+        'Content-Length' => filesize($apkPath),
     ]);
-})->name('download.apk.dynamic');
+})->name('download.apk.filename');
