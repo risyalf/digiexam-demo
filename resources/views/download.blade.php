@@ -18,8 +18,12 @@
             </a>
             <br>
             <div class="mt-3">
-                (Ukuran : 49 MB. Untuk Versi Full)
+                (Ukuran : 49 MB)
             </div>
+            <div>
+                Versi full, direkomendasikan untuk HP keluaran 2017 ke atas, kompatibel untuk HP Android 6 sampai Android 15
+            </div>
+            <br>
         </div>
         <br>
 
@@ -30,8 +34,12 @@
             </a>
             <br>
             <div class="mt-3">
-                (Ukuran : 18 MB. Untuk Versi Android Baru)
+                (Ukuran : 18 MB)
             </div>
+            <div>
+                Versi ringan, direkomendasikan untuk semua HP yang rilis di atas 2015, kompatibel untuk HP Android 6 sampai Android 15
+            </div>
+            <br>
         </div>
         <br>
         <div class="">
@@ -41,20 +49,14 @@
             </a>
             <br>
             <div class="mt-3">
-                (Ukuran : 15 MB. Untuk Versi Android Lama)
+                (Ukuran : 15 MB)
             </div>
+            <div>
+                Mendukung Android 5.0 Lollipop dan 5.1, untuk perangkat yang masih memakai HP generasi lama.
+            </div>
+            <br>
         </div>
         <br>
-        <div class="">
-            <a href="{{ route('download.apk.filename', 'assessment_86.apk') }}"
-                class="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-blue-700 transition">
-                Download
-            </a>
-            <br>
-            <div class="mt-3">
-                (Ukuran : 18 MB. Untuk Versi Android Arsitektur 86)
-            </div>
-        </div>
     </div>
 </body>
 
