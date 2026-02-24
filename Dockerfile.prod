@@ -5,7 +5,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     curl git unzip nodejs npm \
     && rm -rf /var/lib/apt/lists/* \
-    && install-php-extensions pdo_mysql intl zip gd opcache pcntl redis
+    && install-php-extensions pdo_mysql intl zip gd opcache pcntl redis mbstring
 
 COPY --from=docker.io/composer:2 /usr/bin/composer /usr/bin/composer
 
