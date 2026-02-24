@@ -25,4 +25,4 @@ Route::get('/download/apk/{filename}', function ($filename) {
         'Content-Type' => 'application/vnd.android.package-archive',
         'Content-Disposition' => "attachment; filename=\"$filename\"",
     ]);
-});
+})->name('download.apk.filename');
