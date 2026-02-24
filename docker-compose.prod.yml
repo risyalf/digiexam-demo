@@ -6,7 +6,7 @@ services:
     container_name: student-assessment-cms
     restart: always
     ports:
-      - "9495:8000"
+      - "127.0.0.1:9495:8000"
     env_file:
       - .env
     volumes:
