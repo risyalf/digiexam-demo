@@ -17,24 +17,35 @@ Route::get('/download', function () {
 
 Route::get('/download/apk/{filename}', function ($filename) {
     if (! preg_match('/^[a-zA-Z0-9._-]+\.apk$/', $filename)) {
-        abort(400, 'Nama file tidak valid');
+        abort(400, 'Invalid filename');
     }
 
     $apkPath = public_path("apk/$filename");
 
     if (! File::exists($apkPath)) {
-        abort(404, 'File APK tidak ditemukan');
+        abort(404, 'File not found');
     }
 
-    return response()->streamDownload(function () use ($apkPath) {
-        $stream = fopen($apkPath, 'rb');
-        while (!feof($stream)) {
-            echo fread($stream, 1024 * 32);
-            flush();
-        }
-        fclose($stream);
-    }, $filename, [
-        'Content-Type' => 'application/vnd.android.package-archive',
-        'Content-Length' => filesize($apkPath),
-    ]);
+    while (ob_get_level() > 0) {
+        ob_end_clean();
+    }
+
+    $filesize = filesize($apkPath);
+
+    header('Content-Type: application/vnd.android.package-archive');
+    header("Content-Disposition: attachment; filename=\"$filename\"");
+    header('Content-Length: ' . $filesize);
+    header('Accept-Ranges: bytes');
+    header('Content-Transfer-Encoding: binary');
+    header('Cache-Control: no-cache');
+
+    $fp = fopen($apkPath, 'rb');
+
+    while (!feof($fp)) {
+        echo fread($fp, 1024 * 128);
+        flush();
+    }
+
+    fclose($fp);
+    exit;
 })->name('download.apk.filename');
