@@ -76,4 +76,9 @@ class Assessment extends Model
             'participant_group_id'
         );
     }
+
+    public function participantAssessments(): HasMany
+    {
+        return $this->hasMany(ParticipantAssessment::class, 'assessment_id', 'id');
+    }
 }
