@@ -34,5 +34,3 @@ RUN npm run build
 
 ENV APP_ENV=production
 ENV APP_DEBUG=false
-
-CMD ["php", "artisan", "octane:frankenphp", "--workers=4"]
