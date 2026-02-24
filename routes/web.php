@@ -21,7 +21,7 @@ Route::get('/download/apk/{filename}', function ($filename) {
     $apkPath = public_path("apk/$filename");
     if (! File::exists($apkPath)) abort(404);
 
-    return response()->file($apkPath, [
+    return response()->download($apkPath, null,[
         'Content-Type' => 'application/vnd.android.package-archive',
         'Content-Disposition' => "attachment; filename=\"$filename\"",
     ]);
