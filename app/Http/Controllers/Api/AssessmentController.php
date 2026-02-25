@@ -265,6 +265,9 @@ class AssessmentController extends Controller
     {
         $validated = $request->validate([
             "participant_assessment_id" => "required|uuid",
+            "value" => "array",
+            "value.*.test_question_id" => "uuid",
+            "value.*.answer" => "int",
             // "value" => "required|array|min:1",
             // "value.*.test_question_id" => "required|uuid",
             // "value.*.answer" => "nullable|int",
