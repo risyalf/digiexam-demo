@@ -12,7 +12,7 @@ use function Symfony\Component\Clock\now;
 
 class PrintLoginCard
 {
-    public static function execute(string $moduleId, ?string $groupId)
+    public static function execute(string $moduleId, ?string $groupId, ?string $participantId)
     {
         $module = Module::find($moduleId);
         $moduleName = $module->name;
@@ -23,6 +23,7 @@ class PrintLoginCard
                             ->whereHas('participantAssessments.assessment', function ($q) {
                                 $q->whereDate('end_date', '>=', Carbon::now()->format('Y-m-d'));
                             })
+                            ->when($participantId, fn($q) => $q->where('id', $participantId))
                             ->get()
                             ->map(function ($participant) {
                                 $name = $participant->user->name ?? '';
