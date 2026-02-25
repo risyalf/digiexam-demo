@@ -26,7 +26,7 @@
                 Versi full, direkomendasikan untuk HP keluaran 2017 ke atas, kompatibel untuk HP Android 6 sampai Android 15
             </div>
             <br>
-        </div>
+        </div> 
         <br>
 
         <div class="mb-8">
