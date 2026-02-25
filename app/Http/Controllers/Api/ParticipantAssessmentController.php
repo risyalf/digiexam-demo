@@ -71,6 +71,30 @@ class ParticipantAssessmentController extends Controller
         }
     }
 
+    public function status($id)
+    {
+        try {
+            $id = str_replace('"', "", $id);
+            $participantAssessment = ParticipantAssessment::find($id);
+
+            $status = null;
+
+            if ($participantAssessment) {
+                $status = $participantAssessment->status;
+            }
+
+            return response()->json([
+                'message' => "SUKSES GET DATA STATUS",
+                'data' => $status
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage()
+            ],
+            400);
+        }
+    }
+
     public function lock(Request $request)
     {
         try {

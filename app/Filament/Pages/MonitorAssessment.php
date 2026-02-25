@@ -248,7 +248,6 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                             $ids = $records->pluck('id')->toArray();
 
                             ParticipantAssessment::query()
-                                ->where('is_locked', false)
                                 ->whereIn('id', $ids)
                                 ->update([
                                     'unlock_token' => null,
