@@ -25,7 +25,7 @@ class UnlockParticipant
         // }
 
         $lastStatus = $participant->status;
-        $participant->status = $participant->last_status;
+        $participant->status = ParticipantStatus::IN_PROGRESS;
         $participant->last_status = $lastStatus;
         $participant->unlock_token = null;
         return $participant->save();

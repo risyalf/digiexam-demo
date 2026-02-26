@@ -31,7 +31,7 @@ class AuthController extends Controller
             'data' => $user,
             'token' => $token
         ]);
-    }
+    } 
 
     public function logout(Request $request)
     {
@@ -40,5 +40,5 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'LOGGED OUT'
         ]);
-    }
+    } 
 }

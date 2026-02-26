@@ -86,9 +86,7 @@ class ProcessAnswer implements ShouldQueue
             );
 
             $point = $correct / $totalQuestion * 100;
-
-            $participantAssessment->status = ParticipantStatus::SUBMITTED;
-            $participantAssessment->last_status = $participantAssessment->status;
+            
             $participantAssessment->point = $point;
             $participantAssessment->save();
         });

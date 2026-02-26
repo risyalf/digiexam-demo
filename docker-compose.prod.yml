@@ -12,7 +12,7 @@ services:
     volumes:
       - ./storage:/app/storage
       - ./logs:/app/logs
-    command: php artisan octane:frankenphp --workers=4
+    command: php artisan octane:frankenphp --workers=4 --max-requests=250
     depends_on:
       - mysql
       - redis

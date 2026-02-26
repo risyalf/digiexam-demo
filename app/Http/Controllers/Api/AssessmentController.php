@@ -265,15 +265,30 @@ class AssessmentController extends Controller
     {
         $validated = $request->validate([
             "participant_assessment_id" => "required|uuid",
-            "value" => "required|array|min:1",
-            "value.*.test_question_id" => "required|uuid",
-            "value.*.answer" => "nullable|int",
+            "value" => "array",
+            "value.*.test_question_id" => "uuid",
+            "value.*.answer" => "int",
+            // "value" => "required|array|min:1",
+            // "value.*.test_question_id" => "required|uuid",
+            // "value.*.answer" => "nullable|int",
         ]);
+
+        if (!$request->value) {
+            ParticipantAssessment::query()
+                ->where("id", $request->participant_assessment_id)
+                ->update([
+                    "status" => ParticipantStatus::SUBMITTED,
+                    "last_status" => ParticipantStatus::IN_PROGRESS,
+                ]);
+            return response()->json([
+                "message" => "Jawaban sedang diproses",
+            ]);
+        }
 
         ParticipantAssessment::query()
             ->where("id", $request->participant_assessment_id)
             ->update([
-                "status" => ParticipantStatus::FINISH,
+                "status" => ParticipantStatus::SUBMITTED,
                 "last_status" => ParticipantStatus::IN_PROGRESS,
             ]);
 

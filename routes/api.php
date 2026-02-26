@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\ApkController;
 use App\Http\Controllers\Api\AssessmentController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ParticipantAssessmentController;
@@ -10,6 +11,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::post("/auth/login", [AuthController::class, "login"])->name("api.user.login");
 Route::post("/auth/participant/login", [ParticipantController::class, 'login'])->name('api.participant.login');
+
+Route::prefix("apk")->group(function () {
+    Route::get("/version", [ApkController::class, "version"])->name("api.apk.version");
+});
 
 Route::middleware("auth:sanctum")->group(function () {
     Route::post("/auth/participant/logout", [ParticipantController::class, 'logout'])->name('api.participant.logout');
@@ -30,16 +35,10 @@ Route::middleware("auth:sanctum")->group(function () {
     });
 
     Route::prefix("participant-assessment")->group(function () {
-        Route::get("/{id}", [ParticipantAssessmentController::class, "get"])->name(
-            "api.participant.assessment.get",
-        );
-        Route::post("/lock", [ParticipantAssessmentController::class, "lock"])->name(
-            "api.participant.assessment.lock",
-        );
-        Route::post("/unlock", [
-            ParticipantAssessmentController::class,
-            "unlock",
-        ])->name("api.participant.assessment.unlock");
+        Route::get("/{id}", [ParticipantAssessmentController::class, "get"])->name("api.participant.assessment.get");
+        Route::get("/status/{id}", [ParticipantAssessmentController::class, "status"])->name("api.participant.assessment.status");
+        Route::post("/lock", [ParticipantAssessmentController::class, "lock"])->name("api.participant.assessment.lock");
+        Route::post("/unlock", [ParticipantAssessmentController::class,"unlock"])->name("api.participant.assessment.unlock");
     });
 
     Route::prefix("assessment")->group(function () {
