@@ -31,7 +31,7 @@ class AuthController extends Controller
             'data' => $user,
             'token' => $token
         ]);
-    }
+    } 
 
     public function logout(Request $request)
     {
