@@ -236,6 +236,28 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                     )
                     ->successNotification(Notification::make()->success()->title('SUKSES GENERATE UNLOCK TOKEN'))
                     ->deselectRecordsAfterCompletion(),
+                Action::make('open-same')
+                    ->label('Generate Unlock Token YANG SAMA')
+                    ->accessSelectedRecords()
+                    ->successNotificationTitle('Sukses Membuka Ujian Siswa!')
+                    ->requiresConfirmation()
+                    ->color(Color::Emerald)
+                    ->icon(Heroicon::LockOpen)
+                    ->modal()
+                    ->action(
+                        function (Collection $records) {
+                            $ids = $records->pluck('id')->toArray();
+
+                            ParticipantAssessment::query()
+                                ->where('status', ParticipantStatus::LOCKED)
+                                ->whereIn('id', $ids)
+                                ->update([
+                                    'unlock_token' => GenerateRandomString::execute(),
+                                ]);
+                        }
+                    )
+                    ->successNotification(Notification::make()->success()->title('SUKSES GENERATE UNLOCK TOKEN'))
+                    ->deselectRecordsAfterCompletion(),
                 Action::make('lock')
                     ->label('Kunci Siswa')
                     ->accessSelectedRecords()
