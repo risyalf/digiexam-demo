@@ -2,6 +2,8 @@ FROM docker.io/dunglas/frankenphp:php8.4
 
 WORKDIR /app
 
+COPY php.ini /usr/local/etc/php/php.ini
+
 RUN apt-get update && apt-get install -y \
     curl git unzip nodejs npm \
     && rm -rf /var/lib/apt/lists/* \

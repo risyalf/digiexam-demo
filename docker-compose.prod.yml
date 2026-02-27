@@ -11,8 +11,7 @@ services:
       - .env
     volumes:
       - ./storage:/app/storage
-      - ./logs:/app/logs
-    command: php artisan octane:frankenphp --workers=3 --max-requests=250
+    command: php artisan octane:frankenphp --workers=3 --max-requests=250 --log-level
     depends_on:
       - mysql
       - redis
@@ -27,7 +26,6 @@ services:
       - .env
     volumes:
       - ./storage:/app/storage
-      - ./logs:/app/logs
     command: php artisan queue:work --sleep=3 --tries=3 --timeout=90
     depends_on:
       - mysql
