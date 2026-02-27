@@ -31,10 +31,8 @@ return [
     */
 
     "deprecations" => [
-        "driver" => "single",
-        "path" => storage_path("logs/deprecations.log"),
-        "level" => env("LOG_LEVEL", "debug"),
-        "replace_placeholders" => true,
+        "channel" => env("LOG_DEPRECATIONS_CHANNEL", "null"),
+        "trace" => env("LOG_DEPRECATIONS_TRACE", false),
     ],
 
     /*
