@@ -13,6 +13,20 @@
     <br>
     <h1 class="text-xl font-semibold mb-12">Build Baru</h1>
     <div class="bg-white py-16 rounded-xl shadow-lg text-center w-full max-w-sm">
+        <div class="">
+            <a href="https://github.com/alris-dev/student-assessment-releases/releases/tag/build"
+                target="_blank"
+                class="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-blue-700 transition">
+                Link All
+            </a>
+            <br>
+            <div>
+                Semua versi apk
+            </div>
+            <br>
+        </div>
+        <br>
+
         <div class="mb-8">
             <a href="https://drive.google.com/file/d/13w_AOINt8D5rfb6v3Y852WaMkEupaCt1/view?usp=drive_link"
                 target="_blank"
