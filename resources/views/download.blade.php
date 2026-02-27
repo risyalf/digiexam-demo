@@ -8,13 +8,14 @@
 </head>
 
 <body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
-    <h1 class="text-2xl font-semibold mb-12">Aplikasi Lembar Jawab Siswa</h1>
+    <h1 class="text-2xl font-semibold mb-12">Aplikasi Lembar Jawab Siswa (Sementara)</h1>
 
     <br>
     <h1 class="text-xl font-semibold mb-12">Build Baru</h1>
     <div class="bg-white py-16 rounded-xl shadow-lg text-center w-full max-w-sm">
         <div class="mb-8">
-            <a href="{{ route('download.apk.new.filename', 'assessment_full.apk') }}"
+            <a href="https://drive.google.com/file/d/13w_AOINt8D5rfb6v3Y852WaMkEupaCt1/view?usp=drive_link"
+                target="_blank"
                 class="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-blue-700 transition">
                 Download
             </a>
@@ -30,7 +31,8 @@
         <br>
 
         <div class="mb-8">
-            <a href="{{ route('download.apk.new.filename', 'assessment_v_new.apk') }}"
+            <a href="https://drive.google.com/file/d/16J5ZNgc4F68ny7E0DSMD_2rEwcqcog7o/view?usp=drive_link"
+                target="_blank"
                 class="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-blue-700 transition">
                 Download
             </a>
@@ -45,7 +47,8 @@
         </div>
         <br>
         <div class="">
-            <a href="{{ route('download.apk.new.filename', 'assessment_v_old.apk') }}"
+            <a href="https://drive.google.com/file/d/1akC51jH99UcDy06-43CuDok4QSH225zp/view?usp=drive_link"
+                target="_blank"
                 class="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-blue-700 transition">
                 Download
             </a>
@@ -60,7 +63,7 @@
         </div>
         <br>
     </div>
-    <br>
+    {{-- <br>
     <h1 class="text-xl font-semibold mb-12">Build Lama</h1>
     <div class="bg-white py-16 rounded-xl shadow-lg text-center w-full max-w-sm">
         <div class="mb-8">
@@ -109,7 +112,7 @@
             <br>
         </div>
         <br>
-    </div>
+    </div> --}}
 </body>
 
 </html>
