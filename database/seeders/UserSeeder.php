@@ -16,19 +16,15 @@ class UserSeeder extends Seeder
         $adminPassword = Hash::make("RootSwadaya!123");
 
         // admin & guru (1 query)
-        User::upsert(
+        User::create(
             [
-                [
-                    "name" => "Admin SMK Swadaya",
-                    "email" => "swadayasemarang@gmail.com",
-                    "nis" => "admin",
-                    "password" => $adminPassword,
-                    "created_at" => $now,
-                    "updated_at" => $now,
-                ],
-            ],
-            ["email"],
-            ["name", "password", "updated_at"],
+                "name" => "Admin SMK Swadaya",
+                "email" => "swadayasemarang@gmail.com",
+                "nis" => "admin",
+                "password" => $adminPassword,
+                "created_at" => $now,
+                "updated_at" => $now,
+            ]
         );
     }
 }
