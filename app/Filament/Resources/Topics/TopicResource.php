@@ -63,7 +63,7 @@ class TopicResource extends Resource
             ->columns([
                 TextColumn::make('no')
                     ->label('NO.')
-                    ->rowIndex(),
+                    ->rowIndex(isFromZero:false),
                 TextColumn::make('module.name')
                     ->label('NAMA MODUL')
                     ->alignCenter(),
