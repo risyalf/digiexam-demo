@@ -19,7 +19,7 @@ return new class extends Migration
             $table->unique(
                 ["name", "deleted_at"],
                 "tests_name_deleted_at_unique",
-            );
+            );  
         });
     }
 
