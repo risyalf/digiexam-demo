@@ -53,7 +53,7 @@ class ModuleResource extends Resource
             ->columns([
                 TextColumn::make('no')
                     ->label('NO.')
-                    ->rowIndex(),
+                    ->rowIndex(isFromZero:false),
                 TextColumn::make('name')
                     ->label('NAMA')
                     ->alignCenter(),
@@ -70,6 +70,7 @@ class ModuleResource extends Resource
                 ForceDeleteAction::make(),
                 RestoreAction::make(),
             ])
+            ->paginated()
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),

@@ -184,7 +184,8 @@ class RoleResource extends Resource
                 //
             ])
             ->recordActions([EditAction::make(), DeleteAction::make()])
-            ->toolbarActions([DeleteBulkAction::make()]);
+            ->toolbarActions([DeleteBulkAction::make()])
+            ->paginated();
     }
 
     public static function getRelations(): array

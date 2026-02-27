@@ -211,6 +211,7 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                         $q->whereHas('participant', fn($q) => $q->where('participant_group_id', $this->filterFormData['group_id']));
                     })
             )
+            ->paginated()
             ->heading('Peserta')
             ->headerActions([
                 Action::make('open')
@@ -301,7 +302,7 @@ class MonitorAssessment extends Page implements HasTable, HasForms
             ])
             ->columns([
                 TextColumn::make('No.')
-                    ->rowIndex()
+                    ->rowIndex(isFromZero:false)
                     ->alignCenter(),
                 TextColumn::make('participant.user.name')
                     ->copyable()

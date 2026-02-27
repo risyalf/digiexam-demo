@@ -169,7 +169,7 @@ class GenerateToken extends Page implements HasForms, HasTable
                 )
                 ->columns([
                     TextColumn::make('No.')
-                        ->rowIndex()
+                        ->rowIndex(isFromZero:false)
                         ->copyable(),
                     TextColumn::make('value')
                         ->label('Token')
@@ -208,7 +208,8 @@ class GenerateToken extends Page implements HasForms, HasTable
                             'EXPIRED' => 'danger',
                             default => 'gray',
                         }),
-                ]);
+                ])
+                ->paginated();
     }
 
     public function createToken()

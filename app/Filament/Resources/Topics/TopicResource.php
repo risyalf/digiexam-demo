@@ -80,6 +80,7 @@ class TopicResource extends Resource
             ->filters([
                 TrashedFilter::make(),
             ])
+            ->paginated()
             ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
@@ -92,7 +93,8 @@ class TopicResource extends Resource
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->paginated();
     }
 
     public static function getPages(): array

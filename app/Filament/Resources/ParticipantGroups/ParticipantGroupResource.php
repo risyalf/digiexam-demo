@@ -104,7 +104,8 @@ class ParticipantGroupResource extends Resource
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->paginated();
     }
 
     public static function getPages(): array

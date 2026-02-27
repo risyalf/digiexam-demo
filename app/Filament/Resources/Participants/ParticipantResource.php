@@ -158,7 +158,8 @@ class ParticipantResource extends Resource
             ])
             ->toolbarActions([
                 BulkActionGroup::make([DeleteBulkAction::make()]),
-            ]);
+            ])
+            ->paginated();
     }
 
     public static function getPages(): array

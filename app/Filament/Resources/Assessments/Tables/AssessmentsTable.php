@@ -25,7 +25,7 @@ class AssessmentsTable
             ->columns([
                 TextColumn::make('no')
                     ->label('No.')
-                    ->rowIndex(),
+                    ->rowIndex(isFromZero:false),
                 TextColumn::make('name')
                     ->label('NAMA')
                     ->copyable(),
@@ -97,6 +97,7 @@ class AssessmentsTable
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make()
                 ]),
-            ]);
+            ])
+            ->paginated();
     }
 }

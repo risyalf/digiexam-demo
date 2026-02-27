@@ -68,7 +68,7 @@ class TestResource extends Resource
             ->columns([
                 TextColumn::make('no')
                     ->label('NO.')
-                    ->rowIndex(),
+                    ->rowIndex(isFromZero:false),
                 TextColumn::make('topic.name')
                     ->label('NAMA TOPIK')
                     ->alignCenter(),
@@ -204,7 +204,8 @@ class TestResource extends Resource
                     ForceDeleteBulkAction::make(),
                     RestoreBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->paginated();
     }
 
     public static function getPages(): array

@@ -28,7 +28,7 @@ class TestQuestionsTable
     {
         return $table
             ->columns([
-                TextColumn::make('no')->label('NO.')->rowIndex(),
+                TextColumn::make('no')->label('NO.')->rowIndex(isFromZero:false),
                 TextColumn::make('created_at')->label('DIBUAT PADA')->alignCenter(),
                 TextColumn::make('name')->label('NAMA')->wrap()->html(),
                 TextColumn::make('option_answers')
@@ -151,6 +151,7 @@ class TestQuestionsTable
                         }
                     }),
             ])
-            ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make(), ForceDeleteBulkAction::make(), RestoreBulkAction::make()])]);
+            ->toolbarActions([BulkActionGroup::make([DeleteBulkAction::make(), ForceDeleteBulkAction::make(), RestoreBulkAction::make()])])
+            ->paginated();
     }
 }
