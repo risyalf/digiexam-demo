@@ -6,8 +6,6 @@ assessment-admin.smkswadaya.sch.id {
     file_server
     encode gzip
 
-    tls youremail@example.com
-
     @http {
         protocol http
     }
