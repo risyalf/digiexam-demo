@@ -17,7 +17,7 @@ assessment-admin.smkswadaya.sch.id {
         Referrer-Policy "strict-origin-when-cross-origin"
         Permissions-Policy "geolocation=(), microphone=()"
     }
-
+ 
     @storage {
         path /storage/*
     }
