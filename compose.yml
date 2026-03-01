@@ -17,16 +17,17 @@ services:
       - mysql
       - redis
 
-  nginx:
-    image: nginx:alpine
-    container_name: student-assessment-nginx
+  caddy:
+    image: docker.io/caddy:alpine
+    container_name: student-assessment-caddy
     restart: unless-stopped
     tty: true
     ports:
-      - "127.0.0.1:9495:80"
+      - "80:80"
+      - "443:443"
     volumes:
       - student-assessment-cms-data:/var/www/app
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./Caddyfile:/etc/caddy/Caddyfile
     depends_on:
       - app
 

@@ -1,0 +1,15 @@
+assessment-admin.smkswadaya.sch.id {
+    root * /var/www/app/public
+
+    php_fastcgi app:9000
+
+    file_server
+    encode gzip
+
+    tls youremail@example.com
+
+    @http {
+        protocol http
+    }
+    redir @http https://{host}{uri} permanent
+}
