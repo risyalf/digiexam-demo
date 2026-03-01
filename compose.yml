@@ -16,6 +16,8 @@ services:
     depends_on:
       - mysql
       - redis
+    networks:
+      - student-assessment-cms-network
 
   caddy:
     image: docker.io/caddy:alpine
@@ -30,6 +32,8 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile
     depends_on:
       - app
+    networks:
+      - student-assessment-cms-network
 
   queue:
     build:
@@ -45,6 +49,8 @@ services:
     depends_on:
       - mysql
       - redis
+    networks:
+      - student-assessment-cms-network
 
   mysql:
     image: docker.io/mysql:8.0.45-bookworm
@@ -60,6 +66,8 @@ services:
     volumes:
       - mysql-data:/var/lib/mysql
       - ./mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    networks:
+      - student-assessment-cms-network
 
   redis:
     image: docker.io/redis:8.6.0-alpine
@@ -68,8 +76,14 @@ services:
     command: redis-server --appendonly yes
     volumes:
       - redis-data:/data
+    networks:
+      - student-assessment-cms-network
 
 volumes:
   student-assessment-cms-data:
   mysql-data:
   redis-data:
+
+networks:
+  student-assessment-cms-network:
+    driver: bridge
