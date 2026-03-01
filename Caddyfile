@@ -27,3 +27,7 @@ assessment-admin.smkswadaya.sch.id {
         rewrite * /index.php
     }
 }
+
+dashboard.smkswadaya.sch.id {
+	reverse_proxy grafana:3000
+}
