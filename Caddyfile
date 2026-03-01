@@ -1,17 +1,15 @@
 assessment-admin.smkswadaya.sch.id {
     root * /var/www/app/public
-
     php_fastcgi app:9000
-
     file_server
-
-    encode gzip
+    encode gzip zstd
 
     @http {
         protocol http
     }
     redir @http https://{host}{uri} permanent
 
+    # Security headers
     header {
         Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
         X-Frame-Options "SAMEORIGIN"
