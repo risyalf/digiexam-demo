@@ -11,16 +11,21 @@ assessment-admin.smkswadaya.sch.id {
 
     # Security headers
     header {
-        Access-Control-Allow-Origin "https://assessment.smkswadaya.sch.id"
-        Access-Control-Allow-Methods "GET, POST, OPTIONS"
-        Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
-        Access-Control-Allow-Credentials "true"
-
         Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
         X-Frame-Options "SAMEORIGIN"
         X-Content-Type-Options "nosniff"
         Referrer-Policy "strict-origin-when-cross-origin"
         Permissions-Policy "geolocation=(), microphone=()"
+    }
+
+    @storage {
+        path /storage/*
+    }
+    header @storage {
+        Access-Control-Allow-Origin "https://assessment.smkswadaya.sch.id"
+        Access-Control-Allow-Methods "GET, POST, OPTIONS"
+        Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+        Access-Control-Allow-Credentials "true"
     }
 
     @static_assets {
