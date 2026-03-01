@@ -4,10 +4,28 @@ assessment-admin.smkswadaya.sch.id {
     php_fastcgi app:9000
 
     file_server
+
     encode gzip
 
     @http {
         protocol http
     }
     redir @http https://{host}{uri} permanent
+
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Frame-Options "SAMEORIGIN"
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy "strict-origin-when-cross-origin"
+        Permissions-Policy "geolocation=(), microphone=()"
+    }
+
+    @static_assets {
+        path *.css *.js *.woff2 *.woff *.png *.jpg *.jpeg *.gif *.svg *.ico
+    }
+    header @static_assets Cache-Control "public, max-age=31536000, immutable"
+
+    handle_errors {
+        rewrite * /index.php
+    }
 }
