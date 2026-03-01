@@ -10,6 +10,7 @@ services:
       - "9000"
     volumes:
       - student-assessment-cms-data:/var/www/app
+      - ./storage/app/public:/var/www/app/storage/public
     env_file:
       - .env
     depends_on:
@@ -29,20 +30,20 @@ services:
     depends_on:
       - app
 
-  # queue:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   container_name: student-assessment-cms-queue
-  #   restart: unless-stopped
-  #   env_file:
-  #     - .env
-  #   volumes:
-  #     - ./storage:/app/storage
-  #   command: php artisan queue:work --sleep=3 --tries=3 --timeout=90
-  #   depends_on:
-  #     - mysql
-  #     - redis
+  queue:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: student-assessment-cms-queue
+    restart: unless-stopped
+    env_file:
+      - .env
+    volumes:
+      - ./storage/app/public:/var/www/app/storage/public
+    command: php artisan queue:work --sleep=3 --tries=3 --timeout=90
+    depends_on:
+      - mysql
+      - redis
 
   mysql:
     image: docker.io/mysql:8.0.45-bookworm
