@@ -31,3 +31,10 @@ assessment-admin.smkswadaya.sch.id {
 dashboard.smkswadaya.sch.id {
 	reverse_proxy grafana:3000
 }
+
+assessment.smkswadaya.sch.id {
+    root * /home/deploy/student-assessment-exam
+    try_files {path} /index.html
+    file_server
+    encode gzip zstd
+}
