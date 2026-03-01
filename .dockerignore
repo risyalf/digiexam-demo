@@ -12,3 +12,5 @@ bootstrap/cache
 Dockerfile
 compose.yml
 README.md
+storage/*
+!storage/app/public
