@@ -1,5 +1,4 @@
 http://assessment-admin.smkswadaya.sch.id {
-    auto_https off
     root * /var/www/app/public
     php_fastcgi app:9000
     file_server
@@ -37,12 +36,10 @@ http://assessment-admin.smkswadaya.sch.id {
 }
 
 http://dashboard.smkswadaya.sch.id {
-    auto_https off
 	reverse_proxy grafana:3000
 }
 
 http://assessment.smkswadaya.sch.id {
-    auto_https off
     root * /home/deploy/student-assessment-exam
     try_files {path} /index.html
     file_server
