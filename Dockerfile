@@ -70,6 +70,6 @@ FROM docker.io/caddy:alpine AS caddy-base
 
 WORKDIR /var/www/app
 
-COPY --from=app-base /var/www/app /var/www/app
+COPY --from=app-base /var/www/app/public /var/www/app/public
 
 COPY ./Caddyfile /etc/caddy/Caddyfile
