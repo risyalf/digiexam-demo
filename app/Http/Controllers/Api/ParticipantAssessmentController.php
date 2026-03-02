@@ -80,9 +80,16 @@ class ParticipantAssessmentController extends Controller
 
             $status = null;
 
-            if ($participantAssessment) {
-                $status = $participantAssessment->status;
+            if(!$participantAssessment) {
+                $participantId = auth()->user()->id;
+
+                $participantAssessment = ParticipantAssessment::query()
+                                            ->where('participant_id', $participantId)
+                                            ->orderBy('updated_at', 'DESC')
+                                            ->first();
             }
+
+            $status = $participantAssessment->status;
 
             return response()->json([
                 'message' => "SUKSES GET DATA STATUS",
