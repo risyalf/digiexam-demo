@@ -10,7 +10,7 @@ services:
     expose:
       - "9000"
     volumes:
-      - ./storage/app/public:/var/www/app/storage/public
+      - ./storage/app/public:/var/www/app/storage/app/public
     env_file:
       - .env
     depends_on:
