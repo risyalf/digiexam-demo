@@ -5,17 +5,13 @@ namespace App\Http\Controllers\Api;
 use App\Enum\ParticipantStatus;
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessAnswer;
-use App\Models\Answer;
 use App\Models\Assessment;
 use App\Models\Participant;
 use App\Models\AssessmentToken;
 use App\Models\ParticipantAssessment;
-use App\Models\TestQuestion;
-use App\Models\TestQuestionOption;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class AssessmentController extends Controller
