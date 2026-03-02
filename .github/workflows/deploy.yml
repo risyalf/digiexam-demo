@@ -10,34 +10,8 @@ jobs:
     runs-on: [self-hosted, live]
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Pull latest code
+      - name: Run Deploy Script
         run: |
           cd /home/deploy/student-assessment-cms
-          git fetch --all
-          git reset --hard origin/main
-
-      # - name: Build & Up Containers
-      #   run: |
-      #     cd /home/deploy/student-assessment-cms
-      #     docker compose up -d --build
-
-      - name: Wait for App to be Healthy
-        run: |
-          until docker exec student-assessment-cms curl -sf https://assessment-admin.smkswadaya.sch.id/ping; do
-            echo "Waiting for app..."
-            sleep 5
-          done
-
-      - name: Run Migrations
-        run: |
-          docker exec student-assessment-cms php artisan migrate --force
-
-      - name: Cache Configs
-        run: |
-          docker exec student-assessment-cms php artisan config:cache
-          docker exec student-assessment-cms php artisan route:cache
-          docker exec student-assessment-cms php artisan view:cache
-          docker exec student-assessment-cms php artisan storage:link
+          chmod +x deploy.sh
+          ./deploy.sh
