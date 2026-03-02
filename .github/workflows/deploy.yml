@@ -19,10 +19,10 @@ jobs:
           git fetch --all
           git reset --hard origin/main
 
-      - name: Build & Up Containers
-        run: |
-          cd /home/deploy/student-assessment-cms
-          docker compose up -d --build --no-cache
+      # - name: Build & Up Containers
+      #   run: |
+      #     cd /home/deploy/student-assessment-cms
+      #     docker compose up -d --build
 
       - name: Wait for App to be Healthy
         run: |
