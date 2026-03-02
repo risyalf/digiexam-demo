@@ -22,7 +22,7 @@ jobs:
       - name: Build & Up Containers
         run: |
           cd /home/deploy/student-assessment-cms
-          docker compose up -d --build
+          docker compose up -d --build --no-cache
 
       - name: Wait for App to be Healthy
         run: |
