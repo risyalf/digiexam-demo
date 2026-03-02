@@ -136,7 +136,7 @@ class AssessmentController extends Controller
                 "assessment_token" => "required",
             ]);
 
-            $assessmentId = Assessment::first()->id;
+            $assessmentId = $request->assessment_id;
             $participantId = auth()->user()->id;
             $assessmentToken = $request->assessment_token;
 
