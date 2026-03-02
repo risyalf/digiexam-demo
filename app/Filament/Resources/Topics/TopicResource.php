@@ -58,7 +58,7 @@ class TopicResource extends Resource
     }
 
     public static function table(Table $table): Table
-    {
+    { 
         return $table
             ->columns([
                 TextColumn::make('no')
