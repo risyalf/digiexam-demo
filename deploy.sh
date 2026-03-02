@@ -10,7 +10,7 @@ MAX_WAIT=120
 INTERVAL=5
 ELAPSED=0
 
-echo "🚀 Starting Deploy..."
+echo "🚀🚀 Starting Deploy..."
 
 cd $APP_DIR
 
