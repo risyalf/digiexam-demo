@@ -27,6 +27,8 @@ services:
     ports:
       - "80:80"
       - "443:443"
+    environment:
+      - CADDY_AUTOSAVE=disabled
     volumes:
       - student-assessment-cms-data:/var/www/app
       - ./Caddyfile:/etc/caddy/Caddyfile
