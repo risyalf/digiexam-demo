@@ -66,6 +66,9 @@ class AssessmentController extends Controller
 
             $participantAssessments = ParticipantAssessment::query()
                 ->with("assessment")
+                ->whereHas("assessment", function ($q) {
+                    $q->whereNull("deleted_at");
+                })
                 ->where("participant_id", $participantId)
                 ->get();
 
