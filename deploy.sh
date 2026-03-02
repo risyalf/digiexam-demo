@@ -4,7 +4,11 @@ set -e
 
 APP_DIR="/home/deploy/student-assessment-cms"
 CONTAINER_NAME="student-assessment-cms"
-# HEALTHCHECK_URL="https://assessment-admin.smkswadaya.sch.id/ping"
+# HEALTHCHECK_URL="http://localhost/ping"
+
+MAX_WAIT=120
+INTERVAL=5
+ELAPSED=0
 
 echo "🚀 Starting Deploy..."
 
@@ -17,11 +21,18 @@ git reset --hard origin/main
 echo "🐳 Build & Start Containers..."
 docker compose up -d --build
 
-echo "⏳ Waiting for app to be healthy..."
+echo "⏳ Waiting for app to be healthy (max ${MAX_WAIT}s)..."
 
 # until docker exec $CONTAINER_NAME curl -sf $HEALTHCHECK_URL > /dev/null; do
-#   echo "Waiting for app..."
-#   sleep 5
+#   sleep $INTERVAL
+#   ELAPSED=$((ELAPSED + INTERVAL))
+
+#   echo "Waiting... (${ELAPSED}s)"
+
+#   if [ "$ELAPSED" -ge "$MAX_WAIT" ]; then
+#     echo "❌ App failed to become healthy within ${MAX_WAIT} seconds"
+#     exit 1
+#   fi
 # done
 
 echo "✅ App is healthy!"
