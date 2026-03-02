@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Assessment;
 use App\Models\Participant;
 use App\Models\ParticipantAssessment;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -104,8 +105,6 @@ class ParticipantAssessmentController extends Controller
 
             $id = $request->participant_assessment_id;
 
-            LockParticipant::execute($id);
-
             $pa = ParticipantAssessment::query()
                 ->select([
                     'id',
@@ -114,9 +113,20 @@ class ParticipantAssessmentController extends Controller
                     'start_time',
                     'end_time',
                     'status',
+                    'updated_at'
                 ])
                 ->where('id', $id)
                 ->firstOrFail();
+
+            $updatedAt = $pa->updated_at;
+            $now = Carbon::now();
+            $dif = abs($now->diffInSeconds($updatedAt));
+
+            if ($dif > 3) {
+                LockParticipant::execute($id);
+
+                $pa->refresh();
+            }
 
             $participantName = Participant::query()
                 ->where('participants.id', $pa->participant_id)
