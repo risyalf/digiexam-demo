@@ -34,6 +34,8 @@ services:
       - CADDY_AUTOSAVE=disabled
     volumes:
       - /home/deploy/student-assessment-exam:/home/deploy/student-assessment-exam
+      - caddy_data:/data
+      - caddy_config:/config
     depends_on:
       - mysql
       - redis
@@ -89,6 +91,8 @@ services:
 volumes:
   mysql-data:
   redis-data:
+  caddy_data:
+  caddy_config:
 
 networks:
   student-assessment-cms-network:
