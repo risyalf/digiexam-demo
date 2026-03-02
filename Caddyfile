@@ -1,4 +1,4 @@
-http://assessment-admin.smkswadaya.sch.id {
+https://assessment-admin.smkswadaya.sch.id {
     root * /var/www/app/public
     php_fastcgi app:9000
     file_server
@@ -33,15 +33,24 @@ http://assessment-admin.smkswadaya.sch.id {
     handle_errors {
         rewrite * /index.php
     }
+    tls {
+            ca https://acme-staging-v02.api.letsencrypt.org/directory
+        }
 }
 
-http://dashboard.smkswadaya.sch.id {
+https://dashboard.smkswadaya.sch.id {
 	reverse_proxy grafana:3000
+	tls {
+        ca https://acme-staging-v02.api.letsencrypt.org/directory
+    }
 }
 
-http://assessment.smkswadaya.sch.id {
+https://assessment.smkswadaya.sch.id {
     root * /home/deploy/student-assessment-exam
     try_files {path} /index.html
     file_server
     encode gzip zstd
+    tls {
+            ca https://acme-staging-v02.api.letsencrypt.org/directory
+        }
 }
