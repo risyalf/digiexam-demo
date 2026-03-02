@@ -3,13 +3,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: app-base
     container_name: student-assessment-cms
     restart: always
     tty: true
     expose:
       - "9000"
     volumes:
-      - student-assessment-cms-data:/var/www/app
       - ./storage/app/public:/var/www/app/storage/public
     env_file:
       - .env
@@ -20,7 +20,10 @@ services:
       - student-assessment-cms-network
 
   caddy:
-    image: docker.io/caddy:alpine
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: caddy-base
     container_name: student-assessment-caddy
     restart: unless-stopped
     tty: true
@@ -30,11 +33,10 @@ services:
     environment:
       - CADDY_AUTOSAVE=disabled
     volumes:
-      - student-assessment-cms-data:/var/www/app
-      - ./Caddyfile:/etc/caddy/Caddyfile
       - /home/deploy/student-assessment-exam:/home/deploy/student-assessment-exam
     depends_on:
-      - app
+      - mysql
+      - redis
     networks:
       - student-assessment-cms-network
 
@@ -42,6 +44,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: app-base
     container_name: student-assessment-cms-queue
     restart: unless-stopped
     env_file:
@@ -52,6 +55,7 @@ services:
     depends_on:
       - mysql
       - redis
+      - app
     networks:
       - student-assessment-cms-network
 
@@ -83,7 +87,6 @@ services:
       - student-assessment-cms-network
 
 volumes:
-  student-assessment-cms-data:
   mysql-data:
   redis-data:
 

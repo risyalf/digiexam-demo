@@ -11,7 +11,7 @@ COPY public ./public
 
 RUN npm run build
 
-FROM docker.io/php:8.4-fpm-alpine
+FROM docker.io/php:8.4-fpm-alpine AS app-base
 
 RUN apk add --no-cache --virtual .build-deps \
         $PHPIZE_DEPS \
@@ -65,3 +65,11 @@ RUN mkdir -p \
     && chmod -R 775 storage bootstrap/cache
 
 CMD ["php-fpm"]
+
+FROM docker.io/caddy:alpine AS caddy-base
+
+WORKDIR /var/www/app
+
+COPY --from=app-base /var/www/app /var/www/app
+
+COPY ./Caddyfile /etc/caddy/Caddyfile
