@@ -1,4 +1,4 @@
-assessment-admin.smkswadaya.sch.id {
+http://assessment-admin.smkswadaya.sch.id {
     root * /var/www/app/public
     php_fastcgi app:9000
     file_server

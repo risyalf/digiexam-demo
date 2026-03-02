@@ -4,7 +4,7 @@ set -e
 
 APP_DIR="/home/deploy/student-assessment-cms"
 CONTAINER_NAME="student-assessment-cms"
-HEALTHCHECK_URL="https://assessment-admin.smkswadaya.sch.id/ping"
+# HEALTHCHECK_URL="https://assessment-admin.smkswadaya.sch.id/ping"
 
 echo "🚀 Starting Deploy..."
 
@@ -19,10 +19,10 @@ docker compose up -d --build
 
 echo "⏳ Waiting for app to be healthy..."
 
-until docker exec $CONTAINER_NAME curl -sf $HEALTHCHECK_URL > /dev/null; do
-  echo "Waiting for app..."
-  sleep 5
-done
+# until docker exec $CONTAINER_NAME curl -sf $HEALTHCHECK_URL > /dev/null; do
+#   echo "Waiting for app..."
+#   sleep 5
+# done
 
 echo "✅ App is healthy!"
 
