@@ -34,6 +34,7 @@ services:
       - CADDY_AUTOSAVE=disabled
     volumes:
       - /home/deploy/student-assessment-exam:/home/deploy/student-assessment-exam
+      - ./storage/app/public:/var/www/app/storage/public
       - caddy_data:/data
       - caddy_config:/config
     depends_on:
