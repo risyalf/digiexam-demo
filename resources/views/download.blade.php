@@ -8,10 +8,10 @@
 </head>
  
 <body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen">
-    <h1 class="text-2xl font-semibold mb-12">Aplikasi Lembar Jawab Siswa (Sementara)</h1>
+    <h1 class="text-2xl font-semibold mb-12">Aplikasi Lembar Jawab Siswa</h1>
 
     <br>
-    <h1 class="text-xl font-semibold mb-12">Build Baru</h1>
+    <h1 class="text-xl font-semibold mb-12">Build APK</h1>
     <div class="bg-white py-16 rounded-xl shadow-lg text-center w-full max-w-sm">
         <div class="">
             <a href="https://github.com/alris-dev/student-assessment-releases/releases/tag/build-webview"
