@@ -20,7 +20,7 @@ https://assessment-admin.smkswadaya.sch.id {
 
     @storage_cors path /storage
     header @storage_cors {
-        Access-Control-Allow-Origin "https://assessment.smkswadaya.sch.id"
+        Access-Control-Allow-Origin "*"
         Access-Control-Allow-Methods "GET, OPTIONS"
         Access-Control-Allow-Headers "*"
     }
