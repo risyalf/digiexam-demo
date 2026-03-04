@@ -10,7 +10,7 @@ services:
     expose:
       - "9000"
     volumes:
-      - ./storage/app/public:/var/www/app/storage/app/public
+      - ./storage/app/public:/var/www/app/storage/public
     env_file:
       - .env
     depends_on:
@@ -53,7 +53,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./storage/app/public:/var/www/app/storage/app/public
+      - ./storage/app/public:/var/www/app/storage/public
     command: php artisan queue:work --sleep=3 --tries=3 --timeout=90
     depends_on:
       - mysql
