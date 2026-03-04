@@ -75,19 +75,12 @@ class ParticipantAssessmentController extends Controller
     public function status($id)
     {
         try {
-            $id = str_replace('"', "", $id);
-            $participantAssessment = ParticipantAssessment::find($id);
+            $participantId = auth()->user()->id;
 
-            $status = null;
-
-            if(!$participantAssessment) {
-                $participantId = auth()->user()->id;
-
-                $participantAssessment = ParticipantAssessment::query()
-                                            ->where('participant_id', $participantId)
-                                            ->orderBy('updated_at', 'DESC')
-                                            ->first();
-            }
+            $participantAssessment = ParticipantAssessment::query()
+                                        ->where('participant_id', $participantId)
+                                        ->orderBy('updated_at', 'DESC')
+                                        ->first();
 
             $status = $participantAssessment->status;
 
