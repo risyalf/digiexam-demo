@@ -50,10 +50,6 @@ class ImportTestFormDocx
 
                     $number++;
 
-                    if ($number == 24) {
-                        echo "HERE".PHP_EOL;
-                    }
-
                     $type     = self::parseCell($cells[1] ?? null, $id);
                     $question = self::parseCell($cells[2] ?? null, $id);
                     $answers  = $answerRows->map(function ($aRow, $index) use ($id) {
