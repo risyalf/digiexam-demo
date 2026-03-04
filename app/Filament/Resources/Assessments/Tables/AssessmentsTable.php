@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Assessments\Tables;
 
 use App\Action\SyncParticipantAssessment;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -11,9 +12,11 @@ use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
@@ -25,7 +28,7 @@ class AssessmentsTable
             ->columns([
                 TextColumn::make('no')
                     ->label('No.')
-                    ->rowIndex(isFromZero:false),
+                    ->rowIndex(isFromZero: false),
                 TextColumn::make('name')
                     ->label('NAMA')
                     ->copyable(),
@@ -78,19 +81,23 @@ class AssessmentsTable
             ->filters([
                 TrashedFilter::make(),
             ])
-            ->recordActions([
-                EditAction::make()
-                    ->color(Color::Cyan)
-                    ->button(),
-                Action::make('resync')
-                    ->label('Sync Siswa')
-                    ->button()
-                    ->color(Color::Emerald)
-                    ->icon(Heroicon::CloudArrowDown)
-                    ->action(fn($record) => SyncParticipantAssessment::execute($record->id))
-                    ->successNotification(Notification::make()->success()->title('SUKSES SYNCHRONIZE SISWA'))
-                    ->failureNotification(fn() => Notification::make()->danger()->title('ERROR')->body('ADA ERROR KETIKA SYNC SISWA'))
-            ])
+            ->recordActions(
+                ActionGroup::make([
+                    EditAction::make()
+                        ->color(Color::Cyan)
+                        ->button(),
+                    Action::make('resync')
+                        ->label('Sync Siswa')
+                        ->button()
+                        ->color(Color::Emerald)
+                        ->icon(Heroicon::CloudArrowDown)
+                        ->action(fn($record) => SyncParticipantAssessment::execute($record->id))
+                        ->successNotification(Notification::make()->success()->title('SUKSES SYNCHRONIZE SISWA'))
+                        ->failureNotification(fn() => Notification::make()->danger()->title('ERROR')->body('ADA ERROR KETIKA SYNC SISWA'))
+                ])
+            )
+            ->recordActionsPosition(RecordActionsPosition::BeforeColumns)
+            ->recordActionsColumnLabel('AKSI')
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
