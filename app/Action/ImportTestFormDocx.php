@@ -18,6 +18,8 @@ use PhpOffice\PhpWord\Style;
 use PhpOffice\PhpWord\Style\ListItem as ListItemStyle;
 use PhpOffice\PhpWord\Style\Numbering;
 
+use function PHPUnit\Framework\stringContains;
+
 class ImportTestFormDocx
 {
     protected const DEFAULT_FONT_FAMILY = '"Times New Roman", Times, serif';
@@ -70,10 +72,14 @@ class ImportTestFormDocx
                     }
 
                     $cleanQuestion = trim(strip_tags($question));
+                    
 
                     if (!$cleanQuestion) {
-                        $questionIsNull = true;
-                        continue;
+
+                        if (!str_contains($question, '<img')) {
+                            $questionIsNull = true;
+                            continue;
+                        }
                     }
 
                     if ($questionIsNull) {
