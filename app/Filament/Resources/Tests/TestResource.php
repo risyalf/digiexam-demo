@@ -28,6 +28,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -55,6 +56,7 @@ class TestResource extends Resource
                 Select::make('topic_id')
                     ->label('NAMA TOPIK')
                     ->options(Topic::query()->pluck('name', 'id'))
+                    ->searchable()
                     ->required(),
                 TextInput::make('name')
                     ->label('NAMA')
@@ -81,6 +83,20 @@ class TestResource extends Resource
             ])
             ->filters([
                 TrashedFilter::make(),
+                SelectFilter::make('topic_id')
+                    ->options(
+                        Topic::query()
+                            ->pluck('name', 'id')
+                    )
+                    ->searchable()
+                    ->label('Topic'),
+                SelectFilter::make('name')
+                    ->options(
+                        Test::query()
+                            ->pluck('name', 'id')
+                    )
+                    ->searchable()
+                    ->label('Topic'),
             ])
             ->headerActions([
                 Action::make('import')
@@ -93,6 +109,7 @@ class TestResource extends Resource
                                 Topic::query()
                                     ->pluck('name', 'id')
                             )
+                            ->searchable()
                             ->required(),
                         FileUpload::make('attachment')
                             ->label('Pilih File Word (.docx)')
