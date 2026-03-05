@@ -10,7 +10,7 @@ services:
     expose:
       - "9000"
     volumes:
-      - ./storage:/var/www/app/storage
+      - ./storage/app:/var/www/app/storage/app
       - ./public:/var/www/app/public
     env_file:
       - .env
@@ -35,7 +35,7 @@ services:
       - CADDY_AUTOSAVE=disabled
     volumes:
       - /home/deploy/student-assessment-exam:/home/deploy/student-assessment-exam
-      - ./storage:/var/www/app/storage
+      - ./storage/app:/var/www/app/storage/app
       - ./public:/var/www/app/public
       - caddy_data:/data
       - caddy_config:/config
@@ -55,7 +55,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ./storage:/var/www/app/storage
+      - ./storage/app:/var/www/app/storage/app
       - ./public:/var/www/app/public
     command: php artisan queue:work --sleep=3 --tries=3 --timeout=90
     depends_on:
