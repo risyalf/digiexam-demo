@@ -27,6 +27,20 @@
         </div>
         <br>
 
+        <div class="">
+            <a href="https://drive.google.com/drive/folders/17cmc1cMmTfEZ-FSzI3nLF5VyxTy8neYn?usp=sharing"
+                target="_blank"
+                class="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-blue-700 transition">
+                Link All (Google Drive)
+            </a>
+            <br> 
+            <div>
+                Semua versi apk
+            </div>
+            <br>
+        </div>
+        <br>
+
         {{-- <div class="mb-8">
             <a href="https://drive.google.com/file/d/13w_AOINt8D5rfb6v3Y852WaMkEupaCt1/view?usp=drive_link"
                 target="_blank"
