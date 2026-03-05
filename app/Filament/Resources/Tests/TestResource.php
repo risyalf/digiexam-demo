@@ -96,7 +96,7 @@ class TestResource extends Resource
                             ->pluck('name', 'id')
                     )
                     ->searchable()
-                    ->label('Topic'),
+                    ->label('Nama Soal'),
             ])
             ->headerActions([
                 Action::make('import')
