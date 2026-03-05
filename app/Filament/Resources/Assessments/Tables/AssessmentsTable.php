@@ -3,6 +3,9 @@
 namespace App\Filament\Resources\Assessments\Tables;
 
 use App\Action\SyncParticipantAssessment;
+use App\Models\Assessment;
+use App\Models\Module;
+use App\Models\Topic;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
@@ -17,6 +20,7 @@ use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Enums\RecordActionsPosition;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
@@ -80,6 +84,27 @@ class AssessmentsTable
             ])
             ->filters([
                 TrashedFilter::make(),
+                SelectFilter::make('name')
+                    ->options(
+                        Assessment::query()
+                            ->pluck('name', 'id')
+                    )
+                    ->searchable()
+                    ->label('Nama Ujian'),
+                SelectFilter::make('module_id')
+                    ->options(
+                        Module::query()
+                            ->pluck('name', 'id')
+                    )
+                    ->searchable()
+                    ->label('Modul'),
+                SelectFilter::make('topic_id')
+                    ->options(
+                        Topic::query()
+                            ->pluck('name', 'id')
+                    )
+                    ->searchable()
+                    ->label('Topic'),
             ])
             ->recordActions(
                 ActionGroup::make([

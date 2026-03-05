@@ -56,6 +56,7 @@ class LoginAssessmentCard extends Page implements HasForms
                                 $set('group_id', null);
                                 $set('participant_id', null);
                             })
+                            ->searchable()
                             ->options(
                                 Module::query()
                                     ->pluck('name', 'id')
@@ -66,6 +67,7 @@ class LoginAssessmentCard extends Page implements HasForms
                             ->reactive()
                             ->afterStateUpdated(fn($set) => $set('participant_id', null))
                             ->disabled(fn($get) => !$get('module_id'))
+                            ->searchable()
                             ->options(
                                 fn($get) =>
                                 ParticipantGroup::query()
@@ -81,6 +83,7 @@ class LoginAssessmentCard extends Page implements HasForms
                         Select::make('participant_id')
                             ->label('Pilih Siswa')
                             ->disabled(fn($get) => !$get('group_id'))
+                            ->searchable()
                             ->options(function ($get) {
                                 $groupId = $get('group_id');
                         

@@ -59,6 +59,7 @@ class AnswerReport extends Page implements HasForms
                             ->label('Modul')
                             ->reactive()
                             ->afterStateUpdated(fn($set) => $set('topic_id', null))
+                            ->searchable()
                             ->options(
                                 Module::query()
                                     ->pluck('name', 'id')
@@ -66,6 +67,7 @@ class AnswerReport extends Page implements HasForms
                         Select::make('topic_id')
                             ->label('Topik')
                             ->disabled(fn($get) => !$get('module_id'))
+                            ->searchable()
                             ->options(
                                 function ($get) {
                                     return Topic::query()
@@ -75,6 +77,7 @@ class AnswerReport extends Page implements HasForms
                             ),
                         Select::make('group_id')
                             ->label('Kelas')
+                            ->searchable()
                             ->options(
                                 ParticipantGroup::query()
                                     ->pluck('name', 'id')

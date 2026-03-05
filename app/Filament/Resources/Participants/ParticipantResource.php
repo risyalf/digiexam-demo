@@ -63,6 +63,7 @@ class ParticipantResource extends Resource
                 ->required(),
             Select::make("module_id")
                 ->label("Modul")
+                ->searchable()
                 ->options(Module::query()->pluck("name", "id")),
             TextInput::make("order_number")
                 ->label("Nomor Urut")
@@ -122,8 +123,10 @@ class ParticipantResource extends Resource
                         ParticipantGroup::query()
                             ->pluck('name', 'id')
                     )
+                    ->searchable()
                     ->label('Kelas'),
                 SelectFilter::make('module_id')
+                    ->searchable()
                     ->options(
                         Module::query()
                             ->pluck('name', 'id')

@@ -21,6 +21,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -48,6 +49,7 @@ class TopicResource extends Resource
                         Module::query()
                             ->pluck('name', 'id')
                     )
+                    ->searchable()
                     ->required(),
                 TextInput::make('name')
                     ->label('NAMA TOPIK')
@@ -79,6 +81,11 @@ class TopicResource extends Resource
             ])
             ->filters([
                 TrashedFilter::make(),
+                SelectFilter::make('name')
+                    ->options(
+                        Topic::query()
+                            ->pluck('name', 'id')
+                    )
             ])
             ->paginated()
             ->recordActions([
