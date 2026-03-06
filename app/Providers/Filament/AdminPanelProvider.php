@@ -72,6 +72,8 @@ class AdminPanelProvider extends PanelProvider
                 Menu::DATA_PESERTA->value,
                 Menu::DATA_TES->value,
                 Menu::ADMIN->value
-            ]);
+            ])
+            ->sidebarCollapsibleOnDesktop()
+            ->sidebarFullyCollapsibleOnDesktop(false);
     }
 }
