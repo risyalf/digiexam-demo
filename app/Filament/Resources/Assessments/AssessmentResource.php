@@ -37,7 +37,10 @@ class AssessmentResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return AssessmentsTable::configure($table);
+        return AssessmentsTable::configure($table)
+                ->modifyQueryUsing(function (Builder $query) {
+                    $query->orderBy('created_at', 'desc');
+                });
     }
 
     public static function getRelations(): array

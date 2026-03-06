@@ -327,6 +327,7 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                 TextColumn::make('point')
                     ->copyable()
                     ->label('Poin')
+                    ->formatStateUsing(fn($state) => round($state, 2))
                     ->alignCenter(),
                 TextColumn::make('status')
                     ->copyable()
