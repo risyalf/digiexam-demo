@@ -9,6 +9,7 @@ enum Menu:string implements HasLabel
     case ADMIN = 'ADMIN';
     case DATA_MODUL = 'DATA MODUL';
     case DATA_PESERTA = 'DATA PESERTA';
+    case DATA_GURU = 'DATA GURU';
     case DATA_TES = 'DATA TES';
 
     public function getLabel(): ?string

@@ -6,6 +6,7 @@ use App\Enum\Menu;
 use App\Filament\Resources\Topics\Pages\ManageTopics;
 use App\Models\Module;
 use App\Models\Topic;
+use App\Models\UserTopic;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -62,6 +63,16 @@ class TopicResource extends Resource
     public static function table(Table $table): Table
     { 
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                $isTeacher = auth()->user()->hasRole('guru');
+                $query->when($isTeacher, function ($q) {
+                    return $q->whereIn(
+                        'id', UserTopic::query()
+                                ->where('user_id', auth()->user()->id)
+                                ->pluck('topic_id')
+                    );
+                });
+            })
             ->columns([
                 TextColumn::make('no')
                     ->label('NO.')

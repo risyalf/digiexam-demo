@@ -12,9 +12,8 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create("assessment_participant_groups", function (
-            Blueprint $table,
-        ) {
+        Schema::create("assessment_participant_groups", function (Blueprint $table) 
+        {
             $table->foreignIdFor(Assessment::class)->constrained()->onDelete('cascade');
             $table->foreignIdFor(ParticipantGroup::class)->constrained()->onDelete('cascade');
 

@@ -69,6 +69,7 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([Authenticate::class])
             ->navigationGroups([
                 Menu::DATA_MODUL->value,
+                Menu::DATA_GURU->value,
                 Menu::DATA_PESERTA->value,
                 Menu::DATA_TES->value,
                 Menu::ADMIN->value
