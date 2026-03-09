@@ -30,7 +30,11 @@ class TestQuestionsTable
             ->columns([
                 TextColumn::make('no')->label('NO.')->rowIndex(isFromZero:false),
                 TextColumn::make('created_at')->label('DIBUAT PADA')->alignCenter(),
-                TextColumn::make('name')->label('NAMA')->wrap()->html(),
+                TextColumn::make('name')
+                    ->label('NAMA')
+                    ->wrap()
+                    ->formatStateUsing(fn ($state) => html_entity_decode($state))
+                    ->html(),
                 TextColumn::make('option_answers')
                     ->label('JAWABAN')
                     ->getStateUsing(fn($record) => true)
