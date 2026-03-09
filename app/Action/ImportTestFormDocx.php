@@ -3,6 +3,8 @@
 namespace App\Action;
 
 use Exception;
+use PhpOffice\Math\Writer\MathML as MathMLWriter;
+use PhpOffice\PhpWord\Element\Formula;
 use PhpOffice\PhpWord\Element\Image;
 use PhpOffice\PhpWord\Element\ListItem;
 use PhpOffice\PhpWord\Element\ListItemRun;
@@ -52,7 +54,7 @@ class ImportTestFormDocx
 
                     $number++;
 
-                    if ($number == 41) {
+                    if ($number == 17) {
                         $a = 0;
                     }
 
@@ -177,6 +179,12 @@ class ImportTestFormDocx
                 continue;
             }
 
+            if ($element instanceof Formula) {
+                $blocks[] = self::wrapParagraph(self::renderFormula($element));
+                $i++;
+                continue;
+            }
+
             $i++;
         }
 
@@ -234,6 +242,11 @@ class ImportTestFormDocx
 
             if ($child instanceof TextBreak) {
                 $html .= '<br>';
+                continue;
+            }
+
+            if ($child instanceof Formula) {
+                $html .= self::renderFormula($child);
                 continue;
             }
         }
@@ -444,5 +457,15 @@ class ImportTestFormDocx
         $text = str_replace(["\r\n", "\r"], "\n", $text);
         $escaped = htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
         return str_replace("\n", '<br>', $escaped);
+    }
+
+    protected static function renderFormula(Formula $formula): string
+    {
+        $writer = new MathMLWriter();
+        $mathML = $writer->write($formula->getMath());
+        $mathML = preg_replace('/^<\\?xml[^>]*>\\s*/', '', $mathML) ?? $mathML;
+        $mathML = preg_replace('/<!DOCTYPE[^>]*>\\s*/', '', $mathML) ?? $mathML;
+
+        return $mathML;
     }
 }
