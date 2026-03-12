@@ -10,6 +10,18 @@ use Illuminate\Validation\ValidationException;
 
 class Login extends BaseAuth
 {
+    protected string $view = 'filament.pages.login-page';
+
+    public function getHeading(): string | Htmlable | null
+    {
+        return null;
+    }
+
+    protected function getSubheading(): ?string
+    {
+        return null;
+    }
+    
     public function form(Schema $schema): Schema
     {
         return $schema
