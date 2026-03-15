@@ -6,6 +6,7 @@ use Filament\Auth\Pages\Login as BaseAuth;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Validation\ValidationException;
 
 class Login extends BaseAuth
@@ -17,9 +18,14 @@ class Login extends BaseAuth
         return null;
     }
 
-    protected function getSubheading(): ?string
+    public function getSubheading(): string | Htmlable | null
     {
         return null;
+    }
+
+    public function hasLogo(): bool
+    {
+        return false;
     }
     
     public function form(Schema $schema): Schema

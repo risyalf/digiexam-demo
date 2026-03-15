@@ -1,19 +1,18 @@
 <x-filament-panels::page.simple>
-
-    <div class="flex flex-col items-center">
-
-        <img src="/images/logo_smk.png" style="height: 7rem">
-
-        <h1 class="text-2xl font-bold">
+    <header class="fi-simple-header">
+        <h1 class="fi-simple-header-heading">
             DigiExam CBT
         </h1>
+        <br>
+        <img alt="Logo DigiExam CBT" src="/images/logo_smk.png" style="height: 7rem;" class="fi-logo">
+        <h1 class="fi-simple-header-heading">
+            SMK Swadaya Semarang
+            <br>
+            <br>
+            Masuk ke akun Anda            
+        </h1>
+    </header>
 
-        <p class="text-gray-500 mb-6">
-            Masuk ke akun Anda
-        </p>
-
-    </div>
-
-    {{ $this->form }}
+    {{ $this->content }}
 
 </x-filament-panels::page.simple>
