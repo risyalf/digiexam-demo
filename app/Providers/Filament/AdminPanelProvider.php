@@ -31,10 +31,35 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id("admin")
             ->path("admin")
-            ->brandName('DigiExam CBT')
-            ->brandLogoHeight('3rem')
-            ->brandLogo(asset('images/logo_smk.png'))
+            ->brandName('')
             ->favicon(asset("images/logo_smk.png"))
+            ->renderHook(
+                PanelsRenderHook::TOPBAR_START,
+                fn (): string => Blade::render('
+                    <style>
+                        .fi-topbar .fi-logo {
+                            margin-right:5rem;
+                            margin-top:1rem;
+                            margin-bottom:1rem;
+                        }
+
+                        .logo-light { display: block; }
+                        .logo-dark { display: none; }
+
+                        .dark .logo-light { display: none; }
+                        .dark .logo-dark { display: block; }
+                        
+                        @media (max-width: 1023px) {
+                            .fi-topbar .fi-logo {
+                                margin-right:0;
+                                display:none;
+                            }
+                        }
+                    </style>
+                    <img alt="Logo SMK Swadaya" src="/images/logo_light.png" class="logo-light h-10 fi-logo" style="height: 4rem;" alt="Logo Light">
+                    <img alt="Logo SMK Swadaya" src="/images/logo_dark.png" class="logo-dark h-10 fi-logo" style="height: 4rem;" alt="Logo Dark">
+                ')
+            )
             ->authGuard("web")
             ->login(Login::class)
             ->colors([
