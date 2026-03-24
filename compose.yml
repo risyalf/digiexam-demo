@@ -69,11 +69,13 @@ services:
     image: docker.io/mysql:8.0.45-bookworm
     container_name: student-assessment-mysql
     restart: unless-stopped
+    env_file:
+      - .env
     environment:
-      MYSQL_ROOT_PASSWORD: secret
-      MYSQL_DATABASE: student_assessment
-      MYSQL_USER: student
-      MYSQL_PASSWORD: secret
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "127.0.0.1:3307:3306"
     volumes:
