@@ -1,6 +1,9 @@
 #!/bin/bash
 set -e
 
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
 APP_DIR="/home/deploy/student-assessment-cms"
 
 echo "🚀🚀 Starting Deploy..."
@@ -21,17 +24,15 @@ echo "🗄 Running Migrations..."
 php artisan migrate --force
 
 echo "⚡ Caching Laravel..."
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+php artisan optimize
 php artisan storage:link
 
 echo "🔒 Fix permissions..."
 sudo chown -R deploy:www-data storage bootstrap/cache
 sudo chmod -R 775 storage bootstrap/cache
 
-echo "🔄 Restart PHP-FPM & Queue..."
-sudo systemctl restart php8.4-fpm
+echo "🔄 Reload PHP-FPM & restart Queue..."
+sudo systemctl reload php8.4-fpm
 sudo systemctl restart laravel-queue
 
 echo "🎉 Deploy Finished Successfully!"
