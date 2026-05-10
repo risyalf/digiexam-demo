@@ -1,17 +1,17 @@
-name: Build & Deploy
+# name: Build & Deploy
 
-on:
-  push:
-    branches:
-      - main
+# on:
+#   push:
+#     branches:
+#       - main
 
-jobs:
-  deploy-live:
-    runs-on: [self-hosted, live]
+# jobs:
+#   deploy-live:
+#     runs-on: [self-hosted, live]
 
-    steps:
-      - name: Run Deploy Script
-        run: |
-          cd /home/deploy/student-assessment-cms
-          chmod +x deploy.sh
-          ./deploy.sh
+#     steps:
+#       - name: Run Deploy Script
+#         run: |
+#           cd /home/deploy/student-assessment-cms
+#           chmod +x deploy.sh
+#           ./deploy.sh
