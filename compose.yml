@@ -7,38 +7,13 @@ services:
     container_name: student-assessment-cms
     restart: always
     tty: true
-    expose:
-      - "9000"
+    ports:
+      - "9000:9000"
     volumes:
       - ./storage/app:/var/www/app/storage/app
       - ./public:/var/www/app/public
     env_file:
       - .env
-    depends_on:
-      - mysql
-      - redis
-    networks:
-      - student-assessment-cms-network
-
-  caddy:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: caddy-base
-    container_name: student-assessment-caddy
-    restart: unless-stopped
-    tty: true
-    ports:
-      - "80:80"
-      - "443:443"
-    environment:
-      - CADDY_AUTOSAVE=disabled
-    volumes:
-      - /home/deploy/student-assessment-exam:/home/deploy/student-assessment-exam
-      - ./storage/app:/var/www/app/storage/app
-      - ./public:/var/www/app/public
-      - caddy_data:/data
-      - caddy_config:/config
     depends_on:
       - mysql
       - redis
