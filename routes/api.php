@@ -15,6 +15,9 @@ Route::post("/auth/participant/login", [ParticipantController::class, 'login'])-
 Route::prefix("apk")->group(function () {
     Route::get("/version", [ApkController::class, "version"])->name("api.apk.version");
 });
+Route::get("/test/trial", [TestController::class, "getTrial"])->name(
+    "api.test.get.trial",
+);
 
 Route::middleware("auth:sanctum")->group(function () {
     Route::post("/auth/participant/logout", [ParticipantController::class, 'logout'])->name('api.participant.logout');
@@ -38,7 +41,7 @@ Route::middleware("auth:sanctum")->group(function () {
         Route::get("/{id}", [ParticipantAssessmentController::class, "get"])->name("api.participant.assessment.get");
         Route::get("/status/{id}", [ParticipantAssessmentController::class, "status"])->name("api.participant.assessment.status");
         Route::post("/lock", [ParticipantAssessmentController::class, "lock"])->name("api.participant.assessment.lock");
-        Route::post("/unlock", [ParticipantAssessmentController::class,"unlock"])->name("api.participant.assessment.unlock");
+        Route::post("/unlock", [ParticipantAssessmentController::class, "unlock"])->name("api.participant.assessment.unlock");
     });
 
     Route::prefix("assessment")->group(function () {
@@ -66,9 +69,6 @@ Route::middleware("auth:sanctum")->group(function () {
     Route::prefix("test")->group(function () {
         Route::get("/", [TestController::class, "get"])->name(
             "api.test.get",
-        );
-        Route::get("/trial", [TestController::class, "getTrial"])->name(
-            "api.test.get.trial",
         );
         Route::get("/result/{assessmentId}", [
             TestController::class,
