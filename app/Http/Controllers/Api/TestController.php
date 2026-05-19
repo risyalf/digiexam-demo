@@ -49,6 +49,35 @@ class TestController extends Controller
             ], 400);
         }
     }
+
+    public function getTrial(Request $request)
+    {
+        try {
+            $request->validate([
+                'assessment_id' => 'required',
+            ]);
+
+            $assessmentId = $request->assessment_id;
+
+            $assessment = Assessment::with([
+                'test.testQuestions.options'
+            ])->findOrFail($assessmentId);
+
+            $test = $assessment->test;
+
+            $questions = $test->testQuestions->toArray();
+
+            return response()->json([
+                'message' => 'SUKSES AMBIL DATA OPTIONS',
+                'data' => $questions,
+            ]);
+
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage(),
+            ], 400);
+        }
+    }
     
     public function result($assessmentId)
     {

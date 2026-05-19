@@ -67,6 +67,9 @@ Route::middleware("auth:sanctum")->group(function () {
         Route::get("/", [TestController::class, "get"])->name(
             "api.test.get",
         );
+        Route::get("/trial", [TestController::class, "getTrial"])->name(
+            "api.test.get.trial",
+        );
         Route::get("/result/{assessmentId}", [
             TestController::class,
             "result",
