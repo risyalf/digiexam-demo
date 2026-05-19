@@ -21,6 +21,7 @@ use App\Models\Topic;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
+use Illuminate\Support\Str;
 
 class trial extends Command
 {
@@ -43,6 +44,8 @@ class trial extends Command
      */
     public function handle()
     {
-        
+        $user = User::query()->get();
+
+        dd(count($user));
     }
 }

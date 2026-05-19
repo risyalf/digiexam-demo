@@ -8,10 +8,12 @@ use App\Enum\AssessmentType;
 use App\Enum\Menu;
 use App\Filament\Resources\TestQuestions\TestQuestionResource;
 use App\Filament\Resources\Tests\Pages\ManageTests;
+use App\Models\Module;
 use App\Models\Test;
 use App\Models\TestQuestion;
 use App\Models\TestQuestionOption;
 use App\Models\Topic;
+use App\Models\UserTopic;
 use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
@@ -28,11 +30,13 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use UnitEnum;
@@ -67,22 +71,61 @@ class TestResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                $user = Auth::user();
+                $isTeacher = $user->hasRole('guru');
+                $query->when($isTeacher, function ($q) use($user) {
+                    return $q->whereIn(
+                        'topic_id', UserTopic::query()
+                                ->where('user_id', $user->id)
+                                ->pluck('topic_id')
+                    );
+                });
+            })
             ->columns([
                 TextColumn::make('no')
                     ->label('NO.')
                     ->rowIndex(isFromZero:false),
+                TextColumn::make('topic.module.name')
+                    ->label('MODUL')
+                    ->alignCenter()
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('topic.name')
                     ->label('NAMA TOPIK')
-                    ->alignCenter(),
+                    ->alignCenter()
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('name')
                     ->label('NAMA')
-                    ->alignCenter(),
+                    ->alignCenter()
+                    ->sortable()
+                    ->searchable(),
                 TextColumn::make('created_at')
                     ->label('DIBUAT PADA')
-                    ->alignCenter(),
+                    ->alignCenter()
+                    ->sortable()
+                    ->searchable(),
             ])
             ->filters([
-                TrashedFilter::make(),
+                SelectFilter::make('topic.module_id')
+                    ->options(
+                        Module::query()
+                            ->pluck('name', 'id')
+                    )
+                    ->searchable()
+                    ->label('Modul')
+                    ->query(function (Builder $query, array $data) {
+                        $value = $data['value'] ?? null;
+
+                        if (!$value) {
+                            return;
+                        }
+
+                        $query->whereHas('topic', function (Builder $query) use ($value) {
+                            $query->where('module_id', $value);
+                        });
+                    }),
                 SelectFilter::make('topic_id')
                     ->options(
                         Topic::query()
@@ -97,7 +140,7 @@ class TestResource extends Resource
                     )
                     ->searchable()
                     ->label('Nama Soal'),
-            ])
+            ], FiltersLayout::AboveContent)
             ->headerActions([
                 Action::make('import')
                     ->label('IMPORT SOAL')

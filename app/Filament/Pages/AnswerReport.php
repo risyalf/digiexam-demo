@@ -9,6 +9,7 @@ use App\Models\Module;
 use App\Models\ParticipantGroup;
 use App\Models\Topic;
 use BackedEnum;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -26,7 +27,7 @@ use UnitEnum;
 
 class AnswerReport extends Page implements HasForms
 {
-    use InteractsWithForms;
+    use InteractsWithForms, HasPageShield;
 
     protected string $view = 'filament.pages.answer-report';
 

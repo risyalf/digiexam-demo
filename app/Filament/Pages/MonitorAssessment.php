@@ -12,6 +12,7 @@ use App\Models\ParticipantGroup;
 use App\Models\Topic;
 use App\Models\User;
 use BackedEnum;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -35,11 +36,12 @@ use Filament\Tables\Table;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\On;
+use Override;
 use UnitEnum;
 
 class MonitorAssessment extends Page implements HasTable, HasForms
 {
-    use InteractsWithTable, InteractsWithForms;
+    use InteractsWithTable, InteractsWithForms, HasPageShield;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::MagnifyingGlassPlus;
     
@@ -95,7 +97,7 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                             ->options(
                                 Assessment::query()
                                     ->where('start_date', '<=', Carbon::now()->toDateTimeString())
-                                    ->where('end_date', '>=', Carbon::now()->toDateTimeString())
+                                    // ->where('end_date', '>=', Carbon::now()->toDateTimeString())
                                     ->pluck('name', 'id')
                             )
                             ->reactive()
@@ -213,6 +215,8 @@ class MonitorAssessment extends Page implements HasTable, HasForms
             )
             ->paginated()
             ->heading('Peserta')
+            ->persistFiltersInSession(false)
+            ->persistColumnsInSession(false)
             ->headerActions([
                 Action::make('open')
                     ->label('Generate Unlock Token')
@@ -328,7 +332,8 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                     ->copyable()
                     ->label('Poin')
                     ->formatStateUsing(fn($state) => round($state, 2))
-                    ->alignCenter(),
+                    ->alignCenter()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')
                     ->copyable()
                     ->label('Status')

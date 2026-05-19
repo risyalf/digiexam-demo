@@ -24,7 +24,17 @@ class ManageUserTopics extends ManageRecords
 
                     $datas = [];
 
-                    foreach ($topicIds as $key => $topicId) {
+                    foreach ($topicIds as $topicId) {
+                        $exists = UserTopic::query()
+                                    ->where([
+                                        "user_id" => $userId,
+                                        "topic_id" => $topicId
+                                    ])
+                                    ->exists();
+
+                        if ($exists) {
+                            continue;
+                        }
                         $datas[] = [
                             "id" => Str::uuid7(),
                             "user_id" => $userId,
@@ -32,7 +42,9 @@ class ManageUserTopics extends ManageRecords
                         ];
                     }
 
-                    UserTopic::insert($datas);
+                    if (count($datas) > 0) {
+                        UserTopic::insert($datas);
+                    }
                 }),
         ];
     }

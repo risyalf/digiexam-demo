@@ -20,13 +20,16 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Override;
 use UnitEnum;
 
 class TopicResource extends Resource
@@ -63,16 +66,6 @@ class TopicResource extends Resource
     public static function table(Table $table): Table
     { 
         return $table
-            ->modifyQueryUsing(function (Builder $query) {
-                $isTeacher = auth()->user()->hasRole('guru');
-                $query->when($isTeacher, function ($q) {
-                    return $q->whereIn(
-                        'id', UserTopic::query()
-                                ->where('user_id', auth()->user()->id)
-                                ->pluck('topic_id')
-                    );
-                });
-            })
             ->columns([
                 TextColumn::make('no')
                     ->label('NO.')
@@ -82,7 +75,8 @@ class TopicResource extends Resource
                     ->alignCenter(),
                 TextColumn::make('name')
                     ->label('NAMA')
-                    ->alignCenter(),
+                    ->alignCenter()
+                    ->searchable(),
                 TextColumn::make('description')
                     ->label('DESKRIPSI')
                     ->alignCenter(),
@@ -91,13 +85,18 @@ class TopicResource extends Resource
                     ->alignCenter(),
             ])
             ->filters([
-                TrashedFilter::make(),
                 SelectFilter::make('name')
                     ->options(
                         Topic::query()
                             ->pluck('name', 'id')
-                    )
-            ])
+                    ),
+                SelectFilter::make('module_id')
+                    ->label('MODUL')
+                    ->options(
+                        Module::query()
+                            ->pluck('name', 'id')
+                    ),
+            ], FiltersLayout::AboveContent)
             ->paginated()
             ->recordActions([
                 EditAction::make(),

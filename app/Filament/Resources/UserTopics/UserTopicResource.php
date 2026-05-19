@@ -8,17 +8,21 @@ use App\Models\Topic;
 use App\Models\User;
 use App\Models\UserTopic;
 use BackedEnum;
+use Exception;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Str;
 use UnitEnum;
 
 class UserTopicResource extends Resource
@@ -40,20 +44,22 @@ class UserTopicResource extends Resource
         return $schema
             ->components([
                 Select::make('user_id')
-                    ->label('NAMA')
+                    ->label('Nama')
                     ->searchable()
                     ->options(
                         User::role('guru')
                             ->pluck('name', 'id')
-                    ),
+                    )
+                    ->required(),
                 Select::make('topic_id')
-                    ->label('TOPIK')
+                    ->label('Topik')
                     ->searchable()
                     ->multiple()
                     ->options(
                         Topic::query()
                             ->pluck('name', 'id')
-                    ),
+                    )
+                    ->required(),
             ]);
     }
 
@@ -81,7 +87,61 @@ class UserTopicResource extends Resource
                     ),
             ])
             ->recordActions([
-                EditAction::make(),
+                Action::make('edit')
+                    ->label('EDIT')
+                    ->schema([
+                        Select::make('user_id')
+                            ->label('Nama')
+                            ->searchable()
+                            ->options(
+                                User::role('guru')
+                                    ->pluck('name', 'id')
+                            )
+                            ->default(fn($record) => $record->user_id)
+                            ->required(),
+                        Select::make('topic_id')
+                            ->label('Topik')
+                            ->searchable()
+                            ->options(
+                                Topic::query()
+                                    ->pluck('name', 'id')
+                            )
+                            ->default(fn($record) => $record->topic_id)
+                            ->required(),
+                    ])
+                    ->action(function($data, $record) {
+                        try {
+                            $userId = $data['user_id'];
+                            $topicId = $data['topic_id'];
+
+                            $exists = UserTopic::query()
+                                        ->where([
+                                            'user_id' => $userId,
+                                            'topic_id' => $topicId
+                                        ])
+                                        ->exists();
+
+                            if ($exists) {
+                                $user = User::find($userId);
+                                throw new Exception("AKSES SUDAH ADA UNTUK USER {$user->name}");
+                            }
+
+                            UserTopic::where('id', $record->id)
+                                ->update([
+                                    'topic_id' => $topicId
+                                ]);
+
+                            Notification::make()
+                                ->success()
+                                ->title('SUKSES MEMBUAT AKSES GURU')
+                                ->send();
+                        } catch (\Throwable $th) {
+                            Notification::make()
+                                ->danger()
+                                ->title('ERROR')
+                                ->body($th->getMessage());
+                        }
+                    }),
                 DeleteAction::make(),
             ])
             ->toolbarActions([

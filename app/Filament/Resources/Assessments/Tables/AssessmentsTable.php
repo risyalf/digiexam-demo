@@ -16,9 +16,11 @@ use Filament\Actions\RestoreBulkAction;
 use Filament\Notifications\Notification;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Enums\RecordActionsPosition;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TrashedFilter;
@@ -47,43 +49,54 @@ class AssessmentsTable
                     ->copyable(),
                 TextColumn::make('start_date')
                     ->label('WAKTU MULAI')
+                    ->wrapHeader()
                     ->copyable(),
                 TextColumn::make('end_date')
                     ->label('WAKTU SELESAI')
+                    ->wrapHeader()
                     ->copyable(),
                 TextColumn::make('time_test')
                     ->label('LAMA TEST (MENIT)')
+                    ->wrapHeader()
                     ->copyable(),
                 TextColumn::make('correct_point')
                     ->label('NILAI JAWABAN BENAR')
+                    ->wrapHeader()
                     ->copyable(),
                 TextColumn::make('wrong_point')
                     ->label('NILAI JAWABAN SALAH')
+                    ->wrapHeader()
                     ->copyable(),
                 TextColumn::make('empty_point')
                     ->label('NILAI JAWABAN KOSONG')
+                    ->wrapHeader()
                     ->copyable(),
                 ToggleColumn::make('show_result')
                     ->label('TAMPILKAN JAWABAN SETELAH SELESAI')
+                    ->wrapHeader()
                     ->disabled(),
                 ToggleColumn::make('answer_not_null')
                     ->label('JAWABAN TERISI SEMUA')
+                    ->wrapHeader()
                     ->disabled(),
                 ToggleColumn::make('need_token')
                     ->label('BUTUH TOKEN UNTUK MENGIKUTI UJIAN')
-                    ->disabled(),
+                    ->disabled()
+                    ->wrapHeader(),
                 TextColumn::make('total_question')
                     ->label('PERTANYAAN YANG DI TAMPILKAN')
+                    ->wrapHeader()
                     ->copyable(),
                 ToggleColumn::make('randomize_question')
                     ->label('ACAK SOAL')
+                    ->wrapHeader()
                     ->disabled(),
                 ToggleColumn::make('need_token')
                     ->label('ACAK JAWABAN')
+                    ->wrapHeader()
                     ->disabled(),
             ])
             ->filters([
-                TrashedFilter::make(),
                 SelectFilter::make('name')
                     ->options(
                         Assessment::query()
@@ -105,7 +118,9 @@ class AssessmentsTable
                     )
                     ->searchable()
                     ->label('Topic'),
-            ])
+            ], FiltersLayout::AboveContent)
+            ->deferFilters()
+            ->filtersFormWidth(Width::MaxContent)
             ->recordActions(
                 ActionGroup::make([
                     EditAction::make()

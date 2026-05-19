@@ -25,6 +25,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -132,7 +133,7 @@ class ParticipantResource extends Resource
                             ->pluck('name', 'id')
                     )
                     ->label('Modul'),
-            ])
+            ], FiltersLayout::AboveContent)
             ->headerActions([
                 Action::make("generate")
                     ->label("Generate Nomor Test Dan Password")

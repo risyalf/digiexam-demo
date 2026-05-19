@@ -9,6 +9,7 @@ use App\Models\Module;
 use App\Models\Participant;
 use App\Models\ParticipantGroup;
 use BackedEnum;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -22,7 +23,7 @@ use UnitEnum;
 
 class LoginAssessmentCard extends Page implements HasForms
 {
-    use InteractsWithForms;
+    use InteractsWithForms, HasPageShield;
 
     protected string $view = 'filament.pages.login-assessment-card';
 

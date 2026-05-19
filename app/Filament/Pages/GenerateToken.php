@@ -7,6 +7,7 @@ use App\Enum\Menu;
 use App\Models\Assessment;
 use App\Models\AssessmentToken;
 use BackedEnum;
+use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Carbon\Carbon;
 use Exception;
 use Filament\Actions\Action;
@@ -34,7 +35,7 @@ use UnitEnum;
 
 class GenerateToken extends Page implements HasForms, HasTable
 {
-    use InteractsWithForms, InteractsWithTable;
+    use InteractsWithForms, InteractsWithTable, HasPageShield;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Key;
     
