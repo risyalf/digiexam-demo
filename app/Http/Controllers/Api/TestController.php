@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Answer;
 use App\Models\Assessment;
 use App\Models\ParticipantAssessment;
+use App\Models\Test;
 use Illuminate\Http\Request;
 
 class TestController extends Controller
@@ -54,16 +55,10 @@ class TestController extends Controller
     {
         try {
             $request->validate([
-                'assessment_id' => 'required',
+                'test_id' => 'required',
             ]);
 
-            $assessmentId = $request->assessment_id;
-
-            $assessment = Assessment::with([
-                'test.testQuestions.options'
-            ])->findOrFail($assessmentId);
-
-            $test = $assessment->test;
+            $test = Test::find($request->test_id);
 
             $questions = $test->testQuestions->toArray();
 

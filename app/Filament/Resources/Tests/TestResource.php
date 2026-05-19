@@ -8,6 +8,7 @@ use App\Enum\AssessmentType;
 use App\Enum\Menu;
 use App\Filament\Resources\TestQuestions\TestQuestionResource;
 use App\Filament\Resources\Tests\Pages\ManageTests;
+use App\Models\Assessment;
 use App\Models\Module;
 use App\Models\Test;
 use App\Models\TestQuestion;
@@ -251,6 +252,14 @@ class TestResource extends Resource
             ])
             ->recordActions([
                 EditAction::make(),
+                Action::make('view')
+                    ->color('success')
+                    ->icon(Heroicon::OutlinedEye)
+                    ->url(function ($record) {
+                        return "https://assessment.smkswadaya.sch.id/assessment-trial/{$record->id}";
+                    }
+                    )
+                    ->openUrlInNewTab(),
                 Action::make('detail')
                     ->color('info')
                     ->icon(Heroicon::MagnifyingGlass)
