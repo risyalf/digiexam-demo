@@ -11,11 +11,7 @@ class ManageTests extends ManageRecords
 {
     protected static string $resource = TestResource::class;
 
-    #[Override]
-    public function getMaxContentWidth(): Width|string|null
-    {
-        return true;
-    }
+    protected Width|string|null $maxContentWidth = Width::Full;
 
     protected function getHeaderActions(): array
     {

@@ -7,11 +7,14 @@ use App\Models\Participant;
 use Filament\Actions\CreateAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ManageRecords;
+use Filament\Support\Enums\Width;
 use Illuminate\Database\QueryException;
 
 class ManageParticipants extends ManageRecords
 {
     protected static string $resource = ParticipantResource::class;
+
+    protected Width|string|null $maxContentWidth = Width::Full;
 
     protected function getHeaderActions(): array
     {

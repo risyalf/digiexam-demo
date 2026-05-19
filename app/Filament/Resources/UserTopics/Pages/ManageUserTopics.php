@@ -7,11 +7,14 @@ use App\Models\UserTopic;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
+use Filament\Support\Enums\Width;
 use Illuminate\Support\Str;
 
 class ManageUserTopics extends ManageRecords
 {
     protected static string $resource = UserTopicResource::class;
+
+    protected Width|string|null $maxContentWidth = Width::Full;
 
     protected function getHeaderActions(): array
     {

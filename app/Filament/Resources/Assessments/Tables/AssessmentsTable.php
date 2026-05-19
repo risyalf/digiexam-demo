@@ -120,7 +120,7 @@ class AssessmentsTable
                     ->label('Topic'),
             ], FiltersLayout::AboveContent)
             ->deferFilters()
-            ->filtersFormWidth(Width::MaxContent)
+            ->filtersFormWidth(Width::Full)
             ->recordActions(
                 ActionGroup::make([
                     EditAction::make()

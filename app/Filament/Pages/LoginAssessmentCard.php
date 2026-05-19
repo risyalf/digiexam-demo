@@ -18,6 +18,7 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use UnitEnum;
 
@@ -36,6 +37,8 @@ class LoginAssessmentCard extends Page implements HasForms
     protected static ?string $title = "Cetak Kartu Login";
 
     protected static ?int $navigationSort = 2;
+
+    protected Width|string|null $maxContentWidth = Width::Full;
 
     public $formData = [
         'module_id' => null,

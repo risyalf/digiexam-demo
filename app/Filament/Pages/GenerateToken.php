@@ -23,6 +23,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -42,6 +43,8 @@ class GenerateToken extends Page implements HasForms, HasTable
     protected static string|UnitEnum|null $navigationGroup = Menu::DATA_TES->value;
 
     protected string $view = 'filament.pages.generate-token';
+    
+    protected Width|string|null $maxContentWidth = Width::Full;
 
     public array $createFormData = [
         'all_module' => false,

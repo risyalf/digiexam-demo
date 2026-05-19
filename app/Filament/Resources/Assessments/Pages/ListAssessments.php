@@ -12,11 +12,7 @@ class ListAssessments extends ListRecords
 {
     protected static string $resource = AssessmentResource::class;
 
-    #[Override]
-    public function getMaxContentWidth(): Width|string|null
-    {
-        return Width::MaxContent;
-    }
+    protected Width|string|null $maxContentWidth = Width::Full;
 
     protected function getHeaderActions(): array
     {

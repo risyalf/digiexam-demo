@@ -22,6 +22,7 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use UnitEnum;
 
@@ -40,6 +41,8 @@ class AnswerReport extends Page implements HasForms
     protected static ?string $title = "Evaluasi Jawaban";
 
     protected static ?int $navigationSort = 3;
+
+    protected Width|string|null $maxContentWidth = Width::Full;
 
     public array $data = [
         'module_id' => null,

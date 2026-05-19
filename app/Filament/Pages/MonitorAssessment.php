@@ -28,6 +28,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -52,6 +53,8 @@ class MonitorAssessment extends Page implements HasTable, HasForms
     protected static ?int $navigationSort = 1;
 
     protected string $view = 'filament.pages.monitor-assessment';
+
+    protected Width|string|null $maxContentWidth = Width::Full;
 
     public array $selectFormData = [
         'assessment_id' => null,

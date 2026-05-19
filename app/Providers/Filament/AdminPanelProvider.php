@@ -56,8 +56,8 @@ class AdminPanelProvider extends PanelProvider
                             }
                         }
                     </style>
-                    <img alt="Logo SMK Swadaya" src="/images/logo_light.png" class="logo-light h-10 fi-logo" style="height: 4rem;" alt="Logo Light">
-                    <img alt="Logo SMK Swadaya" src="/images/logo_dark.png" class="logo-dark h-10 fi-logo" style="height: 4rem;" alt="Logo Dark">
+                    <img alt="Logo SMK Swadaya" src="/images/logo_light.png" class="logo-light fi-logo" style="height: 4rem;" alt="Logo Light">
+                    <img alt="Logo SMK Swadaya" src="/images/logo_dark.png" class="logo-dark fi-logo" style="height: 4rem;" alt="Logo Dark">
                 ')
             )
             ->authGuard("web")
