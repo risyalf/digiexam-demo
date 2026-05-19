@@ -55,10 +55,10 @@ class TestController extends Controller
     {
         try {
             $request->validate([
-                'test_id' => 'required',
+                'assessment_id' => 'required',
             ]);
 
-            $test = Test::find($request->test_id);
+            $test = Test::find($request->assessment_id);
 
             $questions = $test->testQuestions->toArray();
 
