@@ -58,7 +58,10 @@ class TestController extends Controller
                 'assessment_id' => 'required',
             ]);
 
-            $test = Test::find($request->assessment_id);
+            $test = Test::query()
+                    ->with('testQuestions.options')
+                    ->where('id', $request->assessment_id)
+                    ->first();
 
             $questions = $test->testQuestions->toArray();
 
