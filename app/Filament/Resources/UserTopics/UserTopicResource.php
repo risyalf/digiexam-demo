@@ -57,7 +57,11 @@ class UserTopicResource extends Resource
                     ->multiple()
                     ->options(
                         Topic::query()
-                            ->pluck('name', 'id')
+                        ->with('module')
+                        ->get()
+                        ->mapWithKeys(fn($topic) => [
+                            $topic->id => "{$topic->module->name} - {$topic->name}"
+                        ])
                     )
                     ->required(),
             ]);
@@ -83,12 +87,17 @@ class UserTopicResource extends Resource
                     ->label('TOPIC')
                     ->options(
                         Topic::query()
-                            ->pluck('name', 'id')
+                        ->with('module')
+                        ->get()
+                        ->mapWithKeys(fn($topic) => [
+                            $topic->id => "{$topic->module->name} - {$topic->name}"
+                        ])
                     ),
             ])
             ->recordActions([
                 Action::make('edit')
-                    ->label('EDIT')
+                    ->label('Edit')
+                    ->icon(Heroicon::OutlinedPencil)
                     ->schema([
                         Select::make('user_id')
                             ->label('Nama')
@@ -104,7 +113,11 @@ class UserTopicResource extends Resource
                             ->searchable()
                             ->options(
                                 Topic::query()
-                                    ->pluck('name', 'id')
+                                ->with('module')
+                                ->get()
+                                ->mapWithKeys(fn($topic) => [
+                                    $topic->id => "{$topic->module->name} - {$topic->name}"
+                                ])
                             )
                             ->default(fn($record) => $record->topic_id)
                             ->required(),

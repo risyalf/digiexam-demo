@@ -60,7 +60,14 @@ class TestResource extends Resource
             ->components([
                 Select::make('topic_id')
                     ->label('NAMA TOPIK')
-                    ->options(Topic::query()->pluck('name', 'id'))
+                    ->options(
+                        Topic::query()
+                            ->with('module')
+                            ->get()
+                            ->mapWithKeys(fn($topic) => [
+                                $topic->id => "{$topic->module->name} - {$topic->name}"
+                            ])
+                    )
                     ->searchable()
                     ->required(),
                 TextInput::make('name')
@@ -130,7 +137,11 @@ class TestResource extends Resource
                 SelectFilter::make('topic_id')
                     ->options(
                         Topic::query()
-                            ->pluck('name', 'id')
+                        ->with('module')
+                        ->get()
+                        ->mapWithKeys(fn ($topic) => [
+                            $topic->id => "{$topic->module->name} - {$topic->name}"
+                        ])
                     )
                     ->searchable()
                     ->label('Topic'),
@@ -151,7 +162,11 @@ class TestResource extends Resource
                         Select::make('topic')
                             ->options(
                                 Topic::query()
-                                    ->pluck('name', 'id')
+                                ->with('module')
+                                ->get()
+                                ->mapWithKeys(fn($topic) => [
+                                    $topic->id => "{$topic->module->name} - {$topic->name}"
+                                ])
                             )
                             ->searchable()
                             ->required(),

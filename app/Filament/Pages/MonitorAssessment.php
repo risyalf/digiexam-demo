@@ -168,15 +168,14 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                         Select::make('topic_id')
                             ->label('Topik')
                             ->searchable()
-                            ->options(function ($q) {
-                                $datas = Topic::query()
-                                    ->pluck('name', 'id');
-
-                                return [
-                                    null => 'Semua Topik',
-                                    ...$datas
-                                ];
-                            }),
+                            ->options(
+                                Topic::query()
+                                ->with('module')
+                                ->get()
+                                ->mapWithKeys(fn ($topic) => [
+                                    $topic->id => "{$topic->module->name} - {$topic->name}"
+                                ])
+                            ),
                         Select::make('group_id')
                             ->label('Kelas')
                             ->searchable()

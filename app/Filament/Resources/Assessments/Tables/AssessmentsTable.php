@@ -112,9 +112,13 @@ class AssessmentsTable
                     ->searchable()
                     ->label('Modul'),
                 SelectFilter::make('topic_id')
-                    ->options(
+                    ->options(fn($get) =>
                         Topic::query()
-                            ->pluck('name', 'id')
+                        ->with('module')
+                        ->get()
+                        ->mapWithKeys(fn ($topic) => [
+                            $topic->id => "{$topic->module->name} - {$topic->name}"
+                        ])
                     )
                     ->searchable()
                     ->label('Topic'),

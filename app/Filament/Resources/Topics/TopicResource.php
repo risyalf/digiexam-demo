@@ -85,16 +85,14 @@ class TopicResource extends Resource
                     ->alignCenter(),
             ])
             ->filters([
-                SelectFilter::make('name')
+                SelectFilter::make('topic')
                     ->options(
                         Topic::query()
-                            ->pluck('name', 'id')
-                    ),
-                SelectFilter::make('module_id')
-                    ->label('MODUL')
-                    ->options(
-                        Module::query()
-                            ->pluck('name', 'id')
+                        ->with('module')
+                        ->get()
+                        ->mapWithKeys(fn ($topic) => [
+                            $topic->id => "{$topic->module->name} - {$topic->name}"
+                        ])
                     ),
             ], FiltersLayout::AboveContent)
             ->paginated()
