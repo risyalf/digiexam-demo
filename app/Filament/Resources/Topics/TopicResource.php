@@ -6,7 +6,6 @@ use App\Enum\Menu;
 use App\Filament\Resources\Topics\Pages\ManageTopics;
 use App\Models\Module;
 use App\Models\Topic;
-use App\Models\UserTopic;
 use BackedEnum;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -20,12 +19,10 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Filters\TrashedFilter;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -85,15 +82,42 @@ class TopicResource extends Resource
                     ->alignCenter(),
             ])
             ->filters([
-                SelectFilter::make('topic')
-                    ->options(
-                        Topic::query()
-                        ->with('module')
-                        ->get()
-                        ->mapWithKeys(fn ($topic) => [
-                            $topic->id => "{$topic->module->name} - {$topic->name}"
-                        ])
-                    ),
+                Filter::make('data')
+                ->schema([
+                    Select::make('module_id')
+                        ->label('Module')
+                        ->options(
+                            Module::query()
+                                ->pluck('name', 'id')
+                        )
+                        ->live()
+                        ->searchable(),
+
+                    Select::make('topic_id')
+                        ->label('Topic')
+                        ->options(fn (callable $get) =>
+                            Topic::query()
+                                ->when(
+                                    $get('module_id'),
+                                    fn ($q, $v) => $q->where('module_id', $v)
+                                )
+                                ->pluck('name', 'id')
+                        )
+                        ->searchable(),
+                ])
+                ->query(function ($query, array $data) {
+                    $query
+                        ->when(
+                            $data['module_id'] ?? null,
+                            fn ($q, $v) =>
+                                $q->where('module_id', $v)
+                        )
+                        ->when(
+                            $data['topic_id'] ?? null,
+                            fn ($q, $v) =>
+                                $q->where('id', $v)
+                        );
+                }),
             ], FiltersLayout::AboveContent)
             ->paginated()
             ->recordActions([

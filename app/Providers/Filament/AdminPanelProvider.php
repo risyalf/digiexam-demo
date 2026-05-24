@@ -60,6 +60,37 @@ class AdminPanelProvider extends PanelProvider
                     <img alt="Logo SMK Swadaya" src="/images/logo_dark.png" class="logo-dark fi-logo" style="height: 4rem;" alt="Logo Dark">
                 ')
             )
+            ->renderHook(
+                'panels::head.end',
+                fn () => <<<HTML
+                    <style>
+                        .fi-ta-filters-header {
+                            display: none
+                        }
+                        .fi-ta-filters-actions-ctn {
+                            margin-top: 25px;
+                        }
+                        .fi-ta-table td {
+                            border: 1px solid rgb(228 228 231);
+                        }
+                        .dark .fi-ta-table td {
+                            border: 1px solid rgb(39 39 42);
+                        }
+                        .fi-ta-table th {
+                            border: 1px solid rgb(228 228 231);
+                        }
+                        .dark .fi-ta-table th {
+                            border: 1px solid rgb(39 39 42);
+                        }
+                        /* .fi-ta-table th {
+                            border: 1px solid rgb(39 39 42);
+                        }
+                        .fi-ta-table td {
+                            border: 1px solid rgb(39 39 42);
+                        } */
+                    </style>
+                HTML
+            )
             ->authGuard("web")
             ->login(Login::class)
             ->colors([
@@ -103,5 +134,6 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->sidebarCollapsibleOnDesktop()
             ->sidebarFullyCollapsibleOnDesktop(false);
+            // ->viteTheme('resources/css/filament/filter.css');
     }
 } 
