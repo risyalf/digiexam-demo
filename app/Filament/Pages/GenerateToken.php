@@ -6,6 +6,7 @@ use App\Action\CreateToken;
 use App\Enum\Menu;
 use App\Models\Assessment;
 use App\Models\AssessmentToken;
+use App\Models\Module;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Carbon\Carbon;
@@ -39,16 +40,17 @@ class GenerateToken extends Page implements HasForms, HasTable
     use InteractsWithForms, InteractsWithTable, HasPageShield;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::Key;
-    
+
     protected static string|UnitEnum|null $navigationGroup = Menu::DATA_TES->value;
 
     protected string $view = 'filament.pages.generate-token';
-    
+
     protected Width|string|null $maxContentWidth = Width::Full;
 
     public array $createFormData = [
         'all_module' => false,
         'assessment_id' => null,
+        'module_id' => null,
         'expired_time' => null,
     ];
 
@@ -70,150 +72,163 @@ class GenerateToken extends Page implements HasForms, HasTable
     public function createForm(Schema $schema): Schema
     {
         return $schema
-                ->statePath('createFormData')
-                ->components([
-                    Section::make('Form')
-                        ->hiddenLabel()
-                        ->components([
-                            Checkbox::make('all_module')
-                                ->label('Untuk Semua Test')
-                                ->reactive()
-                                ->helperText('Jika dicentang, token ini bisa digunakan untuk semua test.'),
-                            Select::make('assessment_id')
-                                ->label('Pilih Test')
-                                ->reactive()
-                                ->searchable()
-                                ->options(
-                                    Assessment::all()
-                                        ->pluck('name', 'id')
-                                )
-                                ->visible(fn($get) => !$get('all_module')),
-                            Select::make('expired_time')
-                                ->label('Masa Aktif (Dalam Menit)')
-                                ->options([
-                                    15 => 15,
-                                    30 => 30,
-                                    45 => 45,
-                                    60 => 60,
-                                ]),
-                        ])
-                        ->headerActions([
-                            Action::make('generate_token')
-                                ->label('Generate Token')
-                                ->action('createToken')
-                        ])
-                ]);
+            ->statePath('createFormData')
+            ->components([
+                Section::make('Form')
+                    ->hiddenLabel()
+                    ->components([
+                        Checkbox::make('all_module')
+                            ->label('Untuk Semua Test')
+                            ->reactive()
+                            ->helperText('Jika dicentang, token ini bisa digunakan untuk semua test.'),
+                        Select::make('module_id')
+                            ->label('Module')
+                            ->options(
+                                Module::query()
+                                    ->pluck('name', 'id')
+                            )
+                            ->live()
+                            ->searchable(),
+
+                        Select::make('assessment_id')
+                            ->label('Pilih Test')
+                            ->options(
+                                fn(callable $get) =>
+                                Assessment::query()
+                                    ->when(
+                                        $get('module_id'),
+                                        fn($q, $v) => $q->where('module_id', $v)
+                                    )
+                                    ->pluck('name', 'id')
+                            )
+                            ->searchable()
+                            ->visible(fn($get) => !$get('all_module')),
+                        Select::make('expired_time')
+                            ->label('Masa Aktif (Dalam Menit)')
+                            ->options([
+                                15 => 15,
+                                30 => 30,
+                                45 => 45,
+                                60 => 60,
+                            ]),
+                    ])
+                    ->headerActions([
+                        Action::make('generate_token')
+                            ->label('Generate Token')
+                            ->action('createToken')
+                    ])
+            ]);
     }
 
     public function filterForm(Schema $schema): Schema
     {
         return $schema
-                ->statePath('filterFormData')
-                ->components([
-                    Section::make('filter')
-                        ->label('Filter')
-                        ->collapsible()
-                        ->collapsed()
-                        ->components([
-                            Grid::make(2)
-                                ->components([
-                                    DatePicker::make('date_from')
-                                        ->format('d/m/Y')
-                                        ->defaultFocusedDate(now())
-                                        ->reactive(),
-                                    DatePicker::make('date_to')
-                                        ->format('d/m/Y')
-                                        ->defaultFocusedDate(now())
-                                        ->reactive()
-                                        ->minDate(fn (callable $get) => $get('date_from') ? Carbon::createFromFormat('Y-m-d', $get('date_from')) : now()->startOfDay()),
-                                ]),
-                            Checkbox::make('show_expired')
-                                ->label('Tampilkan Expired'),
-                            Select::make('assessment_id')
-                                ->label('Assessment')
-                                ->searchable()
-                                ->options(
-                                    Assessment::query()
-                                        ->pluck('name', 'id')
-                                )
-                        ])
-                        ->footerActionsAlignment(Alignment::Right)
-                        ->footerActions([
-                            Action::make('filter')
-                                ->icon(Heroicon::MagnifyingGlass)
-                                ->color(Color::Emerald)
-                                ->label('Filter')
-                                ->action(fn() => $this->dispatch('do-refresh'))
-                        ]),
-                ]);
+            ->statePath('filterFormData')
+            ->components([
+                Section::make('filter')
+                    ->label('Filter')
+                    ->collapsible()
+                    ->collapsed()
+                    ->components([
+                        Grid::make(2)
+                            ->components([
+                                DatePicker::make('date_from')
+                                    ->format('d/m/Y')
+                                    ->defaultFocusedDate(now())
+                                    ->reactive(),
+                                DatePicker::make('date_to')
+                                    ->format('d/m/Y')
+                                    ->defaultFocusedDate(now())
+                                    ->reactive()
+                                    ->minDate(fn(callable $get) => $get('date_from') ? Carbon::createFromFormat('Y-m-d', $get('date_from')) : now()->startOfDay()),
+                            ]),
+                        Checkbox::make('show_expired')
+                            ->label('Tampilkan Expired'),
+                        Select::make('assessment_id')
+                            ->label('Assessment')
+                            ->searchable()
+                            ->options(
+                                Assessment::query()
+                                    ->pluck('name', 'id')
+                            )
+                    ])
+                    ->footerActionsAlignment(Alignment::Right)
+                    ->footerActions([
+                        Action::make('filter')
+                            ->icon(Heroicon::MagnifyingGlass)
+                            ->color(Color::Emerald)
+                            ->label('Filter')
+                            ->action(fn() => $this->dispatch('do-refresh'))
+                    ]),
+            ]);
     }
 
     public function table(Table $table): Table
     {
         return $table
-                ->query(
-                    AssessmentToken::query()
-                        ->with('assessment')
-                        ->select([
-                            '*',
-                            DB::raw("null as status"),
-                        ])
-                        ->when($this->filterFormData['date_from'] && $this->filterFormData['date_to'], function($q) {
-                            $q->whereRaw("(start_date::date >= '{$this->filterFormData['date_from']}' and start_date::date <= '{$this->filterFormData['date_to']}')");
-                        })
-                        ->when($this->filterFormData['date_from'] && $this->filterFormData['date_to'], function($q) {
-                            $q->whereRaw("(start_date::date >= '{$this->filterFormData['date_from']}' and start_date::date <= '{$this->filterFormData['date_to']}')");
-                        })
-                        ->when(!$this->filterFormData['show_expired'], function($q) {
-                            $q->where('expired_until', '>', now());
-                        })
-                        ->when($this->filterFormData['assessment_id'], function($q) {
-                            $q->where('id', $this->filterFormData['assessment_id']);
-                        })
-                )
-                ->columns([
-                    TextColumn::make('No.')
-                        ->rowIndex(isFromZero:false)
-                        ->copyable(),
-                    TextColumn::make('value')
-                        ->label('Token')
-                        ->copyable()
-                        ->alignCenter(),
-                    TextColumn::make('created_at')
-                        ->label('Di Buat Pada')
-                        ->copyable()
-                        ->alignCenter(),
-                    TextColumn::make('expired_time')
-                        ->label('Masa Aktif')
-                        ->copyable()
-                        ->formatStateUsing(fn($state) => $state." Menit")
-                        ->alignCenter(),
-                    TextColumn::make('expired_until')
-                        ->label('Masa Aktif Sampai')
-                        ->copyable()
-                        ->alignCenter(),
-                    TextColumn::make('assessment.name')
-                        ->label('Assessment')
-                        ->copyable()
-                        ->alignCenter(),
-                    IconColumn::make('all_module')
-                        ->boolean()
-                        ->label('Untuk Semua Test')
-                        ->alignCenter(),
-                    TextColumn::make('status')
-                        ->label('Status')
-                        ->alignCenter()
-                        ->formatStateUsing(function ($record) {
-                            return now()->gt($record->expired_until) ? 'EXPIRED' : 'AKTIF';
-                        })
-                        ->badge()
-                        ->color(fn ($state): string => match ($state) {
-                            'AKTIF' => 'success',
-                            'EXPIRED' => 'danger',
-                            default => 'gray',
-                        }),
-                ])
-                ->paginated();
+            ->query(
+                AssessmentToken::query()
+                    ->with('assessment')
+                    ->select([
+                        '*',
+                        DB::raw("null as status"),
+                    ])
+                    ->when($this->filterFormData['date_from'] && $this->filterFormData['date_to'], function ($q) {
+                        $q->whereRaw("(start_date::date >= '{$this->filterFormData['date_from']}' and start_date::date <= '{$this->filterFormData['date_to']}')");
+                    })
+                    ->when($this->filterFormData['date_from'] && $this->filterFormData['date_to'], function ($q) {
+                        $q->whereRaw("(start_date::date >= '{$this->filterFormData['date_from']}' and start_date::date <= '{$this->filterFormData['date_to']}')");
+                    })
+                    ->when(!$this->filterFormData['show_expired'], function ($q) {
+                        $q->where('expired_until', '>', now());
+                    })
+                    ->when($this->filterFormData['assessment_id'], function ($q) {
+                        $q->where('id', $this->filterFormData['assessment_id']);
+                    })
+            )
+            ->columns([
+                TextColumn::make('No.')
+                    ->rowIndex(isFromZero: false)
+                    ->copyable(),
+                TextColumn::make('value')
+                    ->label('Token')
+                    ->copyable()
+                    ->alignCenter(),
+                TextColumn::make('created_at')
+                    ->label('Di Buat Pada')
+                    ->copyable()
+                    ->alignCenter(),
+                TextColumn::make('expired_time')
+                    ->label('Masa Aktif')
+                    ->copyable()
+                    ->formatStateUsing(fn($state) => $state . " Menit")
+                    ->alignCenter(),
+                TextColumn::make('expired_until')
+                    ->label('Masa Aktif Sampai')
+                    ->copyable()
+                    ->alignCenter(),
+                TextColumn::make('assessment.name')
+                    ->label('Assessment')
+                    ->copyable()
+                    ->alignCenter(),
+                IconColumn::make('all_module')
+                    ->boolean()
+                    ->label('Untuk Semua Test')
+                    ->alignCenter(),
+                TextColumn::make('status')
+                    ->label('Status')
+                    ->alignCenter()
+                    ->formatStateUsing(function ($record) {
+                        return now()->gt($record->expired_until) ? 'EXPIRED' : 'AKTIF';
+                    })
+                    ->badge()
+                    ->color(fn($state): string => match ($state) {
+                        'AKTIF' => 'success',
+                        'EXPIRED' => 'danger',
+                        default => 'gray',
+                    }),
+            ])
+            ->paginated();
     }
 
     public function createToken()
