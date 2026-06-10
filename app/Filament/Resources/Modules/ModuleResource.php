@@ -50,10 +50,11 @@ class ModuleResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn($query) => $query->orderBy('created_at', 'DESC'))
             ->columns([
                 TextColumn::make('no')
                     ->label('NO.')
-                    ->rowIndex(isFromZero:false),
+                    ->rowIndex(isFromZero: false),
                 TextColumn::make('name')
                     ->label('NAMA')
                     ->alignCenter(),

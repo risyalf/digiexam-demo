@@ -185,6 +185,7 @@ class GenerateToken extends Page implements HasForms, HasTable
                     ->when($this->filterFormData['assessment_id'], function ($q) {
                         $q->where('id', $this->filterFormData['assessment_id']);
                     })
+                    ->orderBy('created_at', 'desc')
             )
             ->columns([
                 TextColumn::make('No.')

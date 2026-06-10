@@ -21,7 +21,7 @@ class ManageUserTopics extends ManageRecords
         return [
             CreateAction::make()
                 ->label('Buat Akses Guru')
-                ->action(function($data) {
+                ->using(function ($data) {
                     $userId = $data['user_id'];
                     $topicIds = $data['topic_id'];
 
@@ -29,11 +29,11 @@ class ManageUserTopics extends ManageRecords
 
                     foreach ($topicIds as $topicId) {
                         $exists = UserTopic::query()
-                                    ->where([
-                                        "user_id" => $userId,
-                                        "topic_id" => $topicId
-                                    ])
-                                    ->exists();
+                            ->where([
+                                "user_id" => $userId,
+                                "topic_id" => $topicId
+                            ])
+                            ->exists();
 
                         if ($exists) {
                             continue;

@@ -82,18 +82,19 @@ class TestResource extends Resource
             ->modifyQueryUsing(function (Builder $query) {
                 $user = Auth::user();
                 $isTeacher = $user->hasRole('guru');
-                $query->when($isTeacher, function ($q) use($user) {
+                $query->when($isTeacher, function ($q) use ($user) {
                     return $q->whereIn(
-                        'topic_id', UserTopic::query()
-                                ->where('user_id', $user->id)
-                                ->pluck('topic_id')
+                        'topic_id',
+                        UserTopic::query()
+                            ->where('user_id', $user->id)
+                            ->pluck('topic_id')
                     );
-                });
+                })->orderBy('created_at', 'desc');
             })
             ->columns([
                 TextColumn::make('no')
                     ->label('NO.')
-                    ->rowIndex(isFromZero:false),
+                    ->rowIndex(isFromZero: false),
                 TextColumn::make('topic.module.name')
                     ->label('MODUL')
                     ->alignCenter()
@@ -137,11 +138,11 @@ class TestResource extends Resource
                 SelectFilter::make('topic_id')
                     ->options(
                         Topic::query()
-                        ->with('module')
-                        ->get()
-                        ->mapWithKeys(fn ($topic) => [
-                            $topic->id => "{$topic->module->name} - {$topic->name}"
-                        ])
+                            ->with('module')
+                            ->get()
+                            ->mapWithKeys(fn($topic) => [
+                                $topic->id => "{$topic->module->name} - {$topic->name}"
+                            ])
                     )
                     ->searchable()
                     ->label('Topic'),
@@ -162,11 +163,11 @@ class TestResource extends Resource
                         Select::make('topic')
                             ->options(
                                 Topic::query()
-                                ->with('module')
-                                ->get()
-                                ->mapWithKeys(fn($topic) => [
-                                    $topic->id => "{$topic->module->name} - {$topic->name}"
-                                ])
+                                    ->with('module')
+                                    ->get()
+                                    ->mapWithKeys(fn($topic) => [
+                                        $topic->id => "{$topic->module->name} - {$topic->name}"
+                                    ])
                             )
                             ->searchable()
                             ->required(),
@@ -270,9 +271,10 @@ class TestResource extends Resource
                 Action::make('view')
                     ->color('success')
                     ->icon(Heroicon::OutlinedEye)
-                    ->url(function ($record) {
-                        return "https://assessment.smkswadaya.sch.id/assessment-trial/{$record->id}";
-                    }
+                    ->url(
+                        function ($record) {
+                            return "https://assessment.smkswadaya.sch.id/assessment-trial/{$record->id}";
+                        }
                     )
                     ->openUrlInNewTab(),
                 Action::make('detail')

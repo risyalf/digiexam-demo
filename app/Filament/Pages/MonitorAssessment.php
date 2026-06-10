@@ -6,6 +6,7 @@ use App\Action\GenerateRandomString;
 use App\Enum\Menu;
 use App\Enum\ParticipantStatus;
 use App\Models\Assessment;
+use App\Models\Module;
 use App\Models\Participant;
 use App\Models\ParticipantAssessment;
 use App\Models\ParticipantGroup;
@@ -45,7 +46,7 @@ class MonitorAssessment extends Page implements HasTable, HasForms
     use InteractsWithTable, InteractsWithForms, HasPageShield;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::MagnifyingGlassPlus;
-    
+
     protected static string|UnitEnum|null $navigationGroup = Menu::DATA_TES->value;
 
     protected static ?string $navigationLabel = "Monitor Assessment";
@@ -56,17 +57,10 @@ class MonitorAssessment extends Page implements HasTable, HasForms
 
     protected Width|string|null $maxContentWidth = Width::Full;
 
-    public array $selectFormData = [
-        'assessment_id' => null,
-        'status' => null,
-        'date_start' => null,
-        'time' => null,
-        'name' => null,
-    ];
-
     public array $filterFormData = [
         'status' => null,
         'name' => null,
+        'module_id' => null,
         'topic_id' => null,
         'group_id' => null
     ];
@@ -74,68 +68,8 @@ class MonitorAssessment extends Page implements HasTable, HasForms
     protected function getForms(): array
     {
         return [
-            'selectForm',
             'filterForm',
         ];
-    }
-
-    public function selectForm(Schema $schema): Schema
-    {
-        return $schema
-            ->statePath('selectFormData')
-            ->components([
-                Section::make('Pilih Test')
-                    ->collapsible()
-                    ->footerActionsAlignment(Alignment::Right)
-                    ->footerActions([
-                        Action::make('select')
-                            ->icon(Heroicon::MagnifyingGlass)
-                            ->label('Pilih Tes')
-                            ->color(Color::Emerald)
-                            ->action(fn() => $this->dispatch('do-refresh')),
-                    ])
-                    ->components([
-                        Select::make('assessment_id')
-                            ->label('Nama Test')
-                            ->options(
-                                Assessment::query()
-                                    ->where('start_date', '<=', Carbon::now()->toDateTimeString())
-                                    // ->where('end_date', '>=', Carbon::now()->toDateTimeString())
-                                    ->pluck('name', 'id')
-                            )
-                            ->reactive()
-                            ->afterStateUpdated(function ($state, Set $set, Get $get) {
-                                $assesment = Assessment::find($state);
-
-                                $set('name', $assesment ? $assesment->name : null);
-                                $set('status', $assesment ? 'Aktif' : null);
-                                $set('date_start', $assesment ? $assesment->start_date : null);
-                                $set('time', $assesment ? $assesment->time_test : null);
-
-                                $this->dispatch('do-update');
-                            })
-                            ->searchable(),
-                        Grid::make(2)
-                            ->components([
-                                TextInput::make('name')
-                                    ->label('Nama')
-                                    ->readOnly()
-                                    ->copyable(),
-                                TextInput::make('status')
-                                    ->readOnly()
-                                    ->copyable(),
-                                TextInput::make('date_start')
-                                    ->label('Waktu Mulai')
-                                    ->readOnly()
-                                    ->copyable(),
-                                TextInput::make('time')
-                                    ->label('Waktu Tes')
-                                    ->readOnly()
-                                    ->copyable(),
-                            ])
-                    ])
-
-            ]);
     }
 
     public function filterForm(Schema $schema): Schema
@@ -165,22 +99,27 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                                     ...$siswas
                                 ];
                             }),
+                        Select::make('module_id')
+                            ->label('Modul')
+                            ->searchable()
+                            ->options(
+                                Module::query()
+                                    ->pluck('name', 'id')
+                            ),
                         Select::make('topic_id')
                             ->label('Topik')
                             ->searchable()
                             ->options(
+                                fn($get) =>
                                 Topic::query()
-                                ->with('module')
-                                ->get()
-                                ->mapWithKeys(fn ($topic) => [
-                                    $topic->id => "{$topic->module->name} - {$topic->name}"
-                                ])
+                                    ->when($get('module_id'), fn($q, $v) => $q->where('module_id', $v))
+                                    ->pluck('name', 'id')
                             ),
                         Select::make('group_id')
                             ->label('Kelas')
                             ->searchable()
                             ->options(ParticipantGroup::query()
-                            ->pluck('name', 'id')),
+                                ->pluck('name', 'id')),
                     ])
                     ->footerActionsAlignment(Alignment::Right)
                     ->footerActions([
@@ -199,9 +138,6 @@ class MonitorAssessment extends Page implements HasTable, HasForms
             ->query(
                 ParticipantAssessment::query()
                     ->with(['participant', 'assessment'])
-                    ->when($this->selectFormData['assessment_id'], function ($q) {
-                        $q->where('assessment_id', $this->selectFormData['assessment_id']);
-                    })
                     ->when($this->filterFormData['status'], function ($q) {
                         $q->where('status', $this->filterFormData['status']);
                     })
@@ -308,7 +244,7 @@ class MonitorAssessment extends Page implements HasTable, HasForms
             ])
             ->columns([
                 TextColumn::make('No.')
-                    ->rowIndex(isFromZero:false)
+                    ->rowIndex(isFromZero: false)
                     ->alignCenter(),
                 TextColumn::make('participant.user.name')
                     ->copyable()

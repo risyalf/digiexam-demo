@@ -61,12 +61,13 @@ class TopicResource extends Resource
     }
 
     public static function table(Table $table): Table
-    { 
+    {
         return $table
+            ->modifyQueryUsing(fn($query) => $query->orderBy('created_at', 'desc'))
             ->columns([
                 TextColumn::make('no')
                     ->label('NO.')
-                    ->rowIndex(isFromZero:false),
+                    ->rowIndex(isFromZero: false),
                 TextColumn::make('module.name')
                     ->label('NAMA MODUL')
                     ->alignCenter(),
@@ -83,43 +84,43 @@ class TopicResource extends Resource
             ])
             ->filters([
                 Filter::make('data')
-                ->schema([
-                    Select::make('module_id')
-                        ->label('Module')
-                        ->options(
-                            Module::query()
-                                ->pluck('name', 'id')
-                        )
-                        ->live()
-                        ->searchable(),
+                    ->schema([
+                        Select::make('module_id')
+                            ->label('Module')
+                            ->options(
+                                Module::query()
+                                    ->pluck('name', 'id')
+                            )
+                            ->live()
+                            ->searchable(),
 
-                    Select::make('topic_id')
-                        ->label('Topic')
-                        ->options(fn (callable $get) =>
-                            Topic::query()
-                                ->when(
-                                    $get('module_id'),
-                                    fn ($q, $v) => $q->where('module_id', $v)
-                                )
-                                ->pluck('name', 'id')
-                        )
-                        ->searchable(),
-                ])
-                ->query(function ($query, array $data) {
-                    $query
-                        ->when(
-                            $data['module_id'] ?? null,
-                            fn ($q, $v) =>
+                        Select::make('topic_id')
+                            ->label('Topic')
+                            ->options(
+                                fn(callable $get) =>
+                                Topic::query()
+                                    ->when(
+                                        $get('module_id'),
+                                        fn($q, $v) => $q->where('module_id', $v)
+                                    )
+                                    ->pluck('name', 'id')
+                            )
+                            ->searchable(),
+                    ])
+                    ->query(function ($query, array $data) {
+                        $query
+                            ->when(
+                                $data['module_id'] ?? null,
+                                fn($q, $v) =>
                                 $q->where('module_id', $v)
-                        )
-                        ->when(
-                            $data['topic_id'] ?? null,
-                            fn ($q, $v) =>
+                            )
+                            ->when(
+                                $data['topic_id'] ?? null,
+                                fn($q, $v) =>
                                 $q->where('id', $v)
-                        );
-                }),
+                            );
+                    }),
             ], FiltersLayout::AboveContent)
-            ->paginated()
             ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),
