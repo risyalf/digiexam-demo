@@ -144,6 +144,9 @@ class MonitorAssessment extends Page implements HasTable, HasForms
                     ->when($this->filterFormData['name'], function ($q) {
                         $q->whereHas('participant', fn($q) => $q->where('user_id', $this->filterFormData['name']));
                     })
+                    ->when($this->filterFormData['module_id'], function ($q) {
+                        $q->whereHas('assessment', fn($q) => $q->where('module_id', $this->filterFormData['module_id']));
+                    })
                     ->when($this->filterFormData['topic_id'], function ($q) {
                         $q->whereHas('assessment', fn($q) => $q->where('topic_id', $this->filterFormData['topic_id']));
                     })
