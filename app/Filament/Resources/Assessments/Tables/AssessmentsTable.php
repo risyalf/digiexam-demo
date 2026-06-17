@@ -91,8 +91,8 @@ class AssessmentsTable
                     ->label('ACAK SOAL')
                     ->wrapHeader()
                     ->disabled(),
-                ToggleColumn::make('need_token')
-                    ->label('ACAK JAWABAN')
+                ToggleColumn::make('is_lock_enabled')
+                    ->label('AKTIFKAN KUNCI LAYAR')
                     ->wrapHeader()
                     ->disabled(),
             ])
@@ -112,13 +112,14 @@ class AssessmentsTable
                     ->searchable()
                     ->label('Modul'),
                 SelectFilter::make('topic_id')
-                    ->options(fn($get) =>
+                    ->options(
+                        fn($get) =>
                         Topic::query()
-                        ->with('module')
-                        ->get()
-                        ->mapWithKeys(fn ($topic) => [
-                            $topic->id => "{$topic->module->name} - {$topic->name}"
-                        ])
+                            ->with('module')
+                            ->get()
+                            ->mapWithKeys(fn($topic) => [
+                                $topic->id => "{$topic->module->name} - {$topic->name}"
+                            ])
                     )
                     ->searchable()
                     ->label('Topic'),

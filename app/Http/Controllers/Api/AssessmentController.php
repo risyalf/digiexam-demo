@@ -10,7 +10,7 @@ use App\Models\Participant;
 use App\Models\AssessmentToken;
 use App\Models\ParticipantAssessment;
 use Carbon\Carbon;
-use Exception; 
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -39,6 +39,7 @@ class AssessmentController extends Controller
                 "end_date" => $assessment->end_date,
                 "time_test" => $assessment->time_test,
                 "status" => $participantAssessment->status,
+                "is_lock_enabled" => $assessment->is_lock_enabled,
             ];
 
             return response([
@@ -243,6 +244,7 @@ class AssessmentController extends Controller
             $data["duration"] = $participantAssessment->assessment->time_test;
             $data["locked"] =
                 $participantAssessment->status == ParticipantStatus::LOCKED;
+            $data["is_lock_enabled"] = $assessment->is_lock_enabled;
 
             return response([
                 "message" => "SUKSES MULAI UJIAN",

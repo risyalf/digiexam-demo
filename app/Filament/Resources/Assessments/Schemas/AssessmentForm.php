@@ -30,7 +30,7 @@ class AssessmentForm
                     ->label('MODUL')
                     ->searchable()
                     ->reactive()
-                    ->afterStateUpdated(function(Set $set) {
+                    ->afterStateUpdated(function (Set $set) {
                         $set('topic_id', null);
                         $set('test_id', null);
                     })
@@ -62,14 +62,14 @@ class AssessmentForm
                             ->where('topic_id', $get('topic_id'))
                             ->pluck('name', 'id')
                     )
-                    ->afterStateUpdated(function($state, $set) {
+                    ->afterStateUpdated(function ($state, $set) {
                         if (!$state) {
                             return;
                         }
 
                         $totalQuestion = TestQuestion::query()
-                                            ->where('test_id', $state)
-                                            ->count();
+                            ->where('test_id', $state)
+                            ->count();
 
                         $set('total_question', $totalQuestion);
                     })
@@ -128,8 +128,12 @@ class AssessmentForm
                     ->label('ACAK SOAL')
                     ->required()
                     ->default(true),
-                Toggle::make('need_token')
+                Toggle::make('randomize_answer')
                     ->label('ACAK JAWABAN')
+                    ->required()
+                    ->default(true),
+                Toggle::make('is_lock_enabled')
+                    ->label('AKTIFKAN KUNCI LAYAR')
                     ->required()
                     ->default(true),
             ]);
