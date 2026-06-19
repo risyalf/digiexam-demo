@@ -16,6 +16,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
+use Filament\Support\Colors\Color;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
@@ -28,25 +29,29 @@ class TestQuestionsTable
     {
         return $table
             ->columns([
-                TextColumn::make('no')->label('NO.')->rowIndex(isFromZero:false),
+                TextColumn::make('no')->label('NO.')->rowIndex(isFromZero: false),
                 TextColumn::make('created_at')->label('DIBUAT PADA')->alignCenter(),
                 TextColumn::make('name')
                     ->label('NAMA')
                     ->wrap()
-                    ->formatStateUsing(fn ($state) => html_entity_decode($state))
+                    ->formatStateUsing(fn($state) => html_entity_decode($state))
                     ->html(),
+                TextColumn::make('type')
+                    ->label('TIPE')
+                    ->wrap(),
                 TextColumn::make('option_answers')
                     ->label('JAWABAN')
-                    ->getStateUsing(fn($record) => true)
-                    ->formatStateUsing(fn($state, $key) => 'Lihat Jawaban')
-                    ->badge()
-                    ->iconColor('success')
+                    ->getStateUsing(fn() => true)
+                    ->formatStateUsing(fn($record) => isset($record) && $record->type != 'Esai' ? 'Lihat Jawaban' : '')
+                    ->badge(fn($record) => isset($record) && $record->type != 'Esai')
+                    ->iconColor(Color::Emerald)
                     ->weight('bold')
                     ->alignCenter()
                     ->action(
                         Action::make('view')
                             ->label('VIEW')
                             ->modal()
+                            ->hidden(fn($record) => isset($record) && $record->type == 'Esai')
                             ->schema([
                                 Repeater::make('options')
                                     ->schema([RichEditor::make('content')->label('Opsi Jawaban'), Toggle::make('value')->reactive()->label(fn($state) => $state ? 'Benar' : 'Salah')])
@@ -112,7 +117,8 @@ class TestQuestionsTable
             ->filters([TrashedFilter::make()])
             ->recordActions([
                 EditAction::make()
-                    ->label('Ubah Pertanyaan')
+                    ->color(Color::Blue)
+                    ->label('Ubah')
                     ->action(function ($record, $data) {
                         try {
                             DB::transaction(function () use ($record, $data) {

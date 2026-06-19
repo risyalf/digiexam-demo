@@ -78,7 +78,7 @@ class ImportTestFormDocx
                     }
 
                     $cleanQuestion = trim(strip_tags($question));
-                    
+
 
                     if (!$cleanQuestion) {
 
@@ -99,7 +99,7 @@ class ImportTestFormDocx
                     }
 
                     // check correct answer exists
-                    if (!$answers->contains(fn($a) => $a['value'] === 'true')) {
+                    if ($cleanType == 'PILIHAN GANDA' && !$answers->contains(fn($a) => $a['value'] === 'true')) {
                         throw new Exception("TIDAK ADA JAWABAN BENAR PADA SOAL NOMOR : " . $number);
                     }
 
@@ -188,7 +188,7 @@ class ImportTestFormDocx
             $i++;
         }
 
-        $html = trim(implode('', array_filter($blocks, fn ($b) => $b !== '')));
+        $html = trim(implode('', array_filter($blocks, fn($b) => $b !== '')));
         return self::wrapCellContainer($html);
     }
 

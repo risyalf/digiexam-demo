@@ -57,11 +57,11 @@ class UserTopicResource extends Resource
                     ->multiple()
                     ->options(
                         Topic::query()
-                        ->with('module')
-                        ->get()
-                        ->mapWithKeys(fn($topic) => [
-                            $topic->id => "{$topic->module->name} - {$topic->name}"
-                        ])
+                            ->with('module')
+                            ->get()
+                            ->mapWithKeys(fn($topic) => [
+                                $topic->id => "{$topic->module->name} - {$topic->name}"
+                            ])
                     )
                     ->required(),
             ]);
@@ -87,11 +87,11 @@ class UserTopicResource extends Resource
                     ->label('TOPIC')
                     ->options(
                         Topic::query()
-                        ->with('module')
-                        ->get()
-                        ->mapWithKeys(fn($topic) => [
-                            $topic->id => "{$topic->module->name} - {$topic->name}"
-                        ])
+                            ->with('module')
+                            ->get()
+                            ->mapWithKeys(fn($topic) => [
+                                $topic->id => "{$topic->module->name} - {$topic->name}"
+                            ])
                     ),
             ])
             ->recordActions([
@@ -113,26 +113,26 @@ class UserTopicResource extends Resource
                             ->searchable()
                             ->options(
                                 Topic::query()
-                                ->with('module')
-                                ->get()
-                                ->mapWithKeys(fn($topic) => [
-                                    $topic->id => "{$topic->module->name} - {$topic->name}"
-                                ])
+                                    ->with('module')
+                                    ->get()
+                                    ->mapWithKeys(fn($topic) => [
+                                        $topic->id => "{$topic->module->name} - {$topic->name}"
+                                    ])
                             )
                             ->default(fn($record) => $record->topic_id)
                             ->required(),
                     ])
-                    ->action(function($data, $record) {
+                    ->action(function ($data, $record) {
                         try {
                             $userId = $data['user_id'];
                             $topicId = $data['topic_id'];
 
                             $exists = UserTopic::query()
-                                        ->where([
-                                            'user_id' => $userId,
-                                            'topic_id' => $topicId
-                                        ])
-                                        ->exists();
+                                ->where([
+                                    'user_id' => $userId,
+                                    'topic_id' => $topicId
+                                ])
+                                ->exists();
 
                             if ($exists) {
                                 $user = User::find($userId);
