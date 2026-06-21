@@ -20,20 +20,20 @@ class ParticipantAssessmentController extends Controller
         try {
             $participantId = auth()->user()->id;
             $participant = ParticipantAssessment::query()
-                            ->where([
-                                'assessment_id' => $id,
-                                'participant_id' => $participantId,
-                            ])
-                            ->select([
-                                'id',
-                                'participant_id',
-                                'assessment_id',
-                                'start_time',
-                                'end_time',
-                                'status',
-                            ])
-                            ->first();
-            
+                ->where([
+                    'assessment_id' => $id,
+                    'participant_id' => $participantId,
+                ])
+                ->select([
+                    'id',
+                    'participant_id',
+                    'assessment_id',
+                    'start_time',
+                    'end_time',
+                    'status',
+                ])
+                ->first();
+
             if (!$participant) {
                 throw new Exception("TIDAK KETEMU SISWA PADA UJIAN!");
             }
@@ -58,6 +58,7 @@ class ParticipantAssessmentController extends Controller
                 'assessment_name' => $assessment->name ?? null,
                 'duration' => $assessment->time_test ?? null,
                 'locked' => $participant->status === ParticipantStatus::LOCKED,
+                'isLockEnabled' => $assessment->is_lock_enabled
             ];
 
             return response()->json([
@@ -65,10 +66,12 @@ class ParticipantAssessmentController extends Controller
                 'data' => $response
             ]);
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => $th->getMessage()
-            ],
-            400);
+            return response()->json(
+                [
+                    'message' => $th->getMessage()
+                ],
+                400
+            );
         }
     }
 
@@ -78,9 +81,9 @@ class ParticipantAssessmentController extends Controller
             $participantId = auth()->user()->id;
 
             $participantAssessment = ParticipantAssessment::query()
-                                        ->where('participant_id', $participantId)
-                                        ->orderBy('updated_at', 'DESC')
-                                        ->first();
+                ->where('participant_id', $participantId)
+                ->orderBy('updated_at', 'DESC')
+                ->first();
 
             $status = $participantAssessment->status;
 
@@ -89,10 +92,12 @@ class ParticipantAssessmentController extends Controller
                 'data' => $status
             ]);
         } catch (\Throwable $th) {
-            return response()->json([
-                'message' => $th->getMessage()
-            ],
-            400);
+            return response()->json(
+                [
+                    'message' => $th->getMessage()
+                ],
+                400
+            );
         }
     }
 
@@ -154,7 +159,6 @@ class ParticipantAssessmentController extends Controller
                 'message' => 'SUKSES LOCK SISWA',
                 'data' => $response,
             ]);
-
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => $th->getMessage()
@@ -213,7 +217,6 @@ class ParticipantAssessmentController extends Controller
                 'message' => 'SUKSES LOCK SISWA',
                 'data' => $response,
             ]);
-
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => $th->getMessage()

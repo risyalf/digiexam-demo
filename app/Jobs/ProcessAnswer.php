@@ -35,12 +35,17 @@ class ProcessAnswer implements ShouldQueue
         $questionIds = $answers->pluck("test_question_id")->unique();
 
         $participantAssessment = ParticipantAssessment::findOrFail($this->validated['participant_assessment_id']);
-        $testId = $participantAssessment->assessment->test->id;
-        $validQuestionIds = TestQuestion::query()
+        $assessment = $participantAssessment->assessment;
+        $testId = $assessment->test_id;
+        $validQuestions = TestQuestion::query()
             ->where("test_id", $testId)
             ->whereIn("id", $questionIds)
-            ->pluck("id")
-            ->toArray();
+            ->select([
+                "id",
+                "type"
+            ])->get();
+
+        $validQuestionIds = $validQuestions->pluck('id')->toArray();
 
         $correctOptions = TestQuestionOption::query()
             ->whereIn("test_question_id", $validQuestionIds)
@@ -50,6 +55,7 @@ class ProcessAnswer implements ShouldQueue
 
         $correct = 0;
         $wrong = 0;
+        $essayAnswers = [];
 
         foreach ($answers as $item) {
             if (!in_array($item["test_question_id"], $validQuestionIds)) {
@@ -57,6 +63,16 @@ class ProcessAnswer implements ShouldQueue
             }
 
             $answer = $item["answer"];
+
+            if ($validQuestions->where('id', $item["test_question_id"])->first()->type == 'Esai') {
+                $essayAnswers[] = [
+                    "test_question_id" => $item['test_question_id'],
+                    "value" => $answer,
+                    "evaluated" => false,
+                    "point" => 0
+                ];
+                continue;
+            }
 
             $correctOption = $correctOptions[$item["test_question_id"]] ?? null;
 
@@ -68,9 +84,10 @@ class ProcessAnswer implements ShouldQueue
         }
 
         $jsonValue = json_encode($this->validated['value']);
-
-        DB::transaction(function () use ($correct, $wrong, $participantAssessment, $jsonValue) {
-            $totalQuestion = $participantAssessment->assessment->total_question;    
+        $essayValue = json_encode($essayAnswers);
+        $containEssay = count($essayAnswers) > 0;
+        DB::transaction(function () use ($correct, $wrong, $participantAssessment, $assessment, $jsonValue, $essayValue, $containEssay) {
+            $totalQuestion = $assessment->total_question;
             $null = $totalQuestion - ($correct + $wrong);
 
             Answer::updateOrCreate(
@@ -82,11 +99,16 @@ class ProcessAnswer implements ShouldQueue
                     "wrong_answers" => $wrong,
                     "null_answers" => $null,
                     "value" => $jsonValue,
+                    "essay_values" => $essayValue,
                 ],
             );
 
-            $point = $correct / $totalQuestion * 100;
-            
+            $point = 0;
+
+            if (!$containEssay) {
+                $point = $correct / $totalQuestion * 100;
+            }
+
             $participantAssessment->point = $point;
             $participantAssessment->save();
         });

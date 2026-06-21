@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Action\GenerateRandomString;
 use App\Action\GenerateTestNumber;
 use App\Action\PrintLoginCard;
+use App\Action\RecalculateAssessmentPoint;
 use App\Action\SyncParticipantAssessment;
 use App\Enum\ParticipantStatus;
 use App\Filament\Pages\MonitorAssessment;
@@ -44,8 +45,6 @@ class trial extends Command
      */
     public function handle()
     {
-        $user = User::query()->get();
-
-        dd(count($user));
+        RecalculateAssessmentPoint::execute('019eeaef-1dbe-7170-bcee-cf53e7d3e0c6');
     }
 }

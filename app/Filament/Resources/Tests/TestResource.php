@@ -226,6 +226,10 @@ class TestResource extends Resource
                                     return;
                                 }
 
+                                if ($data['type'] != 'PILIHAN GANDA') {
+                                    return null;
+                                }
+
                                 return collect($data['answers'])->map(fn($answer) => [
                                     'created_at' => now()->toDateTimeString(),
                                     'updated_at' => now()->toDateTimeString(),
@@ -239,6 +243,7 @@ class TestResource extends Resource
 
                             $questionOptions = $questionOptions
                                 ->flatten(1)
+                                ->whereNotNull()
                                 ->values()
                                 ->toArray();
 

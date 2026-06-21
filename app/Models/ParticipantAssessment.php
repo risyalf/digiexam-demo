@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class ParticipantAssessment extends Model
 {
@@ -28,9 +29,9 @@ class ParticipantAssessment extends Model
     {
         return $this->belongsTo(Participant::class, 'participant_id', 'id');
     }
-    
-    public function answer(): BelongsTo
+
+    public function answer(): HasOne
     {
-        return $this->belongsTo(Answer::class, 'id', 'participant_assessment_id');
+        return $this->hasOne(Answer::class, 'participant_assessment_id', 'id');
     }
 }

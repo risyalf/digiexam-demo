@@ -27,23 +27,39 @@ class TestController extends Controller
 
             $test = $assessment->test;
 
-            $questions = $test->testQuestions->toArray();
+            $questions = $test->testQuestions;
+
+            $multipleChoiceQuestions = $questions
+                ->where('type', 'Pilihan Ganda');
+
+            $essayQuestions = $questions
+                ->where('type', 'Esai');
 
             if ($assessment->randomize_question) {
-                shuffle($questions);
+                $multipleChoiceQuestions = $multipleChoiceQuestions->shuffle();
+
+                $essayQuestions = $essayQuestions->shuffle();
             }
+
+            $questions = $multipleChoiceQuestions
+                ->concat($essayQuestions)
+                ->values()
+                ->toArray();
 
             if ($assessment->randomize_answer) {
                 foreach ($questions as &$q) {
-                    shuffle($q['options']);
+                    if (!empty($q['options'])) {
+                        shuffle($q['options']);
+                    }
                 }
+
+                unset($q);
             }
 
             return response()->json([
                 'message' => 'SUKSES AMBIL DATA OPTIONS',
                 'data' => $questions,
             ]);
-
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => $th->getMessage(),
@@ -59,9 +75,9 @@ class TestController extends Controller
             ]);
 
             $test = Test::query()
-                    ->with('testQuestions.options')
-                    ->where('id', $request->assessment_id)
-                    ->first();
+                ->with('testQuestions.options')
+                ->where('id', $request->assessment_id)
+                ->first();
 
             $questions = $test->testQuestions->toArray();
 
@@ -69,22 +85,24 @@ class TestController extends Controller
                 'message' => 'SUKSES AMBIL DATA OPTIONS',
                 'data' => $questions,
             ]);
-
         } catch (\Throwable $th) {
             return response()->json([
                 'message' => $th->getMessage(),
             ], 400);
         }
     }
-    
+
     public function result($assessmentId)
     {
         $answer = Answer::query()
+            ->with([
+                'participantAssessment.assessment'
+            ])
             ->whereHas('participantAssessment', fn($q) => $q->where([
                 'participant_id' => auth()->user()->id,
                 'assessment_id' => $assessmentId,
             ]))
-            ->first();        
+            ->first();
 
         if (!$answer) {
             return response()->json(
@@ -96,16 +114,22 @@ class TestController extends Controller
             );
         }
 
+        $participantAssessment = null;
+
         if ($answer->participantAssessment->point == 0) {
-            RecalculateAssessmentPoint::execute($answer->participant_assessment_id);
+            $participantAssessment = RecalculateAssessmentPoint::execute($answer->participant_assessment_id);
+        }
+
+        if (!$participantAssessment) {
+            $participantAssessment = $answer->participantAssessment;
         }
 
         $data = [
             'correct_answer' => $answer->correct_answers,
             'wrong_answer' => $answer->wrong_answers,
             'null_answer' => $answer->null_answers,
-            'total_question' => $answer->participantAssessment->assessment->total_question,
-            'final_point' => $answer->participantAssessment->point,
+            'total_question' => $participantAssessment->assessment->total_question,
+            'final_point' => $participantAssessment->point,
         ];
 
         return response()->json([
