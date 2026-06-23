@@ -5,21 +5,31 @@ namespace App\Filament\Pages;
 use App\Action\RecalculateAssessmentPoint;
 use App\Enum\Menu;
 use App\Models\Answer;
+use App\Models\Assessment;
+use App\Models\Module;
 use App\Models\ParticipantAssessment;
+use App\Models\ParticipantGroup;
 use App\Models\TestQuestion;
+use App\Models\Topic;
+use App\Traits\HasRefreshFunction;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Size;
 use Filament\Support\Enums\TextSize;
 use Filament\Support\Enums\Width;
@@ -33,7 +43,7 @@ use UnitEnum;
 
 class EvaluateEssayAnswer extends Page implements HasTable, HasForms
 {
-    use InteractsWithForms, InteractsWithTable, HasPageShield;
+    use InteractsWithForms, InteractsWithTable, HasPageShield, HasRefreshFunction;
 
     protected string $view = 'filament.pages.evaluate-essay-answer';
 
@@ -49,6 +59,87 @@ class EvaluateEssayAnswer extends Page implements HasTable, HasForms
 
     protected Width|string|null $maxContentWidth = Width::Full;
 
+    public array $filterFormData = [
+        'module_id' => '',
+        'topic_id' => '',
+        'group_id' => '',
+        'assessment_id' => '',
+        'check_status'
+    ];
+
+    protected function getForms(): array
+    {
+        return [
+            'filterForm'
+        ];
+    }
+
+    public function filterForm(Schema $schema): Schema
+    {
+        return $schema
+            ->statePath('filterFormData')
+            ->components([
+                Section::make('')
+                    ->label('Filter')
+                    ->collapsible()
+                    ->collapsed()
+                    ->components([
+                        Select::make('module_id')
+                            ->label('Modul')
+                            ->searchable()
+                            ->options(
+                                fn($get) =>
+                                Module::query()
+                                    ->pluck('name', 'id')
+                            ),
+                        Select::make('topic_id')
+                            ->label('Topik')
+                            ->searchable()
+                            ->options(
+                                fn($get) =>
+                                Topic::query()
+                                    ->when($get('module_id'), fn($q, $v) => $q->where('module_id', $v))
+                                    ->pluck('name', 'id')
+                            ),
+                        Select::make('group_id')
+                            ->label('Kelas')
+                            ->searchable()
+                            ->options(
+                                ParticipantGroup::query()
+                                    ->pluck('name', 'id')
+                            ),
+                        Select::make('assessment_id')
+                            ->label('Assessment')
+                            ->searchable()
+                            ->options(
+                                fn($get) =>
+                                Assessment::query()
+                                    ->when($get('module_id'), fn($q, $v) => $q->where('module_id', $v))
+                                    ->when($get('topic_id'), fn($q, $v) => $q->where('topic_id', $v))
+                                    ->when(
+                                        $get('group_id'),
+                                        fn($q, $v) =>
+                                        $q->whereHas('participant_groups', fn($q) => $q->where('participant_group_id', $v))
+                                    )
+                                    ->pluck('name', 'id')
+                            ),
+                        Select::make('check_status')
+                            ->label('STATUS CEK')
+                            ->options([
+                                true => "SUDAH",
+                                false => "BELUM",
+                            ])
+                    ])
+                    ->footerActionsAlignment(Alignment::Right)
+                    ->footerActions([
+                        Action::make('filter')
+                            ->icon(Heroicon::MagnifyingGlass)
+                            ->color(Color::Emerald)
+                            ->label('Filter')
+                            ->action(fn() => $this->dispatch('do-refresh'))
+                    ]),
+            ]);
+    }
 
     public function table(Table $table): Table
     {
@@ -65,6 +156,7 @@ class EvaluateEssayAnswer extends Page implements HasTable, HasForms
                         'answer',
                         fn($q) =>
                         $q->whereNotNull('essay_values')
+                            ->when(isset($this->filterFormData['check_status']), fn($q, $v) => $q->where('essay_evaluated', $this->filterFormData['check_status']))
                     )
                     ->with([
                         'participant.user',
@@ -74,6 +166,14 @@ class EvaluateEssayAnswer extends Page implements HasTable, HasForms
                         'assessment.topic',
                         'answer'
                     ])
+                    ->when($this->filterFormData['module_id'], fn($q, $v) => $q->whereHas('assessment', fn($q) => $q->where('module_id', $v)))
+                    ->when($this->filterFormData['topic_id'], fn($q, $v) => $q->whereHas('assessment', fn($q) => $q->where('topic_id', $v)))
+                    ->when(
+                        $this->filterFormData['group_id'],
+                        fn($q, $v) =>
+                        $q->whereHas('assessment.participant_groups', fn($q) => $q->where('participant_group_id', $v))
+                    )
+                    ->when($this->filterFormData['assessment_id'], fn($q, $v) => $q->where('assessment_id', $v))
             )
             ->columns([
                 TextColumn::make('participant.user.name')
