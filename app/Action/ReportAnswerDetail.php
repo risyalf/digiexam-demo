@@ -26,43 +26,44 @@ class ReportAnswerDetail
         $name = self::buildFileName($module->name, $topic->name, $group?->name);
 
         $answers = Answer::query()
-                    ->with('participantAssessment.participant.user', 'participantAssessment.participant.participantGroup')
-                    ->whereHas('participantAssessment.assessment', function ($q) use($moduleId, $topicId, $groupId) {
-                        $q->where([
-                            'module_id' => $moduleId,
-                            'topic_id' => $topicId
-                        ])
-                        ->when($groupId, fn($q) => $q->whereRaw(
-                            "exists(
+            ->with('participantAssessment.participant.user', 'participantAssessment.participant.participantGroup')
+            ->whereHas('participantAssessment.assessment', function ($q) use ($moduleId, $topicId, $groupId) {
+                $q->where([
+                    'module_id' => $moduleId,
+                    'topic_id' => $topicId
+                ])
+                    ->when($groupId, fn($q) => $q->whereRaw(
+                        "exists(
                                 select 1 from assessment_participant_groups apg
                                 where apg.assessment_id = id
                                 and apg.participant_group_id = '$groupId'
                             )"
-                        ));
-                    })
-                    ->when($createdAt, fn($q) => $q->whereDate('created_at', $createdAt))
-                    ->get();
+                    ));
+            })
+            ->when($createdAt, fn($q) => $q->whereDate('created_at', $createdAt))
+            ->get();
 
         $assessment = Assessment::query()
-                        ->where([
-                            'module_id' => $moduleId,
-                            'topic_id' => $topicId
-                        ])
-                        ->when($groupId, fn($q) => $q->whereRaw(
-                            "exists(
+            ->with('test', 'test.testQuestions')
+            ->where([
+                'module_id' => $moduleId,
+                'topic_id' => $topicId
+            ])
+            ->when($groupId, fn($q) => $q->whereRaw(
+                "exists(
                                 select 1 from assessment_participant_groups apg
                                 where apg.assessment_id = id
                                 and apg.participant_group_id = '$groupId'
                             )"
-                        ))
-                        ->firstOrFail();
+            ))
+            ->firstOrFail();
 
         $test = $assessment->test;
         $questions = $test->testQuestions()->with('options')->orderBy('ordering')->get();
         $questionTexts = $questions
-                            ->pluck('name')
-                            ->map(fn ($text) => self::sanitizeQuestionText($text))
-                            ->toArray();
+            ->pluck('name')
+            ->map(fn($text) => self::sanitizeQuestionText($text))
+            ->toArray();
 
         $headers = [
             '',
@@ -75,12 +76,20 @@ class ReportAnswerDetail
         ];
 
         $correctAnswers = $questions->map(function ($question) {
-            return $question->options->firstWhere('value', true)?->content ?? '';
+            $trueAnswer = $question->options->firstWhere('value', true)?->content ?? '';
+            if ($trueAnswer) {
+                $trueAnswer = trim(strip_tags($trueAnswer));
+            }
+            return $trueAnswer;
         })->toArray();
 
         $optionContentById = $questions
-            ->flatMap(fn ($question) => $question->options)
+            ->flatMap(fn($question) => $question->options)
             ->pluck('content', 'id');
+
+        foreach ($optionContentById as $key => $data) {
+            $optionContentById[$key] = trim(strip_tags($data));
+        }
 
         $rows = [
             $headers,
@@ -103,9 +112,13 @@ class ReportAnswerDetail
 
             foreach ($questions as $question) {
                 $currentAnswer = $decodedAnswers->get($question->id);
-                $answerArray[] = $currentAnswer
-                    ? ($optionContentById[$currentAnswer->answer] ?? '')
-                    : '';
+                if ($question->type == "Pilihan Ganda") {
+                    $answerArray[] = $currentAnswer
+                        ? ($optionContentById[$currentAnswer->answer] ?? '')
+                        : '';
+                } else {
+                    $answerArray[] = $currentAnswer?->answer;
+                }
             }
 
             $rows[] = [
