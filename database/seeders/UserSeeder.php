@@ -12,14 +12,12 @@ class UserSeeder extends Seeder
     {
         $now = now();
 
-        // password di-hash SEKALI
-        $adminPassword = Hash::make("RootSwadaya!123");
+        $adminPassword = Hash::make("admin");
 
-        // admin & guru (1 query)
         User::create(
             [
-                "name" => "Admin SMK Swadaya",
-                "email" => "swadayasemarang@gmail.com",
+                "name" => "Admin",
+                "email" => "admin@mail.com",
                 "nis" => "admin",
                 "password" => $adminPassword,
                 "created_at" => $now,

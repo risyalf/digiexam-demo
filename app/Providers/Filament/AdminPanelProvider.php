@@ -32,10 +32,10 @@ class AdminPanelProvider extends PanelProvider
             ->id("admin")
             ->path("admin")
             ->brandName('')
-            ->favicon(asset("images/logo_smk.png"))
+            ->favicon(asset("images/logo_front.png"))
             ->renderHook(
                 PanelsRenderHook::TOPBAR_START,
-                fn (): string => Blade::render('
+                fn(): string => Blade::render('
                     <style>
                         .fi-topbar .fi-logo {
                             margin-right:5rem;
@@ -56,13 +56,13 @@ class AdminPanelProvider extends PanelProvider
                             }
                         }
                     </style>
-                    <img alt="Logo SMK Swadaya" src="/images/logo_light.png" class="logo-light fi-logo" style="height: 4rem;" alt="Logo Light">
-                    <img alt="Logo SMK Swadaya" src="/images/logo_dark.png" class="logo-dark fi-logo" style="height: 4rem;" alt="Logo Dark">
+                    <img alt="Logo" src="/images/logo_light.png" class="logo-light fi-logo" style="height: 4rem;" alt="Logo Light">
+                    <img alt="Logo" src="/images/logo_dark.png" class="logo-dark fi-logo" style="height: 4rem;" alt="Logo Dark">
                 ')
             )
             ->renderHook(
                 'panels::head.end',
-                fn () => <<<HTML
+                fn() => <<<HTML
                     <style>
                         .fi-ta-filters-header {
                             display: none
@@ -134,6 +134,6 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->sidebarCollapsibleOnDesktop()
             ->sidebarFullyCollapsibleOnDesktop(false);
-            // ->viteTheme('resources/css/filament/filter.css');
+        // ->viteTheme('resources/css/filament/filter.css');
     }
-} 
+}

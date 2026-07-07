@@ -4,12 +4,12 @@
             DigiExam CBT
         </h1>
         <br>
-        <img alt="Logo DigiExam CBT" src="/images/logo_smk.png" style="height: 7rem;" class="fi-logo">
+        <img alt="Logo DigiExam CBT" src="/images/logo_front.png" style="height: 7rem;" class="fi-logo">
         <h1 class="fi-simple-header-heading">
-            SMK Swadaya Semarang
+            Demo
             <br>
             <br>
-            Masuk ke akun Anda            
+            Masuk ke akun Anda
         </h1>
     </header>
 

@@ -2,11 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Permission as ModelsPermission;
 
 class RolePermissionSeeder extends Seeder
 {
@@ -15,43 +17,33 @@ class RolePermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        foreach (["super_admin", "guru", "siswa"] as $name) {
+        $superAdmin = Role::firstOrCreate([
+            'name' => 'super_admin',
+        ]);
+
+        foreach (["guru", "siswa"] as $name) {
             Role::firstOrCreate(["name" => $name]);
         }
 
         $roles = Role::pluck("uuid", "name");
 
-        $adminId = User::where("email", "swadayasemarang@gmail.com")->value("id");
-        // $guruId = User::where("name", "guru")->value("id");
-
-        // $siswaIds = User::whereNotIn("name", ["admin", "guru"])->pluck("id");
+        $admin = User::where("email", "admin@mail.com")->first();
 
         $rows = [];
 
-        if ($adminId) {
+        if ($admin) {
             $rows[] = [
                 "role_id" => $roles["super_admin"],
                 "model_type" => User::class,
-                "model_uuid" => $adminId,
+                "model_uuid" => $admin->id,
             ];
         }
 
-        // if ($guruId) {
-        //     $rows[] = [
-        //         "role_id" => $roles["guru"],
-        //         "model_type" => User::class,
-        //         "model_uuid" => $guruId,
-        //     ];
-        // }
-
-        // foreach ($siswaIds as $id) {
-        //     $rows[] = [
-        //         "role_id" => $roles["siswa"],
-        //         "model_type" => User::class,
-        //         "model_uuid" => $id,
-        //     ];
-        // }
-
         DB::table("model_has_roles")->insertOrIgnore($rows);
+
+        $permissions = Permission::all();
+
+        $superAdmin->syncPermissions($permissions);
+        $admin->assignRole($superAdmin);
     }
 }

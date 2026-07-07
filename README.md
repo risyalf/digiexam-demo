@@ -1,59 +1,390 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# DigiExam
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+<div align="center">
 
-## About Laravel
+A modern web-based student assessment platform built with **Laravel**, **Filament**, and **Flutter**.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Platform asesmen siswa modern berbasis **Laravel**, **Filament**, dan **Flutter**.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+![Laravel](https://img.shields.io/badge/Laravel-12-red)
+![PHP](https://img.shields.io/badge/PHP-8.4-blue)
+![Filament](https://img.shields.io/badge/Filament-v3-orange)
+![Flutter](https://img.shields.io/badge/Flutter-3.x-46C5FB)
+![SQLite](https://img.shields.io/badge/SQLite-Demo-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+</div>
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+# 🇮🇩 Bahasa Indonesia
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Tentang DigiExam
 
-## Laravel Sponsors
+DigiExam adalah platform asesmen siswa berbasis web yang dirancang untuk membantu sekolah dalam mengelola ujian secara digital. Aplikasi ini menyediakan panel administrasi modern, bank soal, pelaksanaan ujian berbasis token, penilaian otomatis, serta pelaporan hasil ujian.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Repository ini merupakan versi **demo** yang dibuat untuk keperluan portfolio dan demonstrasi. Seluruh logo, data, dan identitas institusi telah diganti menggunakan data contoh.
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Fitur
 
-## Contributing
+- Login Administrator
+- Dashboard
+- Manajemen Guru
+- Manajemen Siswa
+- Manajemen Kelas
+- Manajemen Mata Pelajaran
+- Bank Soal
+- Token Ujian
+- Pelaksanaan Ujian
+- Penilaian Otomatis
+- Dashboard Hasil
+- REST API
+- Mobile Application (Flutter)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## Teknologi
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### Backend
 
-## Security Vulnerabilities
+- Laravel 12
+- Filament v5
+- PHP 8.4
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+### Frontend
+
+- Flutter
+- Blade
+- Vite
+
+### Database
+
+- SQLite (Demo)
+
+### Server
+
+- Docker
+- Caddy
+- PHP-FPM
+
+---
+
+## Screenshots
+
+| Login | Dashboard |
+|-------|-----------|
+| ![alt text](image-2.png) | ![](assets/dashboard.png) |
+
+| Question Bank | Assessment | Monitor Assessment |
+|---------------|------------|
+| ![alt text](image-3.png) | ![alt text](image-4.png) | ![](image-7.png) |
+
+| Mobile App | Result |
+|------------|--------|
+| ![alt text](image-5.png) | ![alt text](image-6.png) |
+
+```
+assets/
+├── login.png
+├── dashboard.png
+├── assessment.png
+└── result.png
+```
+
+---
+
+## Instalasi
+
+Clone repository
+
+```bash
+git clone git@github.com:risyalf/digiexam-demo.git
+
+cd digiexam-demo
+```
+
+Install dependency
+
+```bash
+composer install
+
+npm install
+```
+
+Copy environment
+
+```bash
+cp .env.example .env
+```
+
+Generate application key
+
+```bash
+php artisan key:generate
+```
+
+Buat database SQLite
+
+```bash
+touch database/database.sqlite
+```
+
+Migrasi dan seeder
+
+```bash
+php artisan migrate --seed
+```
+
+Daftarkan Shield
+
+```bash
+php artisan shield:install
+```
+
+Generate Shield
+
+```bash
+php artisan shield:generate
+```
+
+Build asset
+
+```bash
+npm run build
+```
+
+Jalankan aplikasi
+
+```bash
+composer dev
+```
+
+## After Instalasi
+
+![](image-8.png)
+
+Pergi Ke Menu Roles
+
+![](image-9.png)
+
+Edit Role Super Admin
+
+![](image-10.png)
+
+Pilih Select All, Save Changes
+
+---
+
+## Docker
+
+```bash
+docker compose up -d --build
+
+docker compose exec app php artisan migrate --seed --force
+```
+
+---
+
+## Kontribusi
+
+Proyek ini dikembangkan oleh tim yang terdiri dari dua orang.
+
+### Kontribusi Saya
+
+- Database Design
+- Backend Development
+- REST API Development
+- Flutter Mobile Application
+- Filament CMS
+- UI Implementation
+- Feature Development
+
+### Kontribusi Rekan
+
+- Docker Infrastructure
+- CI/CD Pipeline
+- Server Deployment
+- Monitoring
+- Grafana
+
+---
+
+## Disclaimer
+
+Versi ini merupakan aplikasi demo untuk portfolio.
+
+Seluruh data, logo, gambar, dan identitas institusi telah diganti menggunakan data contoh.
+
+---
+
+# 🇺🇸 English
+
+## About
+
+DigiExam is a modern web-based student assessment platform designed to help educational institutions manage digital examinations efficiently.
+
+This repository is a **portfolio demonstration** version. All branding, logos, and institutional data have been replaced with sample assets.
+
+---
+
+## Features
+
+- Authentication
+- Admin Dashboard
+- Teacher Management
+- Student Management
+- Class Management
+- Subject Management
+- Question Bank
+- Exam Token
+- Online Examination
+- Automatic Scoring
+- Result Dashboard
+- REST API
+- Flutter Mobile Application
+
+---
+
+## Tech Stack
+
+### Backend
+
+- Laravel 12
+- Filament v5
+- PHP 8.4
+
+### Frontend
+
+- Flutter
+- Blade
+- Vite
+
+### Database
+
+- SQLite
+
+### Infrastructure
+
+- Docker
+- Caddy
+- PHP-FPM
+
+---
+
+## Installation
+
+Clone repository
+
+```bash
+git clone git@github.com:risyalf/digiexam-demo.git
+
+cd digiexam-demo
+```
+
+Install dependencies
+
+```bash
+composer install
+
+npm install
+```
+
+Create environment
+
+```bash
+cp .env.example .env
+```
+
+Generate application key
+
+```bash
+php artisan key:generate
+```
+
+Create SQLite database
+
+```bash
+touch database/database.sqlite
+```
+
+Run migrations
+
+```bash
+php artisan migrate --seed
+```
+
+Build frontend assets
+
+```bash
+npm run build
+```
+
+Start development server
+
+```bash
+composer dev
+```
+
+---
+
+## Docker
+
+```bash
+docker compose up -d --build
+
+docker compose exec app php artisan migrate --seed --force
+```
+
+---
+
+## Project Structure
+
+```
+app/
+bootstrap/
+config/
+database/
+public/
+resources/
+routes/
+storage/
+```
+
+---
+
+## Future Improvements
+
+- Multi School Support
+- Computer Based Test
+- Question Randomization
+- Real-time Monitoring
+- AI Assisted Question Generator
+- Analytics Dashboard
+
+---
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is released under the MIT License.
+
+---
+
+## Author
+
+**Risyal**
+
+Backend Developer • Flutter Developer
+
+GitHub
+
+https://github.com/risyalf
+
+LinkedIn
+
+https://www.linkedin.com/in/risyal-febrianto/
+
+Portfolio
+
+https://porto.risyal.web.id/
