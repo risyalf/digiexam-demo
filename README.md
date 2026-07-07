@@ -187,29 +187,21 @@ docker compose exec app php artisan migrate --seed --force
 
 ---
 
-## Kontribusi
+## 👥 Kontribusi
 
-Proyek ini dikembangkan oleh tim yang terdiri dari dua orang.
+Proyek ini dikembangkan secara kolaboratif oleh dua orang.
 
-### Kontribusi Saya
-
-- Database Design
-- Backend Development
-- REST API Development
-- Flutter Mobile Application
-- Filament CMS
-- UI Implementation
-- Feature Development
-
-### Kontribusi Rekan
-
-- Docker Infrastructure
-- CI/CD Pipeline
-- Server Deployment
-- Monitoring
-- Grafana
-
----
+| Area | Kontribusi |
+|------|------------|
+| Backend | Saya dengan dukungan rekan tim |
+| Aplikasi Flutter | Dikembangkan oleh saya |
+| Filament CMS | Saya dengan dukungan rekan tim |
+| Desain Database | Dirancang oleh saya |
+| REST API | Saya |
+| Docker & Infrastruktur | Rekan tim |
+| CI/CD | Rekan tim |
+| Deployment Server | Rekan tim |
+| Monitoring (Grafana) | Rekan tim |
 
 ## Disclaimer
 
