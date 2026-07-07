@@ -75,10 +75,10 @@ Repository ini merupakan versi **demo** yang dibuat untuk keperluan portfolio da
 
 | Login | Dashboard |
 |-------|-----------|
-| ![alt text](image-2.png) | ![](assets/dashboard.png) |
+| ![alt text](image-2.png) | ![alt text](image-11.png) |
 
 | Question Bank | Assessment | Monitor Assessment |
-|---------------|------------|
+|---------------|------------|--------------------|
 | ![alt text](image-3.png) | ![alt text](image-4.png) | ![](image-7.png) |
 
 | Mobile App | Result |
