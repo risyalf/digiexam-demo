@@ -214,8 +214,6 @@ Seluruh data, logo, gambar, dan identitas institusi telah diganti menggunakan da
 
 ---
 
----
-
 ## Troubleshooting
 
 ### SQLite: `attempt to write a readonly database`
