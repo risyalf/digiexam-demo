@@ -189,6 +189,9 @@ docker compose exec app php artisan migrate --seed --force
 
 ## 👥 Kontribusi
 
+Risyal Febrianto (@risyalf)
+Andy Wijaya (@andywijaya15)
+
 Proyek ini dikembangkan secara kolaboratif oleh dua orang.
 
 | Area | Kontribusi |
