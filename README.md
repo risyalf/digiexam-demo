@@ -214,6 +214,43 @@ Seluruh data, logo, gambar, dan identitas institusi telah diganti menggunakan da
 
 ---
 
+---
+
+## Troubleshooting
+
+### SQLite: `attempt to write a readonly database`
+
+Jika muncul error seperti berikut:
+
+```text
+SQLSTATE[HY000]: General error: 8 attempt to write a readonly database
+```
+
+Pastikan file database SQLite beserta folder `database` memiliki permission yang benar.
+
+```bash
+sudo chown -R www-data:www-data database
+sudo chmod -R 775 database
+```
+
+Atau jika menjalankan menggunakan user selain `www-data`, sesuaikan owner dengan user web server yang digunakan.
+
+Pastikan file berikut dapat ditulis:
+
+```
+database/database.sqlite
+```
+
+Anda dapat memverifikasi permission dengan:
+
+```bash
+ls -lah database
+```
+
+Setelah permission diperbaiki, restart web server atau PHP-FPM jika diperlukan.
+
+---
+
 # 🇺🇸 English
 
 ## About
@@ -357,6 +394,43 @@ storage/
 - Real-time Monitoring
 - AI Assisted Question Generator
 - Analytics Dashboard
+
+---
+
+## Troubleshooting
+
+### SQLite: `attempt to write a readonly database`
+
+If you encounter the following error:
+
+```text
+SQLSTATE[HY000]: General error: 8 attempt to write a readonly database
+```
+
+Make sure both the SQLite database file and the `database` directory have the correct permissions.
+
+```bash
+sudo chown -R www-data:www-data database
+sudo chmod -R 775 database
+```
+
+If your web server runs under a different user, replace `www-data` with the appropriate user.
+
+Also, ensure that the following file is writable:
+
+```
+database/database.sqlite
+```
+
+You can verify the permissions by running:
+
+```bash
+ls -lah database
+```
+
+If the issue persists, ensure that the parent `database` directory is also writable, as SQLite needs to create temporary journal (`-journal`, `-wal`, or `-shm`) files during write operations.
+
+After updating the permissions, restart your web server or PHP-FPM (if applicable).
 
 ---
 
