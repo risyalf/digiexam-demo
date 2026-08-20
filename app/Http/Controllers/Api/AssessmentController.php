@@ -21,7 +21,7 @@ class AssessmentController extends Controller
         try {
             $assessment = Assessment::query()
                 ->where("id", $id)
-                ->select(["id", "name", "start_date", "end_date", "time_test"])
+                ->select(["id", "name", "start_date", "end_date", "time_test", "is_lock_enabled"])
                 ->first();
 
             $participantAssessment = ParticipantAssessment::query()

@@ -6,7 +6,6 @@ use App\Action\RecalculateAssessmentPoint;
 use App\Http\Controllers\Controller;
 use App\Models\Answer;
 use App\Models\Assessment;
-use App\Models\ParticipantAssessment;
 use App\Models\Test;
 use Illuminate\Http\Request;
 
