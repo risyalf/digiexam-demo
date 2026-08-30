@@ -40,7 +40,7 @@ class AnswerReport extends Page implements HasForms
 
     protected static ?string $title = "Evaluasi Jawaban";
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 5;
 
     protected Width|string|null $maxContentWidth = Width::Full;
 

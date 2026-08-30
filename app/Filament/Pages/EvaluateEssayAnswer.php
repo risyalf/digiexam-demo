@@ -55,7 +55,7 @@ class EvaluateEssayAnswer extends Page implements HasTable, HasForms
 
     protected static ?string $title = "Evaluasi Essay";
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     protected Width|string|null $maxContentWidth = Width::Full;
 
