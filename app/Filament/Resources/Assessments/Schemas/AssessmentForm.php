@@ -97,21 +97,24 @@ class AssessmentForm
                     ->numeric()
                     ->default(1)
                     ->required(),
-                // TextInput::make('correct_point')
-                //     ->label('NILAI JAWABAN BENAR')
-                //     ->numeric()
-                //     ->default(1)
-                //     ->required(),
-                // TextInput::make('wrong_point')
-                //     ->label('NILAI JAWABAN SALAH')
-                //     ->numeric()
-                //     ->default(0)
-                //     ->required(),
-                // TextInput::make('empty_point')
-                //     ->label('NILAI JAWABAN KOSONG')
-                //     ->numeric()
-                //     ->default(0)
-                //     ->required(),                
+                TextInput::make('correct_point')
+                    ->label('NILAI JAWABAN BENAR')
+                    ->numeric()
+                    ->default(1)
+                    ->required()
+                    ->hidden(),
+                TextInput::make('wrong_point')
+                    ->label('NILAI JAWABAN SALAH')
+                    ->numeric()
+                    ->default(0)
+                    ->required()
+                    ->hidden(),
+                TextInput::make('empty_point')
+                    ->label('NILAI JAWABAN KOSONG')
+                    ->numeric()
+                    ->default(0)
+                    ->required()
+                    ->hidden(),
                 TextInput::make('empty_point')
                     ->label('NILAI JAWABAN KOSONG')
                     ->numeric()
