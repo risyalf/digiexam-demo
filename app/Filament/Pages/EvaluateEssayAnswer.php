@@ -145,10 +145,6 @@ class EvaluateEssayAnswer extends Page implements HasTable, HasForms
 
     public function table(Table $table): Table
     {
-        $userTopicIds = UserTopic::query()
-            ->where('user_id', Auth::id())
-            ->pluck('topic_id')
-            ->toArray();
         return $table
             ->deferLoading()
             ->query(
@@ -174,7 +170,14 @@ class EvaluateEssayAnswer extends Page implements HasTable, HasForms
                     ])
                     ->when($this->filterFormData['module_id'], fn($q, $v) => $q->whereHas('assessment', fn($q) => $q->where('module_id', $v)))
                     ->when($this->filterFormData['topic_id'], fn($q, $v) => $q->whereHas('assessment', fn($q) => $q->where('topic_id', $v)))
-                    ->whereHas('assessment', fn($q) => $q->whereIn('topic_id', $userTopicIds))
+                    ->when(!Auth::user()->hasRole('super_admin'), function ($q) {
+                        $userTopicIds = UserTopic::query()
+                            ->where('user_id', Auth::id())
+                            ->pluck('topic_id')
+                            ->toArray();
+
+                        return $q->whereHas('assessment', fn($q) => $q->whereIn('topic_id', $userTopicIds));
+                    })
                     ->when(
                         $this->filterFormData['group_id'],
                         fn($q, $v) =>
