@@ -92,16 +92,26 @@ class AssessmentForm
                     ->numeric()
                     ->default(90)
                     ->required(),
-                TextInput::make('correct_point')
-                    ->label('NILAI JAWABAN BENAR')
+                TextInput::make('max_essay_point')
+                    ->label('NILAI MAX ESSAY')
                     ->numeric()
                     ->default(1)
                     ->required(),
-                TextInput::make('wrong_point')
-                    ->label('NILAI JAWABAN SALAH')
-                    ->numeric()
-                    ->default(0)
-                    ->required(),
+                // TextInput::make('correct_point')
+                //     ->label('NILAI JAWABAN BENAR')
+                //     ->numeric()
+                //     ->default(1)
+                //     ->required(),
+                // TextInput::make('wrong_point')
+                //     ->label('NILAI JAWABAN SALAH')
+                //     ->numeric()
+                //     ->default(0)
+                //     ->required(),
+                // TextInput::make('empty_point')
+                //     ->label('NILAI JAWABAN KOSONG')
+                //     ->numeric()
+                //     ->default(0)
+                //     ->required(),                
                 TextInput::make('empty_point')
                     ->label('NILAI JAWABAN KOSONG')
                     ->numeric()
