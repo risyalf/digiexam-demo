@@ -38,7 +38,6 @@ class UserImporter extends Importer
                 ->requiredMapping()
                 ->rules(["required"]),
             ImportColumn::make("order_number")
-                ->exampleHeader("nomor urut")
                 ->rules(["required"]),
             ImportColumn::make("email")
                 ->requiredMapping()

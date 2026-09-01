@@ -16,6 +16,7 @@ use App\Traits\HasRefreshFunction;
 use BackedEnum;
 use BezhanSalleh\FilamentShield\Traits\HasPageShield;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
@@ -152,7 +153,8 @@ class EvaluateEssayAnswer extends Page implements HasTable, HasForms
                     ->select([
                         'id',
                         'participant_id',
-                        'assessment_id'
+                        'assessment_id',
+                        'point'
                     ])
                     ->whereHas(
                         'answer',
@@ -206,6 +208,11 @@ class EvaluateEssayAnswer extends Page implements HasTable, HasForms
                     ->label("ASSESSMENT")
                     ->wrap()
                     ->copyable(),
+                TextColumn::make('point')
+                    ->label("NILAI")
+                    ->wrap()
+                    ->formatStateUsing(fn($state) => round($state, 2))
+                    ->copyable(),
                 TextColumn::make('answer.essay_evaluated')
                     ->label("STATUS")
                     ->wrap()
@@ -218,89 +225,153 @@ class EvaluateEssayAnswer extends Page implements HasTable, HasForms
                         $state ? Color::Emerald : Color::Red
                     ),
             ])
-            ->recordActions([
-                Action::make('evaluate')
-                    ->label("EVALUASI")
-                    ->button()
-                    ->color(Color::Emerald)
-                    ->mountUsing(function ($form, ParticipantAssessment $record) {
-                        $essayValues = collect(
-                            json_decode($record->answer?->essay_values ?? '[]', true)
-                        );
+            ->recordActionsColumnLabel("ACTIONS")
+            ->recordActions(
+                ActionGroup::make([
+                    Action::make('evaluate')
+                        ->label("EVALUASI")
+                        ->button()
+                        ->color(Color::Emerald)
+                        ->mountUsing(function ($form, ParticipantAssessment $record) {
+                            $essayValues = collect(
+                                json_decode($record->answer?->essay_values ?? '[]', true)
+                            );
 
-                        $questions = TestQuestion::query()
-                            ->whereIn('id', $essayValues->pluck('test_question_id'))
-                            ->pluck('name', 'id');
+                            $questions = TestQuestion::query()
+                                ->whereIn('id', $essayValues->pluck('test_question_id'))
+                                ->pluck('name', 'id');
 
-                        $maxPoint = $record->assessment->max_essay_point;
+                            $maxPoint = $record->assessment->max_essay_point;
 
-                        $form->fill([
-                            'essay_values' => $essayValues
-                                ->map(fn($data) => [
-                                    'answer_id' => $record->answer->id,
-                                    'max_point' => $maxPoint,
-                                    'test_name' => $questions[$data['test_question_id']] ?? '-',
-                                    ...$data,
+                            $form->fill([
+                                'essay_values' => $essayValues
+                                    ->map(fn($data) => [
+                                        'answer_id' => $record->answer->id,
+                                        'max_point' => $maxPoint,
+                                        'test_name' => $questions[$data['test_question_id']] ?? '-',
+                                        ...$data,
+                                    ])
+                                    ->toArray(),
+                            ]);
+                        })
+                        ->schema([
+                            Repeater::make('essay_values')
+                                ->schema([
+                                    Hidden::make('answer_id'),
+                                    Hidden::make('test_question_id'),
+                                    RichEditor::make('test_name')
+                                        ->label('PERTANYAAN')
+                                        ->disabled(),
+                                    Textarea::make('value')
+                                        ->label('JAWABAN')
+                                        ->disabled(),
+                                    TextInput::make('point')
+                                        ->label("POINT")
+                                        ->numeric()
+                                        ->required()
+                                        ->maxValue(fn($get) => $get('max_point'))
+                                        ->default(0),
+                                    TextInput::make('max_point')
+                                        ->label("NILAI MAKSIMAL")
+                                        ->disabled(),
                                 ])
-                                ->toArray(),
-                        ]);
-                    })
-                    ->schema([
-                        Repeater::make('essay_values')
-                            ->schema([
-                                Hidden::make('answer_id'),
-                                Hidden::make('test_question_id'),
-                                RichEditor::make('test_name')
-                                    ->label('PERTANYAAN')
-                                    ->disabled(),
-                                Textarea::make('value')
-                                    ->label('JAWABAN')
-                                    ->disabled(),
-                                TextInput::make('point')
-                                    ->label("POINT")
-                                    ->numeric()
-                                    ->required()
-                                    ->maxValue(fn($get) => $get('max_point'))
-                                    ->default(0),
-                                TextInput::make('max_point')
-                                    ->label("NILAI MAKSIMAL")
-                                    ->disabled(),
-                            ])
-                            ->addable(false)
-                            ->deletable(false)
-                            ->orderColumn(),
-                    ])
-                    ->action(function ($data) {
-                        try {
-                            $answerId = $data['essay_values'][0]['answer_id'];
-                            $answer = Answer::find($answerId);
-                            $essayValues = collect(json_decode($answer->essay_values));
-                            foreach ($data['essay_values'] as $key => $data) {
-                                $value = $essayValues->where('test_question_id', $data['test_question_id'])->first();
-                                $value->point = $data['point'];
-                                $value->evaluated = true;
-                            }
-                            $answer->essay_values = json_encode($essayValues);
-                            $answer->essay_evaluated = true;
-                            $answer->save();
+                                ->addable(false)
+                                ->deletable(false)
+                                ->orderColumn(),
+                        ])
+                        ->action(fn($data) => $this->evaluate($data))
+                        ->modalSubmitActionLabel("Submit")
+                        ->hidden(fn($record) => $record->answer->essay_evaluated),
+                    Action::make('complete')
+                        ->label("AKHIRI EVALUASI")
+                        ->button()
+                        ->color(Color::Blue)
+                        ->action(fn($record) => $this->finishEvaluation($record))
+                        ->modalSubmitActionLabel("Submit")
+                        ->hidden(fn($record) => $record->answer->essay_evaluated)
+                        ->requiresConfirmation(),
+                    Action::make('revert')
+                        ->label("EVALUASI ULANG")
+                        ->button()
+                        ->color(Color::Red)
+                        ->action(fn($record) => $this->revertEvaluatin($record))
+                        ->modalSubmitActionLabel("Submit")
+                        ->hidden(fn($record) => !$record->answer->essay_evaluated || !Auth::user()->hasRole('super_admin'))
+                        ->requiresConfirmation(),
+                ])
+            );
+    }
 
-                            RecalculateAssessmentPoint::execute($answer->participant_assessment_id);
+    protected function evaluate($data)
+    {
+        try {
+            $answerId = $data['essay_values'][0]['answer_id'];
+            $answer = Answer::find($answerId);
+            $essayValues = collect(json_decode($answer->essay_values));
+            foreach ($data['essay_values'] as $key => $data) {
+                $value = $essayValues->where('test_question_id', $data['test_question_id'])->first();
+                $value->point = $data['point'];
+                $value->evaluated = true;
+            }
+            $answer->essay_values = json_encode($essayValues);
+            // $answer->essay_evaluated = true;
+            $answer->save();
 
-                            Notification::make()
-                                ->title("SUCCESS EVALUASI JAWABAN!")
-                                ->success()
-                                ->send();
-                        } catch (\Throwable $th) {
-                            Notification::make()
-                                ->title("ERROR")
-                                ->body($th->getMessage())
-                                ->danger()
-                                ->send();
-                        }
-                    })
-                    ->modalSubmitActionLabel("Submit")
-                    ->disabled(fn($record) => $record->answer->essay_evaluated),
-                // ->requiresConfirmation(),
+            RecalculateAssessmentPoint::execute($answer->participant_assessment_id);
+
+            Notification::make()
+                ->title("SUCCESS EVALUASI JAWABAN!")
+                ->success()
+                ->send();
+        } catch (\Throwable $th) {
+            Notification::make()
+                ->title("ERROR")
+                ->body($th->getMessage())
+                ->danger()
+                ->send();
+        }
+    }
+
+    protected function finishEvaluation(ParticipantAssessment $participantAssessment)
+    {
+        try {
+            $participantAssessment->answer->update([
+                'essay_evaluated' => true
             ]);
+
+            RecalculateAssessmentPoint::execute($participantAssessment->id);
+
+            Notification::make()
+                ->title("SUCCESS MENGAKHIRI EVALUASI JAWABAN!")
+                ->success()
+                ->send();
+        } catch (\Throwable $th) {
+            Notification::make()
+                ->title("ERROR")
+                ->body($th->getMessage())
+                ->danger()
+                ->send();
+        }
+    }
+
+    protected function revertEvaluatin(ParticipantAssessment $participantAssessment)
+    {
+        try {
+            Answer::query()
+                ->where('id', $participantAssessment->answer->id)
+                ->update([
+                    'essay_evaluated' => false
+                ]);
+            Notification::make()
+                ->title("SUCCESS MEMBATALKAN EVALUASI JAWABAN!")
+                ->success()
+                ->send();
+        } catch (\Throwable $th) {
+            Notification::make()
+                ->title("ERROR")
+                ->body($th->getMessage())
+                ->danger()
+                ->send();
+        }
     }
 }
