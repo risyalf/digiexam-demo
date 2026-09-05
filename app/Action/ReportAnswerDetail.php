@@ -16,6 +16,7 @@ class ReportAnswerDetail
     {
         $moduleId = $data['module_id'];
         $topicId = $data['topic_id'];
+        $assessmentId = $data['assessment_id'];
         $groupId = $data['group_id'];
         $createdAt = $data['created_at'];
 
@@ -26,12 +27,13 @@ class ReportAnswerDetail
         $name = self::buildFileName($module->name, $topic->name, $group?->name);
 
         $answers = Answer::query()
-            ->with('participantAssessment.participant.user', 'participantAssessment.participant.participantGroup')
-            ->whereHas('participantAssessment.assessment', function ($q) use ($moduleId, $topicId, $groupId) {
-                $q->where([
-                    'module_id' => $moduleId,
-                    'topic_id' => $topicId
-                ])
+            ->with('participantAssessment.participant.user', 'participantAssessment.participant.participantGroup', 'participantAssessment.assessment')
+            ->whereHas('participantAssessment.assessment', function ($q) use ($moduleId, $topicId, $assessmentId, $groupId) {
+                $q->when($assessmentId, fn($q, $v) => $q->where('assessment_id', $assessmentId))
+                    ->where([
+                        'module_id' => $moduleId,
+                        'topic_id' => $topicId
+                    ])
                     ->when($groupId, fn($q) => $q->whereRaw(
                         "exists(
                                 select 1 from assessment_participant_groups apg
@@ -43,20 +45,25 @@ class ReportAnswerDetail
             ->when($createdAt, fn($q) => $q->whereDate('created_at', $createdAt))
             ->get();
 
-        $assessment = Assessment::query()
-            ->with('test', 'test.testQuestions')
-            ->where([
-                'module_id' => $moduleId,
-                'topic_id' => $topicId
-            ])
-            ->when($groupId, fn($q) => $q->whereRaw(
-                "exists(
+        if ($assessmentId) {
+            $assessment = Assessment::findOrFail($assessmentId);
+        } else {
+            $assessment = Assessment::query()
+                ->with('test', 'test.testQuestions')
+                ->where([
+                    'module_id' => $moduleId,
+                    'topic_id' => $topicId
+                ])
+                ->when($groupId, fn($q) => $q->whereRaw(
+                    "exists(
                                 select 1 from assessment_participant_groups apg
                                 where apg.assessment_id = id
                                 and apg.participant_group_id = '$groupId'
                             )"
-            ))
-            ->firstOrFail();
+                ))
+                ->orderBy('created_at', 'DESC')
+                ->firstOrFail();
+        }
 
         $test = $assessment->test;
         $questions = $test->testQuestions()->with('options')->orderBy('ordering')->get();
@@ -98,6 +105,7 @@ class ReportAnswerDetail
                 'Kelas',
                 'Modul',
                 'Topic',
+                'Assessment',
                 'Nilai',
                 'Waktu Submit',
                 ...$correctAnswers
@@ -106,7 +114,11 @@ class ReportAnswerDetail
 
         foreach ($answers as $answer) {
             $participantAssessment = $answer->participantAssessment;
+            $currentAssessment = $answer->participantAssessment->assessment;
             $participant = $participantAssessment->participant;
+            if ($participant->user->id == '019c8564-34cf-7292-8c47-352121be5733') {
+                echo "HERE" . PHP_EOL;
+            }
             $decodedAnswers = collect(json_decode($answer->value) ?? [])->keyBy('test_question_id');
             $answerArray = [];
 
@@ -126,6 +138,7 @@ class ReportAnswerDetail
                 $participant->participantGroup?->name ?? '',
                 $module->name,
                 $topic->name,
+                $currentAssessment->name,
                 $participantAssessment->point,
                 $answer->created_at->toDateTimeString(),
                 ...$answerArray

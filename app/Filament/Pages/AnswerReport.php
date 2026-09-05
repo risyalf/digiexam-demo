@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Action\ReportAnswerDetail;
 use App\Action\ReportAnswerSummary;
 use App\Enum\Menu;
+use App\Models\Assessment;
 use App\Models\Module;
 use App\Models\ParticipantGroup;
 use App\Models\Topic;
@@ -47,6 +48,7 @@ class AnswerReport extends Page implements HasForms
     public array $data = [
         'module_id' => null,
         'topic_id' => null,
+        'assessment_id' => null,
         'group_id' => null,
         'type' => null,
         'created_at' => null
@@ -70,14 +72,26 @@ class AnswerReport extends Page implements HasForms
                             ),
                         Select::make('topic_id')
                             ->label('Topik')
+                            ->reactive()
                             ->disabled(fn($get) => !$get('module_id'))
+                            ->afterStateUpdated(fn($set) => $set('assessment_id', null))
                             ->searchable()
                             ->options(
-                                function ($get) {
-                                    return Topic::query()
-                                        ->where('module_id', $get('module_id'))
-                                        ->pluck('name', 'id');
-                                }
+                                fn($get) =>
+                                Topic::query()
+                                    ->where('module_id', $get('module_id'))
+                                    ->pluck('name', 'id')
+                            ),
+                        Select::make('assessment_id')
+                            ->label('Assessment')
+                            ->disabled(fn($get) => !$get('topic_id'))
+                            ->searchable()
+                            ->options(
+                                fn($get) =>
+                                Assessment::query()
+                                    ->where('module_id', $get('module_id'))
+                                    ->where('topic_id', $get('topic_id'))
+                                    ->pluck('name', 'id')
                             ),
                         Select::make('group_id')
                             ->label('Kelas')
