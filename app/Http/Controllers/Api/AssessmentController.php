@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Enum\ParticipantStatus;
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessAnswer;
+use App\Models\ApiLog;
 use App\Models\Assessment;
 use App\Models\Participant;
 use App\Models\AssessmentToken;
@@ -12,6 +13,7 @@ use App\Models\ParticipantAssessment;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class AssessmentController extends Controller
@@ -298,11 +300,17 @@ class AssessmentController extends Controller
                 "message" => "Jawaban sedang diproses",
             ]);
         } catch (\Throwable $th) {
+            ApiLog::create([
+                'url' => $request->fullUrl(),
+                'json' => $request->getContent(),
+                'user_id' => Auth::id() ?? null,
+            ]);
+
             return response()->json(
                 [
                     "message" => $th->getMessage(),
                 ],
-                400,
+                500,
             );
         }
     }

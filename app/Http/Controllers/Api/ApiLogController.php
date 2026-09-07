@@ -15,8 +15,8 @@ class ApiLogController extends Controller
         try {
             ApiLog::create([
                 'url' => $request->fullUrl(),
-                'json' => $request->all(),
-                'user_id' => Auth::id(),
+                'json' => $request->getContent(),
+                'user_id' => Auth::id() ?? null,
             ]);
 
             return response()->json([
