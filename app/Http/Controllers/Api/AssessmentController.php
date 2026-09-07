@@ -265,6 +265,12 @@ class AssessmentController extends Controller
     public function submit(Request $request)
     {
         try {
+            ApiLog::create([
+                'url' => $request->fullUrl(),
+                'json' => $request->getContent(),
+                'user_id' => Auth::id() ?? null,
+            ]);
+
             $validated = $request->validate([
                 "participant_assessment_id" => "required|uuid",
                 "value" => "array",
@@ -300,12 +306,6 @@ class AssessmentController extends Controller
                 "message" => "Jawaban sedang diproses",
             ]);
         } catch (\Throwable $th) {
-            ApiLog::create([
-                'url' => $request->fullUrl(),
-                'json' => $request->getContent(),
-                'user_id' => Auth::id() ?? null,
-            ]);
-
             return response()->json(
                 [
                     "message" => $th->getMessage(),
