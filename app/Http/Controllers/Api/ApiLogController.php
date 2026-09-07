@@ -1,3 +1,4 @@
+```php
 <?php
 
 namespace App\Http\Controllers\Api;
@@ -12,22 +13,20 @@ class ApiLogController extends Controller
     public function store(Request $request)
     {
         try {
-            $json = $request->json();
-            $url = $request->url();
             ApiLog::create([
-                "url" => $url,
-                "json" => $json,
-                "user_id" => Auth::id() ?? null
+                'url' => $request->fullUrl(),
+                'json' => $request->all(),
+                'user_id' => Auth::id(),
             ]);
 
-            return response()->json(["message" => "SUCCESS"]);
+            return response()->json([
+                'message' => 'SUCCESS',
+            ]);
         } catch (\Throwable $th) {
-            return response()->json(
-                [
-                    "message" => $th->getMessage(),
-                ],
-                400,
-            );
+            return response()->json([
+                'message' => $th->getMessage(),
+            ], 500);
         }
     }
 }
+```
