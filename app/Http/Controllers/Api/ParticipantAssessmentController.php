@@ -61,7 +61,6 @@ class ParticipantAssessmentController extends Controller
                 'is_lock_enabled' => $assessment->is_lock_enabled
             ];
 
-
             return response()->json([
                 'message' => "SUKSES GET DATA SISWA",
                 'data' => $response
