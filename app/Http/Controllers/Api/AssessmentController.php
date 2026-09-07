@@ -262,39 +262,48 @@ class AssessmentController extends Controller
 
     public function submit(Request $request)
     {
-        $validated = $request->validate([
-            "participant_assessment_id" => "required|uuid",
-            "value" => "array",
-            "value.*.test_question_id" => "uuid",
-            "value.*.answer" => "required",
-            // "value" => "required|array|min:1",
-            // "value.*.test_question_id" => "required|uuid",
-            // "value.*.answer" => "nullable|int",
-        ]);
+        try {
+            $validated = $request->validate([
+                "participant_assessment_id" => "required|uuid",
+                "value" => "array",
+                "value.*.test_question_id" => "uuid",
+                "value.*.answer" => "required",
+                // "value" => "required|array|min:1",
+                // "value.*.test_question_id" => "required|uuid",
+                // "value.*.answer" => "nullable|int",
+            ]);
 
-        if (!$request->value) {
+            if (!$request->value) {
+                ParticipantAssessment::query()
+                    ->where("id", $request->participant_assessment_id)
+                    ->update([
+                        "status" => ParticipantStatus::SUBMITTED,
+                        "last_status" => ParticipantStatus::IN_PROGRESS,
+                    ]);
+                return response()->json([
+                    "message" => "Jawaban sedang diproses",
+                ]);
+            }
+
             ParticipantAssessment::query()
                 ->where("id", $request->participant_assessment_id)
                 ->update([
                     "status" => ParticipantStatus::SUBMITTED,
                     "last_status" => ParticipantStatus::IN_PROGRESS,
                 ]);
+
+            ProcessAnswer::dispatch($validated);
+
             return response()->json([
                 "message" => "Jawaban sedang diproses",
             ]);
+        } catch (\Throwable $th) {
+            return response()->json(
+                [
+                    "message" => $th->getMessage(),
+                ],
+                400,
+            );
         }
-
-        ParticipantAssessment::query()
-            ->where("id", $request->participant_assessment_id)
-            ->update([
-                "status" => ParticipantStatus::SUBMITTED,
-                "last_status" => ParticipantStatus::IN_PROGRESS,
-            ]);
-
-        ProcessAnswer::dispatch($validated);
-
-        return response()->json([
-            "message" => "Jawaban sedang diproses",
-        ]);
     }
 }

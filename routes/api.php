@@ -19,6 +19,13 @@ Route::get("/test/trial", [TestController::class, "getTrial"])->name(
     "api.test.get.trial",
 );
 
+Route::prefix("assessment")->group(function () {
+    Route::post("/submit", [
+        AssessmentController::class,
+        "submit",
+    ])->name("api.assessment.submit");
+});
+
 Route::middleware("auth:sanctum")->group(function () {
     Route::post("/auth/participant/logout", [ParticipantController::class, 'logout'])->name('api.participant.logout');
 
@@ -60,10 +67,10 @@ Route::middleware("auth:sanctum")->group(function () {
         Route::post("/start", [AssessmentController::class, "start"])->name(
             "api.assessment.start",
         );
-        Route::post("/submit", [
-            AssessmentController::class,
-            "submit",
-        ])->name("api.assessment.submit");
+        // Route::post("/submit", [
+        //     AssessmentController::class,
+        //     "submit",
+        // ])->name("api.assessment.submit");
     });
 
     Route::prefix("test")->group(function () {
