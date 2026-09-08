@@ -275,7 +275,7 @@ class AssessmentController extends Controller
                 "participant_assessment_id" => "required|uuid",
                 "value" => "array",
                 "value.*.test_question_id" => "uuid",
-                "value.*.answer" => "required",
+                // "value.*.answer" => "nullable",
                 // "value" => "required|array|min:1",
                 // "value.*.test_question_id" => "required|uuid",
                 // "value.*.answer" => "nullable|int",
