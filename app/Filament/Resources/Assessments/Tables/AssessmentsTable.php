@@ -59,18 +59,22 @@ class AssessmentsTable
                     ->label('LAMA TEST (MENIT)')
                     ->wrapHeader()
                     ->copyable(),
-                TextColumn::make('correct_point')
-                    ->label('NILAI JAWABAN BENAR')
+                TextColumn::make('max_essay_point')
+                    ->label('NILAI JAWABAN ESSAY')
                     ->wrapHeader()
                     ->copyable(),
-                TextColumn::make('wrong_point')
-                    ->label('NILAI JAWABAN SALAH')
-                    ->wrapHeader()
-                    ->copyable(),
-                TextColumn::make('empty_point')
-                    ->label('NILAI JAWABAN KOSONG')
-                    ->wrapHeader()
-                    ->copyable(),
+                // TextColumn::make('correct_point')
+                //     ->label('NILAI JAWABAN BENAR')
+                //     ->wrapHeader()
+                //     ->copyable(),
+                // TextColumn::make('wrong_point')
+                //     ->label('NILAI JAWABAN SALAH')
+                //     ->wrapHeader()
+                //     ->copyable(),
+                // TextColumn::make('empty_point')
+                //     ->label('NILAI JAWABAN KOSONG')
+                //     ->wrapHeader()
+                //     ->copyable(),
                 ToggleColumn::make('show_result')
                     ->label('TAMPILKAN JAWABAN SETELAH SELESAI')
                     ->wrapHeader()
@@ -150,6 +154,7 @@ class AssessmentsTable
                     RestoreBulkAction::make()
                 ]),
             ])
+            ->modifyQueryUsing(fn($query) => $query->orderBy('created_at', 'DESC'))
             ->paginated();
     }
 }
