@@ -172,7 +172,7 @@ class EvaluateEssayAnswer extends Page implements HasTable, HasForms
                     ])
                     ->when($this->filterFormData['module_id'], fn($q, $v) => $q->whereHas('assessment', fn($q) => $q->where('module_id', $v)))
                     ->when($this->filterFormData['topic_id'], fn($q, $v) => $q->whereHas('assessment', fn($q) => $q->where('topic_id', $v)))
-                    ->when(!Auth::user()->hasRole('super_admin'), function ($q) {
+                    ->when(Auth::user()->hasRole('guru'), function ($q) {
                         $userTopicIds = UserTopic::query()
                             ->where('user_id', Auth::id())
                             ->pluck('topic_id')
