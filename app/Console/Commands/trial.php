@@ -45,6 +45,6 @@ class trial extends Command
      */
     public function handle()
     {
-        RecalculateAssessmentPoint::execute('019eeaef-1dbe-7170-bcee-cf53e7d3e0c6');
+        dd(Str::random(16));
     }
 }

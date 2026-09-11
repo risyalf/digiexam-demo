@@ -172,6 +172,8 @@ class EvaluateEssayAnswer extends Page implements HasTable, HasForms
                     ])
                     ->when($this->filterFormData['module_id'], fn($q, $v) => $q->whereHas('assessment', fn($q) => $q->where('module_id', $v)))
                     ->when($this->filterFormData['topic_id'], fn($q, $v) => $q->whereHas('assessment', fn($q) => $q->where('topic_id', $v)))
+                    ->when($this->filterFormData['group_id'], fn($q, $v) => $q->whereHas('participant', fn($q) => $q->where('group_id', $v)))
+                    ->when($this->filterFormData['assessment_id'], fn($q, $v) => $q->where('assessment_id', $v)))
                     ->when(Auth::user()->hasRole('guru'), function ($q) {
                         $userTopicIds = UserTopic::query()
                             ->where('user_id', Auth::id())
