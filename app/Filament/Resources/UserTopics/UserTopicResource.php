@@ -76,7 +76,7 @@ class UserTopicResource extends Resource
                 TextColumn::make('user.name')
                     ->label('NAMA'),
                 TextColumn::make('topic.module.name')
-                    ->label('TOPIC'),
+                    ->label('MODUL'),
                 TextColumn::make('topic.name')
                     ->label('TOPIC'),
             ])
