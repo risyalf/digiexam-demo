@@ -20,6 +20,8 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Enums\FiltersResetActionPosition;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
@@ -73,6 +75,8 @@ class UserTopicResource extends Resource
             ->columns([
                 TextColumn::make('user.name')
                     ->label('NAMA'),
+                TextColumn::make('topic.module.name')
+                    ->label('TOPIC'),
                 TextColumn::make('topic.name')
                     ->label('TOPIC'),
             ])
@@ -157,6 +161,7 @@ class UserTopicResource extends Resource
                     }),
                 DeleteAction::make(),
             ])
+            ->filtersLayout(FiltersLayout::AboveContentCollapsible)
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
