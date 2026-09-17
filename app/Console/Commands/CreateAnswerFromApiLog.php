@@ -36,7 +36,7 @@ class CreateAnswerFromApiLog extends Command
             ->select('participant_assessments.id')
             ->join('participants', 'participants.id', '=', 'participant_assessments.participant_id')
             ->where('participant_assessments.status', ParticipantStatus::SUBMITTED)
-            ->doesntHave('answers')
+            ->doesntHave('answer')
             ->pluck('id');
 
         $total = count($assessmentIds);
