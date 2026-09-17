@@ -39,7 +39,10 @@ class CreateAnswerFromApiLog extends Command
             ->doesntHave('answers')
             ->pluck('id');
 
+        $total = count($assessmentIds);
+
         foreach ($assessmentIds as $key => $id) {
+            echo "PROCCESS " . ($key + 1) . " OF $total" . PHP_EOL;
             $log = ApiLog::query()
                 ->where('json', 'like', "%$id%")
                 ->orderBy('created_at', 'desc')
