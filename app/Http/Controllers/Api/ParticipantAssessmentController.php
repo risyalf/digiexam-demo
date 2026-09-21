@@ -44,7 +44,7 @@ class ParticipantAssessmentController extends Controller
                 ->value('users.name');
 
             $assessment = Assessment::query()
-                ->select(['name', 'time_test'])
+                ->select(['name', 'time_test', 'is_lock_enabled'])
                 ->where('id', $participant->assessment_id)
                 ->first();
 
@@ -58,7 +58,7 @@ class ParticipantAssessmentController extends Controller
                 'assessment_name' => $assessment->name ?? null,
                 'duration' => $assessment->time_test ?? null,
                 'locked' => $participant->status === ParticipantStatus::LOCKED,
-                'isLockEnabled' => $assessment->is_lock_enabled
+                'is_lock_enabled' => $assessment->is_lock_enabled
             ];
 
             return response()->json([

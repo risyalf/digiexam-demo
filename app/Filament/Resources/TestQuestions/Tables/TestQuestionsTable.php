@@ -34,7 +34,13 @@ class TestQuestionsTable
                 TextColumn::make('name')
                     ->label('NAMA')
                     ->wrap()
-                    ->formatStateUsing(fn($state) => html_entity_decode($state))
+                    ->formatStateUsing(function ($state) {
+                        $html = html_entity_decode($state);
+
+                        $htmlWithoutColor = preg_replace('/(?<!-)\bcolor:\s*[^;"]+;?/i', '', $html);
+
+                        return $htmlWithoutColor;
+                    })
                     ->html(),
                 TextColumn::make('type')
                     ->label('TIPE')
