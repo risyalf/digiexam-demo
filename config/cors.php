@@ -4,7 +4,7 @@ return [
     'paths' => ['api/*', 'filament/*'],
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['https://assessment.smkswadaya.sch.id'],
+    'allowed_origins' => ['https://demo.assessment.digiexam.web.id'],
 
     'allowed_headers' => ['*'],
     'exposed_headers' => [],
