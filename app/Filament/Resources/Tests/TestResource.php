@@ -278,7 +278,7 @@ class TestResource extends Resource
                     ->icon(Heroicon::OutlinedEye)
                     ->url(
                         function ($record) {
-                            return "https://assessment.smkswadaya.sch.id/assessment-trial/{$record->id}";
+                            return "https://demo.assessment.digiexam.web.id/assessment-trial/{$record->id}";
                         }
                     )
                     ->openUrlInNewTab(),
