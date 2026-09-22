@@ -91,8 +91,16 @@ class EvaluateEssayAnswer extends Page implements HasTable, HasForms
                             ->label('Modul')
                             ->searchable()
                             ->options(
-                                fn($get) =>
+                                fn() =>
                                 Module::query()
+                                    ->when(Auth::user()->hasRole('guru'), function ($q) {
+                                        $userTopicIds = UserTopic::query()
+                                            ->where('user_id', Auth::id())
+                                            ->pluck('topic_id')
+                                            ->toArray();
+
+                                        return $q->whereHas('topic', fn($q) => $q->whereIn('id', $userTopicIds));
+                                    })
                                     ->pluck('name', 'id')
                             ),
                         Select::make('topic_id')
@@ -101,6 +109,14 @@ class EvaluateEssayAnswer extends Page implements HasTable, HasForms
                             ->options(
                                 fn($get) =>
                                 Topic::query()
+                                    ->when(Auth::user()->hasRole('guru'), function ($q) {
+                                        $userTopicIds = UserTopic::query()
+                                            ->where('user_id', Auth::id())
+                                            ->pluck('topic_id')
+                                            ->toArray();
+
+                                        return $q->whereHas('assessment', fn($q) => $q->whereIn('topic_id', $userTopicIds));
+                                    })
                                     ->when($get('module_id'), fn($q, $v) => $q->where('module_id', $v))
                                     ->pluck('name', 'id')
                             ),
