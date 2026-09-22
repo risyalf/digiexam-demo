@@ -84,12 +84,14 @@ class UserTopicResource extends Resource
             ->filters([
                 SelectFilter::make('user_id')
                     ->label('NAMA')
+                    ->searchable()
                     ->options(
                         User::query()
                             ->pluck('name', 'id')
                     ),
                 SelectFilter::make('topic_id')
                     ->label('TOPIC')
+                    ->searchable()
                     ->options(
                         Topic::query()
                             ->with('module')
