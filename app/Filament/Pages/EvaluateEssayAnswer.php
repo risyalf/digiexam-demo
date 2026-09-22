@@ -99,7 +99,7 @@ class EvaluateEssayAnswer extends Page implements HasTable, HasForms
                                             ->pluck('topic_id')
                                             ->toArray();
 
-                                        return $q->whereHas('topic', fn($q) => $q->whereIn('id', $userTopicIds));
+                                        return $q->whereHas('topics', fn($q) => $q->whereIn('id', $userTopicIds));
                                     })
                                     ->pluck('name', 'id')
                             ),
