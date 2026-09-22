@@ -182,6 +182,8 @@ class EvaluateEssayAnswer extends Page implements HasTable, HasForms
                         'participant.user',
                         'participant.participantGroup',
                         'assessment',
+                        'assessment.test',
+                        'assessment.test.testQuestions',
                         'assessment.module',
                         'assessment.topic',
                         'answer'
@@ -254,25 +256,24 @@ class EvaluateEssayAnswer extends Page implements HasTable, HasForms
                         ->button()
                         ->color(Color::Emerald)
                         ->mountUsing(function ($form, ParticipantAssessment $record) {
+                            $test = $record->assessment->test;
+                            $maxPoint = $record->assessment->max_essay_point;
+
+                            $questions = $test->testQuestions;
+                            $answerId = $record->answer->id;
+
                             $essayValues = collect(
                                 json_decode($record->answer?->essay_values ?? '[]', true)
                             );
 
-                            $questions = TestQuestion::query()
-                                ->whereIn('id', $essayValues->pluck('test_question_id'))
-                                ->pluck('name', 'id');
-
-                            $maxPoint = $record->assessment->max_essay_point;
-
                             $form->fill([
-                                'essay_values' => $essayValues
-                                    ->map(fn($data) => [
-                                        'answer_id' => $record->answer->id,
+                                'essay_values' => $questions
+                                    ->map(fn($question) => [
+                                        'answer_id' => $answerId,
                                         'max_point' => $maxPoint,
-                                        'test_name' => $questions[$data['test_question_id']] ?? '-',
-                                        ...$data,
+                                        'test_name' => $question->name,
+                                        ...($essayValues->firstWhere('test_question_id', $question->id) ?? []),
                                     ])
-                                    ->toArray(),
                             ]);
                         })
                         ->schema([
