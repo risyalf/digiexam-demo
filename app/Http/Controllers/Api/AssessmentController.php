@@ -100,19 +100,17 @@ class AssessmentController extends Controller
 
     public function update(Request $request)
     {
-        $request->validate([
-            "updates" => "required",
-        ]);
-
         try {
-            DB::beginTransaction();
+            $request->validate([
+                "updates" => "required",
+            ]);
+            DB::transaction(function () use ($request) {
 
-            $id = auth()->user()->id;
-            $updates = $request->updates;
+                $id = Auth::id();
+                $updates = $request->updates;
 
-            Participant::where("user_id", $id)->update($updates);
-
-            DB::commit();
+                Participant::where("user_id", $id)->update($updates);
+            });
 
             return response([
                 "message" => "SUKSES UPDATE DATA PARTISIPAN",
@@ -268,30 +266,15 @@ class AssessmentController extends Controller
             ApiLog::create([
                 'url' => $request->fullUrl(),
                 'json' => $request->getContent(),
-                'user_id' => Auth::id() ?? null,
+                'user_id' => Auth::id(),
             ]);
 
             $validated = $request->validate([
                 "participant_assessment_id" => "required|uuid",
                 "value" => "array",
                 "value.*.test_question_id" => "uuid",
-                "value.*.answer" => "nullable",
-                // "value" => "required|array|min:1",
-                // "value.*.test_question_id" => "required|uuid",
-                // "value.*.answer" => "nullable|int",
+                "value.*.answer" => "nullable"
             ]);
-
-            if (!$request->value) {
-                ParticipantAssessment::query()
-                    ->where("id", $request->participant_assessment_id)
-                    ->update([
-                        "status" => ParticipantStatus::SUBMITTED,
-                        "last_status" => ParticipantStatus::IN_PROGRESS,
-                    ]);
-                return response()->json([
-                    "message" => "Jawaban sedang diproses",
-                ]);
-            }
 
             ParticipantAssessment::query()
                 ->where("id", $request->participant_assessment_id)
