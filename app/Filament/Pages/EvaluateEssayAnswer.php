@@ -259,7 +259,7 @@ class EvaluateEssayAnswer extends Page implements HasTable, HasForms
                             $test = $record->assessment->test;
                             $maxPoint = $record->assessment->max_essay_point;
 
-                            $questions = $test->testQuestions->where('type', 'Esai')->get();
+                            $questions = $test->testQuestions->where('type', 'Esai');
                             $answerId = $record->answer->id;
 
                             $essayValues = collect(
